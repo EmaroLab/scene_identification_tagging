@@ -1,0 +1,8 @@
+This project uses OWL API and the PITT architecture (https://github.com/EmaroLab)
+to get the shape and parameters of objects in a table top scenarious and manage the 
+recognition and the learning of composition of primitive objects only by using
+ontological instance cheking.
+
+This software is stable but it has not been generalised and docomunted.
+For any information/comments contact:
+luca.buoncompagni@edu.unige.it or buon_luca@yahoo.com
