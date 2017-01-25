@@ -1,7 +1,0 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<catalog prefer="public" xmlns="urn:oasis:names:tc:entity:xmlns:xml:catalog">
-    <group id="Folder Repository, directory=, recursive=true, Auto-Update=true, version=2" prefer="public" xml:base="">
-        <uri id="Automatically generated entry, Timestamp=1456498586421" name="http://emaroLab/luca-buoncompagni/2016/3/scene/speechInteraction" uri="betterGlobfit.owl"/>
-        <uri id="Automatically generated entry, Timestamp=1456498586421" name="http://www.semanticweb.org/upitalia/ontologies/2015/7/untitled-ontology-9" uri="globFit-recognition-base_old.owl"/>
-    </group>
-</catalog>
