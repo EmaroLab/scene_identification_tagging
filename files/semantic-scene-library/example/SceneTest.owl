@@ -1047,10 +1047,125 @@
     
 
 
-    <!-- http://www.semanticweb.org/emaroLab/luca-buoncompagni/sit#25_01_17-12:00:11.091 -->
+    <!-- http://www.semanticweb.org/emaroLab/luca-buoncompagni/sit#25_01_17-15:12:51.540 -->
 
 
-    <owl:Class rdf:about="http://www.semanticweb.org/emaroLab/luca-buoncompagni/sit#25_01_17-12:00:11.091">
+    <owl:Class rdf:about="http://www.semanticweb.org/emaroLab/luca-buoncompagni/sit#25_01_17-15:12:51.540">
+        <owl:equivalentClass>
+            <owl:Class>
+                <owl:intersectionOf rdf:parseType="Collection">
+                    <rdf:Description rdf:about="http://www.semanticweb.org/emaroLab/luca-buoncompagni/sit#Scene"/>
+                    <owl:Restriction>
+                        <owl:onProperty rdf:resource="http://www.semanticweb.org/emaroLab/luca-buoncompagni/sit#has-scene_alongX"/>
+                        <owl:minQualifiedCardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#nonNegativeInteger">1</owl:minQualifiedCardinality>
+                        <owl:onClass rdf:resource="http://www.semanticweb.org/emaroLab/luca-buoncompagni/sit#GeometricPrimitive"/>
+                    </owl:Restriction>
+                    <owl:Restriction>
+                        <owl:onProperty rdf:resource="http://www.semanticweb.org/emaroLab/luca-buoncompagni/sit#has-scene_alongX"/>
+                        <owl:minQualifiedCardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#nonNegativeInteger">1</owl:minQualifiedCardinality>
+                        <owl:onClass rdf:resource="http://www.semanticweb.org/emaroLab/luca-buoncompagni/sit#Orientable"/>
+                    </owl:Restriction>
+                    <owl:Restriction>
+                        <owl:onProperty rdf:resource="http://www.semanticweb.org/emaroLab/luca-buoncompagni/sit#has-scene_alongX"/>
+                        <owl:minQualifiedCardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#nonNegativeInteger">1</owl:minQualifiedCardinality>
+                        <owl:onClass rdf:resource="http://www.semanticweb.org/emaroLab/luca-buoncompagni/sit#Plane"/>
+                    </owl:Restriction>
+                    <owl:Restriction>
+                        <owl:onProperty rdf:resource="http://www.semanticweb.org/emaroLab/luca-buoncompagni/sit#has-scene_alongX"/>
+                        <owl:minQualifiedCardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#nonNegativeInteger">1</owl:minQualifiedCardinality>
+                        <owl:onClass rdf:resource="http://www.semanticweb.org/emaroLab/luca-buoncompagni/sit#Sphere"/>
+                    </owl:Restriction>
+                    <owl:Restriction>
+                        <owl:onProperty rdf:resource="http://www.semanticweb.org/emaroLab/luca-buoncompagni/sit#has-scene_alongY"/>
+                        <owl:minQualifiedCardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#nonNegativeInteger">1</owl:minQualifiedCardinality>
+                        <owl:onClass rdf:resource="http://www.semanticweb.org/emaroLab/luca-buoncompagni/sit#GeometricPrimitive"/>
+                    </owl:Restriction>
+                    <owl:Restriction>
+                        <owl:onProperty rdf:resource="http://www.semanticweb.org/emaroLab/luca-buoncompagni/sit#has-scene_alongY"/>
+                        <owl:minQualifiedCardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#nonNegativeInteger">1</owl:minQualifiedCardinality>
+                        <owl:onClass rdf:resource="http://www.semanticweb.org/emaroLab/luca-buoncompagni/sit#Orientable"/>
+                    </owl:Restriction>
+                    <owl:Restriction>
+                        <owl:onProperty rdf:resource="http://www.semanticweb.org/emaroLab/luca-buoncompagni/sit#has-scene_alongY"/>
+                        <owl:minQualifiedCardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#nonNegativeInteger">1</owl:minQualifiedCardinality>
+                        <owl:onClass rdf:resource="http://www.semanticweb.org/emaroLab/luca-buoncompagni/sit#Plane"/>
+                    </owl:Restriction>
+                    <owl:Restriction>
+                        <owl:onProperty rdf:resource="http://www.semanticweb.org/emaroLab/luca-buoncompagni/sit#has-scene_alongY"/>
+                        <owl:minQualifiedCardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#nonNegativeInteger">1</owl:minQualifiedCardinality>
+                        <owl:onClass rdf:resource="http://www.semanticweb.org/emaroLab/luca-buoncompagni/sit#Sphere"/>
+                    </owl:Restriction>
+                    <owl:Restriction>
+                        <owl:onProperty rdf:resource="http://www.semanticweb.org/emaroLab/luca-buoncompagni/sit#has-scene_alongZ"/>
+                        <owl:minQualifiedCardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#nonNegativeInteger">1</owl:minQualifiedCardinality>
+                        <owl:onClass rdf:resource="http://www.semanticweb.org/emaroLab/luca-buoncompagni/sit#GeometricPrimitive"/>
+                    </owl:Restriction>
+                    <owl:Restriction>
+                        <owl:onProperty rdf:resource="http://www.semanticweb.org/emaroLab/luca-buoncompagni/sit#has-scene_alongZ"/>
+                        <owl:minQualifiedCardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#nonNegativeInteger">1</owl:minQualifiedCardinality>
+                        <owl:onClass rdf:resource="http://www.semanticweb.org/emaroLab/luca-buoncompagni/sit#Orientable"/>
+                    </owl:Restriction>
+                    <owl:Restriction>
+                        <owl:onProperty rdf:resource="http://www.semanticweb.org/emaroLab/luca-buoncompagni/sit#has-scene_alongZ"/>
+                        <owl:minQualifiedCardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#nonNegativeInteger">1</owl:minQualifiedCardinality>
+                        <owl:onClass rdf:resource="http://www.semanticweb.org/emaroLab/luca-buoncompagni/sit#Plane"/>
+                    </owl:Restriction>
+                    <owl:Restriction>
+                        <owl:onProperty rdf:resource="http://www.semanticweb.org/emaroLab/luca-buoncompagni/sit#has-scene_alongZ"/>
+                        <owl:minQualifiedCardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#nonNegativeInteger">1</owl:minQualifiedCardinality>
+                        <owl:onClass rdf:resource="http://www.semanticweb.org/emaroLab/luca-buoncompagni/sit#Sphere"/>
+                    </owl:Restriction>
+                    <owl:Restriction>
+                        <owl:onProperty rdf:resource="http://www.semanticweb.org/emaroLab/luca-buoncompagni/sit#has-scene_coaxial"/>
+                        <owl:minQualifiedCardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#nonNegativeInteger">1</owl:minQualifiedCardinality>
+                        <owl:onClass rdf:resource="http://www.semanticweb.org/emaroLab/luca-buoncompagni/sit#Orientable"/>
+                    </owl:Restriction>
+                    <owl:Restriction>
+                        <owl:onProperty rdf:resource="http://www.semanticweb.org/emaroLab/luca-buoncompagni/sit#has-scene_coaxial"/>
+                        <owl:minQualifiedCardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#nonNegativeInteger">1</owl:minQualifiedCardinality>
+                        <owl:onClass rdf:resource="http://www.semanticweb.org/emaroLab/luca-buoncompagni/sit#Sphere"/>
+                    </owl:Restriction>
+                    <owl:Restriction>
+                        <owl:onProperty rdf:resource="http://www.semanticweb.org/emaroLab/luca-buoncompagni/sit#has-scene_parallel"/>
+                        <owl:minQualifiedCardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#nonNegativeInteger">1</owl:minQualifiedCardinality>
+                        <owl:onClass rdf:resource="http://www.semanticweb.org/emaroLab/luca-buoncompagni/sit#Orientable"/>
+                    </owl:Restriction>
+                    <owl:Restriction>
+                        <owl:onProperty rdf:resource="http://www.semanticweb.org/emaroLab/luca-buoncompagni/sit#has-scene_parallel"/>
+                        <owl:minQualifiedCardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#nonNegativeInteger">1</owl:minQualifiedCardinality>
+                        <owl:onClass rdf:resource="http://www.semanticweb.org/emaroLab/luca-buoncompagni/sit#Plane"/>
+                    </owl:Restriction>
+                    <owl:Restriction>
+                        <owl:onProperty rdf:resource="http://www.semanticweb.org/emaroLab/luca-buoncompagni/sit#has-scene_right"/>
+                        <owl:minQualifiedCardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#nonNegativeInteger">1</owl:minQualifiedCardinality>
+                        <owl:onClass rdf:resource="http://www.semanticweb.org/emaroLab/luca-buoncompagni/sit#GeometricPrimitive"/>
+                    </owl:Restriction>
+                    <owl:Restriction>
+                        <owl:onProperty rdf:resource="http://www.semanticweb.org/emaroLab/luca-buoncompagni/sit#has-scene_right"/>
+                        <owl:minQualifiedCardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#nonNegativeInteger">1</owl:minQualifiedCardinality>
+                        <owl:onClass rdf:resource="http://www.semanticweb.org/emaroLab/luca-buoncompagni/sit#Orientable"/>
+                    </owl:Restriction>
+                    <owl:Restriction>
+                        <owl:onProperty rdf:resource="http://www.semanticweb.org/emaroLab/luca-buoncompagni/sit#has-scene_right"/>
+                        <owl:minQualifiedCardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#nonNegativeInteger">1</owl:minQualifiedCardinality>
+                        <owl:onClass rdf:resource="http://www.semanticweb.org/emaroLab/luca-buoncompagni/sit#Plane"/>
+                    </owl:Restriction>
+                    <owl:Restriction>
+                        <owl:onProperty rdf:resource="http://www.semanticweb.org/emaroLab/luca-buoncompagni/sit#has-scene_right"/>
+                        <owl:minQualifiedCardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#nonNegativeInteger">1</owl:minQualifiedCardinality>
+                        <owl:onClass rdf:resource="http://www.semanticweb.org/emaroLab/luca-buoncompagni/sit#Sphere"/>
+                    </owl:Restriction>
+                </owl:intersectionOf>
+            </owl:Class>
+        </owl:equivalentClass>
+    </owl:Class>
+    
+
+
+    <!-- http://www.semanticweb.org/emaroLab/luca-buoncompagni/sit#25_01_17-15:13:02.334 -->
+
+
+    <owl:Class rdf:about="http://www.semanticweb.org/emaroLab/luca-buoncompagni/sit#25_01_17-15:13:02.334">
         <owl:equivalentClass>
             <owl:Class>
                 <owl:intersectionOf rdf:parseType="Collection">
@@ -1236,7 +1351,7 @@
         <has-geometric_centerY rdf:datatype="http://www.w3.org/2001/XMLSchema#float">0.02</has-geometric_centerY>
         <has-geometric_centerZ rdf:datatype="http://www.w3.org/2001/XMLSchema#float">0.03</has-geometric_centerZ>
         <has_id rdf:datatype="http://www.w3.org/2001/XMLSchema#long">0</has_id>
-        <has_time rdf:datatype="http://www.w3.org/2001/XMLSchema#long">1485342007431</has_time>
+        <has_time rdf:datatype="http://www.w3.org/2001/XMLSchema#long">1485353570290</has_time>
     </owl:NamedIndividual>
     
 
@@ -1339,10 +1454,10 @@
     <rdf:Description rdf:about="http://www.semanticweb.org/emaroLab/luca-buoncompagni/sit#x1">
         <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#Variable"/>
     </rdf:Description>
-    <rdf:Description rdf:about="http://www.semanticweb.org/emaroLab/luca-buoncompagni/sit#x3">
+    <rdf:Description rdf:about="http://www.semanticweb.org/emaroLab/luca-buoncompagni/sit#x2">
         <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#Variable"/>
     </rdf:Description>
-    <rdf:Description rdf:about="http://www.semanticweb.org/emaroLab/luca-buoncompagni/sit#x2">
+    <rdf:Description rdf:about="http://www.semanticweb.org/emaroLab/luca-buoncompagni/sit#x3">
         <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#Variable"/>
     </rdf:Description>
     <rdf:Description rdf:about="http://www.semanticweb.org/emaroLab/luca-buoncompagni/sit#x0">
@@ -1560,6 +1675,279 @@
     </rdf:Description>
     <rdf:Description rdf:about="http://www.semanticweb.org/emaroLab/luca-buoncompagni/sit#absz">
         <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#Variable"/>
+    </rdf:Description>
+    <rdf:Description>
+        <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#Imp"/>
+        <swrl:body>
+            <rdf:Description>
+                <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#AtomList"/>
+                <rdf:first>
+                    <rdf:Description>
+                        <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#IndividualPropertyAtom"/>
+                        <swrl:propertyPredicate rdf:resource="http://www.semanticweb.org/emaroLab/luca-buoncompagni/sit#isAlongX"/>
+                        <swrl:argument1 rdf:resource="http://www.semanticweb.org/emaroLab/luca-buoncompagni/sit#x1"/>
+                        <swrl:argument2 rdf:resource="http://www.semanticweb.org/emaroLab/luca-buoncompagni/sit#x2"/>
+                    </rdf:Description>
+                </rdf:first>
+                <rdf:rest>
+                    <rdf:Description>
+                        <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#AtomList"/>
+                        <rdf:first>
+                            <rdf:Description>
+                                <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#IndividualPropertyAtom"/>
+                                <swrl:propertyPredicate rdf:resource="http://www.semanticweb.org/emaroLab/luca-buoncompagni/sit#isRightOf"/>
+                                <swrl:argument1 rdf:resource="http://www.semanticweb.org/emaroLab/luca-buoncompagni/sit#x1"/>
+                                <swrl:argument2 rdf:resource="http://www.semanticweb.org/emaroLab/luca-buoncompagni/sit#x3"/>
+                            </rdf:Description>
+                        </rdf:first>
+                        <rdf:rest>
+                            <rdf:Description>
+                                <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#AtomList"/>
+                                <rdf:first>
+                                    <rdf:Description>
+                                        <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#IndividualPropertyAtom"/>
+                                        <swrl:propertyPredicate rdf:resource="http://www.semanticweb.org/emaroLab/luca-buoncompagni/sit#isAlongY"/>
+                                        <swrl:argument1 rdf:resource="http://www.semanticweb.org/emaroLab/luca-buoncompagni/sit#x1"/>
+                                        <swrl:argument2 rdf:resource="http://www.semanticweb.org/emaroLab/luca-buoncompagni/sit#x2"/>
+                                    </rdf:Description>
+                                </rdf:first>
+                                <rdf:rest>
+                                    <rdf:Description>
+                                        <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#AtomList"/>
+                                        <rdf:first>
+                                            <rdf:Description>
+                                                <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#IndividualPropertyAtom"/>
+                                                <swrl:propertyPredicate rdf:resource="http://www.semanticweb.org/emaroLab/luca-buoncompagni/sit#isAlongX"/>
+                                                <swrl:argument1 rdf:resource="http://www.semanticweb.org/emaroLab/luca-buoncompagni/sit#x2"/>
+                                                <swrl:argument2 rdf:resource="http://www.semanticweb.org/emaroLab/luca-buoncompagni/sit#x3"/>
+                                            </rdf:Description>
+                                        </rdf:first>
+                                        <rdf:rest>
+                                            <rdf:Description>
+                                                <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#AtomList"/>
+                                                <rdf:first>
+                                                    <rdf:Description>
+                                                        <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#IndividualPropertyAtom"/>
+                                                        <swrl:propertyPredicate rdf:resource="http://www.semanticweb.org/emaroLab/luca-buoncompagni/sit#isAlongX"/>
+                                                        <swrl:argument1 rdf:resource="http://www.semanticweb.org/emaroLab/luca-buoncompagni/sit#x1"/>
+                                                        <swrl:argument2 rdf:resource="http://www.semanticweb.org/emaroLab/luca-buoncompagni/sit#x3"/>
+                                                    </rdf:Description>
+                                                </rdf:first>
+                                                <rdf:rest>
+                                                    <rdf:Description>
+                                                        <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#AtomList"/>
+                                                        <rdf:first>
+                                                            <rdf:Description>
+                                                                <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#IndividualPropertyAtom"/>
+                                                                <swrl:propertyPredicate rdf:resource="http://www.semanticweb.org/emaroLab/luca-buoncompagni/sit#isAlongX"/>
+                                                                <swrl:argument1 rdf:resource="http://www.semanticweb.org/emaroLab/luca-buoncompagni/sit#x0"/>
+                                                                <swrl:argument2 rdf:resource="http://www.semanticweb.org/emaroLab/luca-buoncompagni/sit#x1"/>
+                                                            </rdf:Description>
+                                                        </rdf:first>
+                                                        <rdf:rest>
+                                                            <rdf:Description>
+                                                                <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#AtomList"/>
+                                                                <rdf:first>
+                                                                    <rdf:Description>
+                                                                        <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#IndividualPropertyAtom"/>
+                                                                        <swrl:propertyPredicate rdf:resource="http://www.semanticweb.org/emaroLab/luca-buoncompagni/sit#isAlongZ"/>
+                                                                        <swrl:argument1 rdf:resource="http://www.semanticweb.org/emaroLab/luca-buoncompagni/sit#x1"/>
+                                                                        <swrl:argument2 rdf:resource="http://www.semanticweb.org/emaroLab/luca-buoncompagni/sit#x2"/>
+                                                                    </rdf:Description>
+                                                                </rdf:first>
+                                                                <rdf:rest>
+                                                                    <rdf:Description>
+                                                                        <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#AtomList"/>
+                                                                        <rdf:first>
+                                                                            <rdf:Description>
+                                                                                <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#ClassAtom"/>
+                                                                                <swrl:classPredicate rdf:resource="http://www.semanticweb.org/emaroLab/luca-buoncompagni/sit#GeometricPrimitive"/>
+                                                                                <swrl:argument1 rdf:resource="http://www.semanticweb.org/emaroLab/luca-buoncompagni/sit#x0"/>
+                                                                            </rdf:Description>
+                                                                        </rdf:first>
+                                                                        <rdf:rest>
+                                                                            <rdf:Description>
+                                                                                <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#AtomList"/>
+                                                                                <rdf:first>
+                                                                                    <rdf:Description>
+                                                                                        <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#IndividualPropertyAtom"/>
+                                                                                        <swrl:propertyPredicate rdf:resource="http://www.semanticweb.org/emaroLab/luca-buoncompagni/sit#isCoaxialWith"/>
+                                                                                        <swrl:argument1 rdf:resource="http://www.semanticweb.org/emaroLab/luca-buoncompagni/sit#x1"/>
+                                                                                        <swrl:argument2 rdf:resource="http://www.semanticweb.org/emaroLab/luca-buoncompagni/sit#x2"/>
+                                                                                    </rdf:Description>
+                                                                                </rdf:first>
+                                                                                <rdf:rest>
+                                                                                    <rdf:Description>
+                                                                                        <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#AtomList"/>
+                                                                                        <rdf:first>
+                                                                                            <rdf:Description>
+                                                                                                <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#IndividualPropertyAtom"/>
+                                                                                                <swrl:propertyPredicate rdf:resource="http://www.semanticweb.org/emaroLab/luca-buoncompagni/sit#isRightOf"/>
+                                                                                                <swrl:argument1 rdf:resource="http://www.semanticweb.org/emaroLab/luca-buoncompagni/sit#x2"/>
+                                                                                                <swrl:argument2 rdf:resource="http://www.semanticweb.org/emaroLab/luca-buoncompagni/sit#x0"/>
+                                                                                            </rdf:Description>
+                                                                                        </rdf:first>
+                                                                                        <rdf:rest>
+                                                                                            <rdf:Description>
+                                                                                                <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#AtomList"/>
+                                                                                                <rdf:first>
+                                                                                                    <rdf:Description>
+                                                                                                        <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#ClassAtom"/>
+                                                                                                        <swrl:classPredicate rdf:resource="http://www.semanticweb.org/emaroLab/luca-buoncompagni/sit#Sphere"/>
+                                                                                                        <swrl:argument1 rdf:resource="http://www.semanticweb.org/emaroLab/luca-buoncompagni/sit#x1"/>
+                                                                                                    </rdf:Description>
+                                                                                                </rdf:first>
+                                                                                                <rdf:rest>
+                                                                                                    <rdf:Description>
+                                                                                                        <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#AtomList"/>
+                                                                                                        <rdf:first>
+                                                                                                            <rdf:Description>
+                                                                                                                <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#IndividualPropertyAtom"/>
+                                                                                                                <swrl:propertyPredicate rdf:resource="http://www.semanticweb.org/emaroLab/luca-buoncompagni/sit#isAlongZ"/>
+                                                                                                                <swrl:argument1 rdf:resource="http://www.semanticweb.org/emaroLab/luca-buoncompagni/sit#x0"/>
+                                                                                                                <swrl:argument2 rdf:resource="http://www.semanticweb.org/emaroLab/luca-buoncompagni/sit#x3"/>
+                                                                                                            </rdf:Description>
+                                                                                                        </rdf:first>
+                                                                                                        <rdf:rest>
+                                                                                                            <rdf:Description>
+                                                                                                                <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#AtomList"/>
+                                                                                                                <rdf:first>
+                                                                                                                    <rdf:Description>
+                                                                                                                        <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#ClassAtom"/>
+                                                                                                                        <swrl:classPredicate rdf:resource="http://www.semanticweb.org/emaroLab/luca-buoncompagni/sit#Orientable"/>
+                                                                                                                        <swrl:argument1 rdf:resource="http://www.semanticweb.org/emaroLab/luca-buoncompagni/sit#x2"/>
+                                                                                                                    </rdf:Description>
+                                                                                                                </rdf:first>
+                                                                                                                <rdf:rest>
+                                                                                                                    <rdf:Description>
+                                                                                                                        <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#AtomList"/>
+                                                                                                                        <rdf:first>
+                                                                                                                            <rdf:Description>
+                                                                                                                                <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#IndividualPropertyAtom"/>
+                                                                                                                                <swrl:propertyPredicate rdf:resource="http://www.semanticweb.org/emaroLab/luca-buoncompagni/sit#isParallelTo"/>
+                                                                                                                                <swrl:argument1 rdf:resource="http://www.semanticweb.org/emaroLab/luca-buoncompagni/sit#x2"/>
+                                                                                                                                <swrl:argument2 rdf:resource="http://www.semanticweb.org/emaroLab/luca-buoncompagni/sit#x3"/>
+                                                                                                                            </rdf:Description>
+                                                                                                                        </rdf:first>
+                                                                                                                        <rdf:rest>
+                                                                                                                            <rdf:Description>
+                                                                                                                                <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#AtomList"/>
+                                                                                                                                <rdf:first>
+                                                                                                                                    <rdf:Description>
+                                                                                                                                        <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#ClassAtom"/>
+                                                                                                                                        <swrl:classPredicate rdf:resource="http://www.semanticweb.org/emaroLab/luca-buoncompagni/sit#Plane"/>
+                                                                                                                                        <swrl:argument1 rdf:resource="http://www.semanticweb.org/emaroLab/luca-buoncompagni/sit#x3"/>
+                                                                                                                                    </rdf:Description>
+                                                                                                                                </rdf:first>
+                                                                                                                                <rdf:rest>
+                                                                                                                                    <rdf:Description>
+                                                                                                                                        <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#AtomList"/>
+                                                                                                                                        <rdf:first>
+                                                                                                                                            <rdf:Description>
+                                                                                                                                                <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#IndividualPropertyAtom"/>
+                                                                                                                                                <swrl:propertyPredicate rdf:resource="http://www.semanticweb.org/emaroLab/luca-buoncompagni/sit#isRightOf"/>
+                                                                                                                                                <swrl:argument1 rdf:resource="http://www.semanticweb.org/emaroLab/luca-buoncompagni/sit#x1"/>
+                                                                                                                                                <swrl:argument2 rdf:resource="http://www.semanticweb.org/emaroLab/luca-buoncompagni/sit#x0"/>
+                                                                                                                                            </rdf:Description>
+                                                                                                                                        </rdf:first>
+                                                                                                                                        <rdf:rest>
+                                                                                                                                            <rdf:Description>
+                                                                                                                                                <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#AtomList"/>
+                                                                                                                                                <rdf:first>
+                                                                                                                                                    <rdf:Description>
+                                                                                                                                                        <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#IndividualPropertyAtom"/>
+                                                                                                                                                        <swrl:propertyPredicate rdf:resource="http://www.semanticweb.org/emaroLab/luca-buoncompagni/sit#isAlongX"/>
+                                                                                                                                                        <swrl:argument1 rdf:resource="http://www.semanticweb.org/emaroLab/luca-buoncompagni/sit#x0"/>
+                                                                                                                                                        <swrl:argument2 rdf:resource="http://www.semanticweb.org/emaroLab/luca-buoncompagni/sit#x2"/>
+                                                                                                                                                    </rdf:Description>
+                                                                                                                                                </rdf:first>
+                                                                                                                                                <rdf:rest>
+                                                                                                                                                    <rdf:Description>
+                                                                                                                                                        <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#AtomList"/>
+                                                                                                                                                        <rdf:first>
+                                                                                                                                                            <rdf:Description>
+                                                                                                                                                                <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#IndividualPropertyAtom"/>
+                                                                                                                                                                <swrl:propertyPredicate rdf:resource="http://www.semanticweb.org/emaroLab/luca-buoncompagni/sit#isAlongX"/>
+                                                                                                                                                                <swrl:argument1 rdf:resource="http://www.semanticweb.org/emaroLab/luca-buoncompagni/sit#x0"/>
+                                                                                                                                                                <swrl:argument2 rdf:resource="http://www.semanticweb.org/emaroLab/luca-buoncompagni/sit#x3"/>
+                                                                                                                                                            </rdf:Description>
+                                                                                                                                                        </rdf:first>
+                                                                                                                                                        <rdf:rest>
+                                                                                                                                                            <rdf:Description>
+                                                                                                                                                                <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#AtomList"/>
+                                                                                                                                                                <rdf:first>
+                                                                                                                                                                    <rdf:Description>
+                                                                                                                                                                        <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#IndividualPropertyAtom"/>
+                                                                                                                                                                        <swrl:propertyPredicate rdf:resource="http://www.semanticweb.org/emaroLab/luca-buoncompagni/sit#isAlongY"/>
+                                                                                                                                                                        <swrl:argument1 rdf:resource="http://www.semanticweb.org/emaroLab/luca-buoncompagni/sit#x0"/>
+                                                                                                                                                                        <swrl:argument2 rdf:resource="http://www.semanticweb.org/emaroLab/luca-buoncompagni/sit#x3"/>
+                                                                                                                                                                    </rdf:Description>
+                                                                                                                                                                </rdf:first>
+                                                                                                                                                                <rdf:rest>
+                                                                                                                                                                    <rdf:Description>
+                                                                                                                                                                        <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#AtomList"/>
+                                                                                                                                                                        <rdf:first>
+                                                                                                                                                                            <rdf:Description>
+                                                                                                                                                                                <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#IndividualPropertyAtom"/>
+                                                                                                                                                                                <swrl:propertyPredicate rdf:resource="http://www.semanticweb.org/emaroLab/luca-buoncompagni/sit#isRightOf"/>
+                                                                                                                                                                                <swrl:argument1 rdf:resource="http://www.semanticweb.org/emaroLab/luca-buoncompagni/sit#x2"/>
+                                                                                                                                                                                <swrl:argument2 rdf:resource="http://www.semanticweb.org/emaroLab/luca-buoncompagni/sit#x3"/>
+                                                                                                                                                                            </rdf:Description>
+                                                                                                                                                                        </rdf:first>
+                                                                                                                                                                        <rdf:rest rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#nil"/>
+                                                                                                                                                                    </rdf:Description>
+                                                                                                                                                                </rdf:rest>
+                                                                                                                                                            </rdf:Description>
+                                                                                                                                                        </rdf:rest>
+                                                                                                                                                    </rdf:Description>
+                                                                                                                                                </rdf:rest>
+                                                                                                                                            </rdf:Description>
+                                                                                                                                        </rdf:rest>
+                                                                                                                                    </rdf:Description>
+                                                                                                                                </rdf:rest>
+                                                                                                                            </rdf:Description>
+                                                                                                                        </rdf:rest>
+                                                                                                                    </rdf:Description>
+                                                                                                                </rdf:rest>
+                                                                                                            </rdf:Description>
+                                                                                                        </rdf:rest>
+                                                                                                    </rdf:Description>
+                                                                                                </rdf:rest>
+                                                                                            </rdf:Description>
+                                                                                        </rdf:rest>
+                                                                                    </rdf:Description>
+                                                                                </rdf:rest>
+                                                                            </rdf:Description>
+                                                                        </rdf:rest>
+                                                                    </rdf:Description>
+                                                                </rdf:rest>
+                                                            </rdf:Description>
+                                                        </rdf:rest>
+                                                    </rdf:Description>
+                                                </rdf:rest>
+                                            </rdf:Description>
+                                        </rdf:rest>
+                                    </rdf:Description>
+                                </rdf:rest>
+                            </rdf:Description>
+                        </rdf:rest>
+                    </rdf:Description>
+                </rdf:rest>
+            </rdf:Description>
+        </swrl:body>
+        <swrl:head>
+            <rdf:Description>
+                <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#AtomList"/>
+                <rdf:first>
+                    <rdf:Description>
+                        <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#ClassAtom"/>
+                        <swrl:classPredicate rdf:resource="http://www.semanticweb.org/emaroLab/luca-buoncompagni/sit#25_01_17-15:13:02.334"/>
+                        <swrl:argument1 rdf:resource="http://www.semanticweb.org/emaroLab/luca-buoncompagni/sit#S"/>
+                    </rdf:Description>
+                </rdf:first>
+                <rdf:rest rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#nil"/>
+            </rdf:Description>
+        </swrl:head>
     </rdf:Description>
     <rdf:Description>
         <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#Imp"/>
@@ -1826,7 +2214,7 @@
                 <rdf:first>
                     <rdf:Description>
                         <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#ClassAtom"/>
-                        <swrl:classPredicate rdf:resource="http://www.semanticweb.org/emaroLab/luca-buoncompagni/sit#25_01_17-12:00:11.091"/>
+                        <swrl:classPredicate rdf:resource="http://www.semanticweb.org/emaroLab/luca-buoncompagni/sit#25_01_17-15:12:51.540"/>
                         <swrl:argument1 rdf:resource="http://www.semanticweb.org/emaroLab/luca-buoncompagni/sit#S"/>
                     </rdf:Description>
                 </rdf:first>

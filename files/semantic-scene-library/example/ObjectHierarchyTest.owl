@@ -607,7 +607,7 @@
         <has-geometric_centerY rdf:datatype="http://www.w3.org/2001/XMLSchema#float">0.02</has-geometric_centerY>
         <has-geometric_centerZ rdf:datatype="http://www.w3.org/2001/XMLSchema#float">0.03</has-geometric_centerZ>
         <has_id rdf:datatype="http://www.w3.org/2001/XMLSchema#long">0</has_id>
-        <has_time rdf:datatype="http://www.w3.org/2001/XMLSchema#long">1484996291387</has_time>
+        <has_time rdf:datatype="http://www.w3.org/2001/XMLSchema#long">1485353495475</has_time>
     </owl:Thing>
     
 
