@@ -144,10 +144,10 @@ public class SceneTemplate extends MORClassDescriptor.MORSimpleClassSceneDescrip
             learnedScened = new SceneTemplate(that);
             learnedScened.setCardinality( new SceneRepresentation.SceneCardinality( scene.getCardinality()));
         }
-        private double computeConfidence(){
+        private double computeConfidence(){ // € [0,1]
             if( conceptCardinality == 0)
-                return 1;
-            return individualCardinality / conceptCardinality; // € [0,1]
+                return 0;
+            return individualCardinality / conceptCardinality; 
         }
 
         public double getConfidenceThreshold() {
@@ -170,7 +170,7 @@ public class SceneTemplate extends MORClassDescriptor.MORSimpleClassSceneDescrip
             return learnedScened;
         }
         public boolean shouldBeLearned() {
-            return confidence > confidenceThreshold;
+            return confidence < confidenceThreshold;
         }
 
         public Set<MORSpatialDescriptor.MORSpatialRelation> getSpatialScene() {
