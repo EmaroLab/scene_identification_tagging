@@ -1,0 +1,11 @@
+<component name="libraryTable">
+  <library name="Gradle: org.openrdf.sesame:sesame-rio-languages:4.0.2">
+    <CLASSES>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.openrdf.sesame/sesame-rio-languages/4.0.2/e54ed9ab41c59ec1e34d3e682779c20034266c2e/sesame-rio-languages-4.0.2.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.openrdf.sesame/sesame-rio-languages/4.0.2/a50a050b1dda6b83383dde3936b6761a72a034a3/sesame-rio-languages-4.0.2-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>

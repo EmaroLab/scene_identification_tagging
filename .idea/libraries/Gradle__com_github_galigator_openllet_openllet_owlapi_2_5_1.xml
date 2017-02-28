@@ -1,0 +1,11 @@
+<component name="libraryTable">
+  <library name="Gradle: com.github.galigator.openllet:openllet-owlapi:2.5.1">
+    <CLASSES>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/com.github.galigator.openllet/openllet-owlapi/2.5.1/457e21cf3d96cdb4fec160079803682e82af451c/openllet-owlapi-2.5.1.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/com.github.galigator.openllet/openllet-owlapi/2.5.1/247f91a23053da2f7f6d20b1953663782d0631bb/openllet-owlapi-2.5.1-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>

@@ -1,0 +1,11 @@
+<component name="libraryTable">
+  <library name="Gradle: org.apache.commons:commons-rdf-api:0.1.0-incubating">
+    <CLASSES>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.apache.commons/commons-rdf-api/0.1.0-incubating/67cd2cbe62d5d263495373a697d5dcd5389c7d59/commons-rdf-api-0.1.0-incubating.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.apache.commons/commons-rdf-api/0.1.0-incubating/7f402db269f3cef5070e3d9e55413497a7170bcb/commons-rdf-api-0.1.0-incubating-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>

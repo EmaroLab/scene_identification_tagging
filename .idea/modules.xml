@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/scene_identification_tracking.iml" filepath="$PROJECT_DIR$/.idea/modules/scene_identification_tracking.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/semantic_scene_library/semantic_scene_library.iml" filepath="$PROJECT_DIR$/.idea/modules/semantic_scene_library/semantic_scene_library.iml" group="semantic_scene_library" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/semantic_scene_library/semantic_scene_library_main.iml" filepath="$PROJECT_DIR$/.idea/modules/semantic_scene_library/semantic_scene_library_main.iml" group="semantic_scene_library" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/semantic_scene_library/semantic_scene_library_test.iml" filepath="$PROJECT_DIR$/.idea/modules/semantic_scene_library/semantic_scene_library_test.iml" group="semantic_scene_library" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/sit/sit.iml" filepath="$PROJECT_DIR$/.idea/modules/sit/sit.iml" group="sit" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/sit/sit_main.iml" filepath="$PROJECT_DIR$/.idea/modules/sit/sit_main.iml" group="sit" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/sit/sit_test.iml" filepath="$PROJECT_DIR$/.idea/modules/sit/sit_test.iml" group="sit" />
+    </modules>
+  </component>
+</project>

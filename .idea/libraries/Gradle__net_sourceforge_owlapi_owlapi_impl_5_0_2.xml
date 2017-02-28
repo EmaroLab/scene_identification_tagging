@@ -1,0 +1,11 @@
+<component name="libraryTable">
+  <library name="Gradle: net.sourceforge.owlapi:owlapi-impl:5.0.2">
+    <CLASSES>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/net.sourceforge.owlapi/owlapi-impl/5.0.2/2f36b2f24cf4671ab737269b3511e1c5c59ab8e6/owlapi-impl-5.0.2.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/net.sourceforge.owlapi/owlapi-impl/5.0.2/724291b78e832c0c70ec165be75392d23378b3e3/owlapi-impl-5.0.2-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>

@@ -1,0 +1,9 @@
+<component name="libraryTable">
+  <library name="Gradle: org.ros.rosjava_messages:std_msgs:0.5.10">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/../../../devel/share/maven/org/ros/rosjava_messages/std_msgs/0.5.10/std_msgs-0.5.10.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>

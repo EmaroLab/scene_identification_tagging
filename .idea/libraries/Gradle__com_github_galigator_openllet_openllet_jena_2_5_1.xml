@@ -1,0 +1,11 @@
+<component name="libraryTable">
+  <library name="Gradle: com.github.galigator.openllet:openllet-jena:2.5.1">
+    <CLASSES>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/com.github.galigator.openllet/openllet-jena/2.5.1/4e261ad50d027fe53b54aba5a6f866cdd2b91ef/openllet-jena-2.5.1.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/com.github.galigator.openllet/openllet-jena/2.5.1/a77dca61fc2e3abcd2dd2ab69e5f398e16683077/openllet-jena-2.5.1-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>

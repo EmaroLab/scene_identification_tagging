@@ -12,7 +12,7 @@ DEFAULT_JVM_OPTS=""
 APP_NAME="Gradle"
 APP_BASE_NAME=`basename "$0"`
 
-# Use the maximum available, or set MAX_FD != -1 to use that object.
+# Use the maximum available, or set MAX_FD != -1 to use that subject.
 MAX_FD="maximum"
 
 warn ( ) {
