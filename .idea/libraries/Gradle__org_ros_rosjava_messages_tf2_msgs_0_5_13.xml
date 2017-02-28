@@ -1,9 +1,0 @@
-<component name="libraryTable">
-  <library name="Gradle: org.ros.rosjava_messages:tf2_msgs:0.5.13">
-    <CLASSES>
-      <root url="jar://$PROJECT_DIR$/../../../devel/share/maven/org/ros/rosjava_messages/tf2_msgs/0.5.13/tf2_msgs-0.5.13.jar!/" />
-    </CLASSES>
-    <JAVADOC />
-    <SOURCES />
-  </library>
-</component>
