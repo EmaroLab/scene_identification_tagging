@@ -11,7 +11,7 @@ import java.util.Set;
 public class MORSceneDescriptor {
 
 
-    public static class MORScene implements SceneSemantic.Scene< MORSceneAtom> { // todo move away
+    public class MORScene implements SceneSemantic.Scene< MORSceneAtom>  { // todo move away
         private Set< MORSceneAtom> atoms;
         private SceneSemantic.SceneCardinality cardinality;
 

@@ -7,6 +7,7 @@ import it.emarolab.scene_identification_tracking.semanticSceneLibrary.core.Seman
 import it.emarolab.scene_identification_tracking.semanticSceneLibrary.core.aMORDescriptor.MORMultiLinkDescriptor;
 import it.emarolab.scene_identification_tracking.semanticSceneLibrary.core.aMORDescriptor.MORSceneDescriptor;
 import it.emarolab.scene_identification_tracking.semanticSceneLibrary.core.aMORDescriptor.MORSpatialDescriptor;
+import it.emarolab.scene_identification_tracking.semanticSceneLibrary.core.aMORDescriptor.MORTypedDescriptor;
 import it.emarolab.scene_identification_tracking.semanticSceneLibrary.core.aMORDescriptor.aMORObject.MORPrimitive;
 import org.semanticweb.owlapi.model.OWLClass;
 import org.semanticweb.owlapi.model.OWLNamedIndividual;
@@ -45,9 +46,9 @@ public interface SceneSemantic {
         // todo setters
     }
 
-    class SceneSemantics
+    class SceneSemantics<O,I,C>
             extends MORMultiLinkDescriptor.MORMultiLinkedTypedIndividual
-            implements Semantics {
+            implements Semantics{//}, SceneDescriptor<O,I,C>{
 
         public static final String SCENE_INDIVIDUAL_NAME = "S";
         public static final String INITIAL_SCENE_TYPE = "Scene";
@@ -153,16 +154,18 @@ public interface SceneSemantic {
 
         @Override
         public MappingTransitions writeSemantic() {
-            return new MORTryWrite<I,A,L>() {
-                protected Semantics.WritingState giveAtry() {
+            return new MORTryWrite<OWLNamedIndividual,OWLObjectProperty,OWLNamedIndividual>( Semantics.this, LOGGING.INTENT_TYPE) {
+                protected MappingTransitions giveAtry() {
                     log( " Semantic sceneAtom writing ...");
 
-                    WritingState state = writeType("classes");
+                    // todo check if loses intents?
+                    MappingTransitions trans = writeType();
+                    WritingState state = (WritingState) trans.merge(); // "classes"
 
                     int removed = cleanIndividual();
                     int added = 0;
                     sceneAtom = getSceneAtom();
-                    for (MORSceneAtom atom : sceneAtom.getAtoms()){
+                    for (MORSceneDescriptor.MORSceneAtom atom : sceneAtom.getAtoms()){
                         getOntology().addObjectPropertyB2Individual(getInstance(), atom.getProperty(), atom.getObject());
                         added += 1;
 
@@ -174,14 +177,14 @@ public interface SceneSemantic {
                     if( removed >= added) // todo ????????????????? ambiguous
                         state = state.merge( new WritingState().asUpdated());
                     else state = state.merge( new WritingState().asAdded());
-                    return state;
+                    return trans;// state;
                 }
             }.perform();
         }
         @Override
         public MappingTransitions readSemantic() { // reads only the types
             log( " Semantic sceneAtom reading ...");
-            return readType("class");
+            return readType(); // "classes"
         }
 
 
@@ -190,17 +193,6 @@ public interface SceneSemantic {
             return null; // todo implement
         }
     }
-
-
-
-
-
-
-
-
-
-
-
 
 
 

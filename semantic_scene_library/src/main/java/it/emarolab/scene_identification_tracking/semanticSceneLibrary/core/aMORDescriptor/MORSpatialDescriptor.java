@@ -820,7 +820,7 @@ public interface MORSpatialDescriptor extends Base{
             return this;
         }
 
-        public SceneSemantic.Scene getSceneAtoms(){ // use getInverseProperty to simplify!!!!!!!
+        public MORSceneDescriptor.MORScene getSceneAtoms(){ // use getInverseProperty to simplify!!!!!!!
             Set<MORSceneDescriptor.MORSceneAtom> atoms = new HashSet<>();
             SceneSemantic.SceneCardinality cardinality = new SceneSemantic.SceneCardinality( ontoRef);
             for( MORSpatialRelation r : this){

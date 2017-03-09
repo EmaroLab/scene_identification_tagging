@@ -123,6 +123,8 @@ public interface Semantics extends Base{
             info += "}";
             return info + " merged state: " + merged;
         }
+
+
     }
     class MappingIntent<I,A,L, M extends MappingState> extends SITBase implements Comparable<MappingIntent<?,?,?,?>>{
 
