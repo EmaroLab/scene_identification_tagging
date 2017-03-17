@@ -1,8 +1,5 @@
 package it.emarolab.scene_identification_tracking.semanticSceneLibrary;
 
-import it.emarolab.scene_identification_tracking.semanticSceneLibrary.core.Semantics;
-import org.semanticweb.owlapi.model.OWLObjectProperty;
-
 /**
  * Contains common utilities among all the architecture. Mainly for debugging and logging.
  * <p>
@@ -10,7 +7,7 @@ import org.semanticweb.owlapi.model.OWLObjectProperty;
  *     and it is aimed into describe:<ul>
  *        <li> a common {@link Vocabolary} for the architecture,
  *        <li> common implementation for logging and debugging,
- *        <li> common policy for error catching (see: {@link TryMap}).
+ *        <li> common policy for error catching (see: { TryMap}).
  *     </ul>
  *
  * <div style="text-align:center;"><small>
@@ -22,7 +19,6 @@ import org.semanticweb.owlapi.model.OWLObjectProperty;
  * </small></div>
  *
  * @see SITBase
- * @see TryMap
  * @see Vocabolary
  */
 public interface Base {
@@ -125,64 +121,64 @@ public interface Base {
      * @see Base
      */
     static interface LOGGING {
-        public static final String NEW_LINE = "\n"; // todo also for file separator
+        String NEW_LINE = "\n"; // todo also for file separator
 
-        public static final String MSG_EMPTY = "'??'";
+        String MSG_EMPTY = "'??'";
 
-        public static final String MSG_OWL_MANAGED = "OWL api already manage it !!!";
+        String MSG_OWL_MANAGED = "OWL api already manage it !!!";
 
-        public static final String INTENT_BELONG = "€";
-        public static final String INTENT_BELONG_ADD = "€+";
-        public static final String INTENT_BELONG_REMOVE = "€-";
-        public static final String INTENT_LITERAL = "LITERAL";
-        public static final String INTENT_LINK = "LINK";
-        public static final String INTENT_LINK_MULTI = "M_LINK";
-        public static final String INTENT_linkSPATIAL_MULTI = "LS";
-        public static final String INTENT_LINK_MULTI_ADD = "+";
-        public static final String INTENT_LINK_MULTI_REMOVE = "-";
-        public static final String INTENT_TYPE = "TYPE";
+        String INTENT_BELONG = "€";
+        String INTENT_BELONG_ADD = "€+";
+        String INTENT_BELONG_REMOVE = "€-";
+        String INTENT_LITERAL = "LITERAL";
+        String INTENT_LINK = "LINK";
+        String INTENT_LINK_MULTI = "M_LINK";
+        String INTENT_linkSPATIAL_MULTI = "LS";
+        String INTENT_LINK_MULTI_ADD = "+";
+        String INTENT_LINK_MULTI_REMOVE = "-";
+        String INTENT_TYPE = "TYPE";
 
-        public static final int LENGTH = 15;
-        public static final int LENGTH_MEDIUM = 10;
-        public static final int LENGTH_SHORT = 8;
-        public static final int LENGTH_LONG = 30;
-        public static final int LENGTH_NUMBER = 4;
+        int LENGTH = 15;
+        int LENGTH_MEDIUM = 10;
+        int LENGTH_SHORT = 8;
+        int LENGTH_LONG = 30;
+        int LENGTH_NUMBER = 4;
 
         /** The message suffix for error logging. */
-        public static final String INDENTATION_ERROR   = "[ERROR]   " ;
+        String INDENTATION_ERROR   = "[ERROR]   " ;
         /** The message suffix for warning logging. */
-        public static final String INDENTATION_WARNING = "[WARNING] " ;
+        String INDENTATION_WARNING = "[WARNING] " ;
         /** The message suffix for debugging logging. */
-        public static final String INDENTATION_DEBUG   = "[DEBUG]   " ;
+        String INDENTATION_DEBUG   = "[DEBUG]   " ;
 
-        public static final Boolean DEFAULT_DEBUG_FLAG = false;
-        public static final Boolean DEFAULT_DOWN_FLAG = false;
+        Boolean DEFAULT_DEBUG_FLAG = false;
+        Boolean DEFAULT_DOWN_FLAG = false;
 
         /** the default value for the description field (empty) */
-        public static final String DEFAULT_3D_DESCRIPTION = "";
+        String DEFAULT_3D_DESCRIPTION = "";
 
-        public static final String STATE_INITIALISED  = "INITIALISED";
-        public static final String STATE_ERROR        = "ERROR";
-        public static final String STATE_INCONSISTENT = "INCONSISTENT";
-        public static final String STATE_NOT_CHANGED  = "UNCHANGED";
-        public static final String STATE_ADDED        = "ADDED";
-        public static final String STATE_UPDATED      = "UPDATED";
-        public static final String STATE_REMOVED      = "REMOVED";
-        public static final String STATE_ABSENT       = "ABSENT";
-        public static final String STATE_SUCCESS      = "SUCCESS";
+        String STATE_INITIALISED  = "INITIALISED";
+        String STATE_ERROR        = "ERROR";
+        String STATE_INCONSISTENT = "INCONSISTENT";
+        String STATE_NOT_CHANGED  = "UNCHANGED";
+        String STATE_ADDED        = "ADDED";
+        String STATE_UPDATED      = "UPDATED";
+        String STATE_REMOVED      = "REMOVED";
+        String STATE_ABSENT       = "ABSENT";
+        String STATE_SUCCESS      = "SUCCESS";
 
-        public static final String STATE_TYPE_WRITE = "WR";
-        public static final String STATE_TYPE_READ = "RD";
-        public static final String STATE_TYPE_MAPPING = "MP";
+        String STATE_TYPE_WRITE = "WR";
+        String STATE_TYPE_READ = "RD";
+        String STATE_TYPE_MAPPING = "MP";
     }
 
     /**
      * Contains all the constants fields of the architecture regarding semantic manipulation states.
      * <p>
-     *     It is a container for constants used for defining the value of {@link Semantics#readSemantic()}.
+     *     It is a container for constants used for defining the value of { Semantics#readSemantic()}.
      * <p>
      *     <b>REMARK</b>: if this enumeration is changed you may to have to adjust
-     *     {@link Semantics.MappingState}, {@link Semantics.ReadingState} and {@link Semantics.WritingState}.
+     *     { Mappin}, { Semantics.ReadingState} and { Semantics.WritingState}.
      * <div style="text-align:center;"><small>
      * <b>File</b>:        {@link it.emarolab.scene_identification_tracking.semanticSceneLibrary.Base} <br>
      * <b>Licence</b>:     GNU GENERAL PUBLIC LICENSE. Version 3, 29 June 2007 <br>
@@ -197,25 +193,25 @@ public interface Base {
     static interface STATEMAPPING {
         // if you change this enumerator remember to change on extending class (constructing validation problems)
 
-        static public final int INITIALISED = -2;
+        int INITIALISED = -2;
         /** The identifier for the {@code ERROR} state. */
-        static public final int ERROR = -1;
+        int ERROR = -1;
         /** The identifier for the {@code INCONSISTENT} state. */
-        static public final int INCONSISTENT = 0;
+        int INCONSISTENT = 0;
         /** The identifier for the {@code NOT_CHANGED} (up to dated) state. */
-        static public final int NOT_CHANGED = 1;
+        int NOT_CHANGED = 1;
 
         /** The identifier for the {@code ADDED} state. */
-        static public final int ADDED = 2; // something was added
+        int ADDED = 2; // something was added
         /** The identifier for the {@code UPDATED} state. */
-        static public final int UPDATED = 3; // something was updated
+        int UPDATED = 3; // something was updated
         /** The identifier for the {@code REMOVED} state. */
-        static public final int REMOVED = 4;
+        int REMOVED = 4;
 
         /** The identifier for the ABSENT state. */
-        static public final int ABSENT = 2; // not found in the ontology
+        int ABSENT = 2; // not found in the ontology
         /** The identifier for the SUCCESS state. */
-        static public final int SUCCESS = 3; // fond and read
+        int SUCCESS = 3; // fond and read
     }
 
     /**
@@ -247,9 +243,9 @@ public interface Base {
      */
     static interface ONTOLOGY extends CLASS, INDIVIDUAL, DATAPROPERTY, OBJECTPROPERTY {
 
-        public static final String DEFAULT_3d_xSUFFIX = "X";
-        public static final String DEFAULT_3d_ySUFFIX = "Y";
-        public static final String DEFAULT_3d_zSUFFIX = "Z";
+        String DEFAULT_3d_xSUFFIX = "X";
+        String DEFAULT_3d_ySUFFIX = "Y";
+        String DEFAULT_3d_zSUFFIX = "Z";
     }
     /**
      * Static container for for constants relate to classes in the {@link ONTOLOGY}.
@@ -267,13 +263,13 @@ public interface Base {
      * @see Base
      */
     static interface CLASS {
-        static public final String SPHERE       = "Sphere";
-        static public final String CONE         = "Cone";
-        static public final String CYLINDER     = "Cylinder";
-        static public final String PLANE        = "Plane";
-        static public final String ORIENTBLE    = "Orientable";
-        static public final String PRIMITIVE    = "GeometricPrimitive";
-        static public final String OBJECT       = "RealObject";
+        String SPHERE       = "Sphere";
+        String CONE         = "Cone";
+        String CYLINDER     = "Cylinder";
+        String PLANE        = "Plane";
+        String ORIENTBLE    = "Orientable";
+        String PRIMITIVE    = "GeometricPrimitive";
+        String OBJECT       = "RealObject";
     }
     /**
      * Static container for for constants relate to individuals in the {@link ONTOLOGY}.
@@ -310,23 +306,23 @@ public interface Base {
      */
     static interface DATAPROPERTY {
 
-        public static final String DEFAULT_3dPROPERTY_xSUFFIX = ONTOLOGY.DEFAULT_3d_xSUFFIX;
-        public static final String DEFAULT_3dPROPERTY_ySUFFIX = ONTOLOGY.DEFAULT_3d_ySUFFIX;
-        public static final String DEFAULT_3dPROPERTY_zSUFFIX = ONTOLOGY.DEFAULT_3d_zSUFFIX;
+        String DEFAULT_3dPROPERTY_xSUFFIX = ONTOLOGY.DEFAULT_3d_xSUFFIX;
+        String DEFAULT_3dPROPERTY_ySUFFIX = ONTOLOGY.DEFAULT_3d_ySUFFIX;
+        String DEFAULT_3dPROPERTY_zSUFFIX = ONTOLOGY.DEFAULT_3d_zSUFFIX;
 
-        public static final String DEFAULT_obj_TIME = "has_time";
-        public static final String DEFAULT_obj_ID = "has_id";
+        String DEFAULT_obj_TIME = "has_time";
+        String DEFAULT_obj_ID = "has_id";
 
-        public static final String DEFAULT_objPRIMITIVE_CENTER = "has-geometric_center";
-        public static final String DEFAULT_objSPHERE_RADIUS = "has-sphere_radius";
-        public static final String DEFAULT_objORIENTABLE_AXIS = "has-geometric_axis";
-        public static final String DEFAULT_objPLANE_HESSIAN = "has-geometric_hessian";
-        public static final String DEFAULT_objCONE_RADIUS = "has-cone_radius";
-        public static final String DEFAULT_objCONE_HEIGHT = "has-cone_height";
-        public static final String DEFAULT_objCONE_APEX = "has-cone_apex";
-        public static final String DEFAULT_objCYLINDER_RADIUS = "has-cylinder_radius";
-        public static final String DEFAULT_objCYLINDER_HEIGHT = "has-cylinder_height";
-        public static final String DEFAULT_objCYLINDER_POINT = "has-cylinder_point";
+        String DEFAULT_objPRIMITIVE_CENTER = "has-geometric_center";
+        String DEFAULT_objSPHERE_RADIUS = "has-sphere_radius";
+        String DEFAULT_objORIENTABLE_AXIS = "has-geometric_axis";
+        String DEFAULT_objPLANE_HESSIAN = "has-geometric_hessian";
+        String DEFAULT_objCONE_RADIUS = "has-cone_radius";
+        String DEFAULT_objCONE_HEIGHT = "has-cone_height";
+        String DEFAULT_objCONE_APEX = "has-cone_apex";
+        String DEFAULT_objCYLINDER_RADIUS = "has-cylinder_radius";
+        String DEFAULT_objCYLINDER_HEIGHT = "has-cylinder_height";
+        String DEFAULT_objCYLINDER_POINT = "has-cylinder_point";
     }
     /**
      * Static container for for constants relate to the data properties in the {@link ONTOLOGY}.
@@ -344,38 +340,38 @@ public interface Base {
      * @see Base
      */
     static interface OBJECTPROPERTY {
-        public static final String DEFAULT_3dPROPERTY_xSUFFIX = ONTOLOGY.DEFAULT_3d_xSUFFIX;
-        public static final String DEFAULT_3dPROPERTY_ySUFFIX = ONTOLOGY.DEFAULT_3d_ySUFFIX;
-        public static final String DEFAULT_3dPROPERTY_zSUFFIX = ONTOLOGY.DEFAULT_3d_zSUFFIX;
+        String DEFAULT_3dPROPERTY_xSUFFIX = ONTOLOGY.DEFAULT_3d_xSUFFIX;
+        String DEFAULT_3dPROPERTY_ySUFFIX = ONTOLOGY.DEFAULT_3d_ySUFFIX;
+        String DEFAULT_3dPROPERTY_zSUFFIX = ONTOLOGY.DEFAULT_3d_zSUFFIX;
 
         // Asymmetric properties
-        public static final String DEFAULT_RELATION_BEHIND = "isBehindOf";
-        public static final String DEFAULT_RELATION_ABOVE = "isAboveOf";
-        public static final String DEFAULT_RELATION_RIGHT = "isRightOf";
-        public static final String DEFAULT_RELATION_BEHINDinverse = "isInFrontOf";
-        public static final String DEFAULT_RELATION_ABOVEinverse = "isBelowOf";
-        public static final String DEFAULT_RELATION_RIGHTinverse = "isLeftOf";
+        String DEFAULT_RELATION_BEHIND = "isBehindOf";
+        String DEFAULT_RELATION_ABOVE = "isAboveOf";
+        String DEFAULT_RELATION_RIGHT = "isRightOf";
+        String DEFAULT_RELATION_BEHINDinverse = "isInFrontOf";
+        String DEFAULT_RELATION_ABOVEinverse = "isBelowOf";
+        String DEFAULT_RELATION_RIGHTinverse = "isLeftOf";
 
         // Symmetric properties
-        public static final String DEFAULT_RELATION_LONGX = "isAlong" + DEFAULT_3dPROPERTY_xSUFFIX;
-        public static final String DEFAULT_RELATION_LONGY = "isAlong"  + DEFAULT_3dPROPERTY_ySUFFIX;
-        public static final String DEFAULT_RELATION_LONGZ = "isAlong"  + DEFAULT_3dPROPERTY_zSUFFIX;
-        public static final String DEFAULT_RELATION_COAXIAL = "isCoaxialWith";
-        public static final String DEFAULT_RELATION_PARALLEL = "isParallelTo";
-        public static final String DEFAULT_RELATION_PERPENDICULAR = "isPerpendicularTo";
+        String DEFAULT_RELATION_LONGX = "isAlong" + DEFAULT_3dPROPERTY_xSUFFIX;
+        String DEFAULT_RELATION_LONGY = "isAlong"  + DEFAULT_3dPROPERTY_ySUFFIX;
+        String DEFAULT_RELATION_LONGZ = "isAlong"  + DEFAULT_3dPROPERTY_zSUFFIX;
+        String DEFAULT_RELATION_COAXIAL = "isCoaxialWith";
+        String DEFAULT_RELATION_PARALLEL = "isParallelTo";
+        String DEFAULT_RELATION_PERPENDICULAR = "isPerpendicularTo";
 
 
 
 
-        public static final String DEFAULT_SPATIAL_COAXIAL = "has-scene_coaxial";
-        public static final String DEFAULT_SPATIAL_PARALLEL = "has-scene_parallel";
-        public static final String DEFAULT_SPATIAL_PERPENDICULAR = "has-scene_perpendicular";
-        public static final String DEFAULT_SPATIAL_LONGX = "has-scene_alongX";
-        public static final String DEFAULT_SPATIAL_LONGY = "has-scene_alongY";
-        public static final String DEFAULT_SPATIAL_LONGZ = "has-scene_alongZ";
-        public static final String DEFAULT_SPATIAL_RIGHT = "has-scene_right";
-        public static final String DEFAULT_SPATIAL_ABOVE = "has-scene_above";
-        public static final String DEFAULT_SPATIAL_BEHIND = "has-scene_behind";
+        String DEFAULT_SPATIAL_COAXIAL = "has-scene_coaxial";
+        String DEFAULT_SPATIAL_PARALLEL = "has-scene_parallel";
+        String DEFAULT_SPATIAL_PERPENDICULAR = "has-scene_perpendicular";
+        String DEFAULT_SPATIAL_LONGX = "has-scene_alongX";
+        String DEFAULT_SPATIAL_LONGY = "has-scene_alongY";
+        String DEFAULT_SPATIAL_LONGZ = "has-scene_alongZ";
+        String DEFAULT_SPATIAL_RIGHT = "has-scene_right";
+        String DEFAULT_SPATIAL_ABOVE = "has-scene_above";
+        String DEFAULT_SPATIAL_BEHIND = "has-scene_behind";
 
     }
 
@@ -607,140 +603,5 @@ public interface Base {
 
     }
 
-
-
-    // [[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[ ERROR MANAGERS  ]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]
-/*    class DebuggingIntent<M extends Semantics.MappingState> extends Semantics.MIntent< String, String, String> {
-        public DebuggingIntent() {
-            //super( LOGGING.MSG_EMPTY, LOGGING.MSG_EMPTY);
-            setDescription( "DEBUG");
-        }
-        public DebuggingIntent( String instance, String actions) {
-            //super(instance, actions);
-            setDescription( "DEBUG");
-        }
-        public DebuggingIntent( String instance, String actions, String description) {
-            //super(instance, actions);
-            if (description == null)
-                setDescription( "DEBUG");
-            else if ( description.isEmpty() | description.equals( LOGGING.MSG_EMPTY))
-                setDescription( "DEBUG");
-            setDescription( description);
-        }
-        public DebuggingIntent(Semantics.MappingIntent<String, String, String, M> copy) {
-            super(copy);
-        }
-
-
-        @Override
-        public M getMergedState() {
-            return super.getMergedState();
-        }
-    }
-*/
-
-
-    /**
-     * This is an helper to manage {@link Semantics.MappingState#ERROR} states for {@link Semantics} operations.
-     * <p>
-     *     It automatically catches for {@link Exception} and return {@link Semantics.MappingState#ERROR}
-     *     in the {@link #perform()} method, to be implemented called. In turn, it executes (in a safety manner)
-     *     the operation defined in the method {@link #giveAtry()} to be implemented.<br>
-     *     Otherwise, the method {@link #onError()} will determine the value of the {@link #perform()} results.
-     *
-     * <div style="text-align:center;"><small>
-     * <b>File</b>:        {@link it.emarolab.scene_identification_tracking.semanticSceneLibrary.Base} <br>
-     * <b>Licence</b>:     GNU GENERAL PUBLIC LICENSE. Version 3, 29 June 2007 <br>
-     * <b>Author</b>:      Buoncompagni Luca (luca.buoncompagni@edu.unige.it) <br>
-     * <b>affiliation</b>: DIBRIS, EMAROLab, University of Genoa. <br>
-     * <b>date</b>:        04/02/2017 <br>
-     * </small></div>
-     *
-     *
-     * @see Semantics.MappingState
-     */
-    abstract class TryMap<I,A,L,M extends Semantics.MappingState> extends SITBase{
-        protected Semantics.MappingTransitions transiton;
-
-        public TryMap(){
-            transiton = new Semantics.MappingTransitions();
-        }
-
-        /** Empty constructor, does not do nothing */
-        public TryMap( String instance, String atom) {
-            Semantics.MappingIntent<String, String, Void, M> intent = new Semantics.MappingIntent<>("\t\t" + instance, atom, getNewState());
-            intent.setDescription( "DEBUG");
-            transiton = new Semantics.MappingTransitions( intent);
-        }
-
-        /** Constructs and sets the message for an eventually {@link #onError()} state. */
-        public TryMap(Semantics.MappingIntent<I,A,L,M> intent) {
-            transiton = new Semantics.MappingTransitions( intent);
-        }
-
-        public Semantics.MappingTransitions getStateTransitions(){
-            return transiton;
-        }
-
-        /**
-         *  make your semantic operations safety from Java {@link Exception}
-         *  @return the actual mapping state of the operation or {@link #onError()} if Exception occurs.
-         */
-        abstract protected Semantics.MappingTransitions giveAtry();
-
-        protected Semantics.MappingIntent<I,A,L,M> getNewIntent(I instance, A atom) {
-            Semantics.MappingIntent<I,A,L,M> intent = new Semantics.MappingIntent(instance, atom, getNewState());
-            propagateAtomDescription( intent);
-            transiton.add( intent);
-            return intent;
-        }
-
-        /**
-         * Called when a Java {@link Exception} occurs in the {@link #perform()} method.
-         * @return the generated {@link Semantics.MappingState#ERROR} to be propagated.
-         */
-        protected Semantics.MappingTransitions onError(){
-            transiton.get( transiton.size() - 1).getState().asError();
-            return transiton;
-        }
-
-        // todo add OnInconsisent
-
-        public Semantics.MappingIntent<?,?,?,M> propagateAtomDescription(Semantics.MappingIntent<?,?,?,M> intent){
-            intent.setDescription( transiton.get( 0).getAtom().toString());
-            return intent;
-        }
-        public Semantics.MappingIntent<?,?,?,M> propagateAtomDescription(Semantics.MappingIntent<?,?,?,M> intent, String description){
-            intent.setDescription( transiton.get( 0).getAtom().toString() + " " + description);
-            return intent;
-        }
-
-        /**
-         * Perform the {@link #giveAtry()} method safely from Java {@link Exception}
-         * also notified by {@link #logError(Exception)}.
-         * @return the state of this mapping operation. It can be the
-         * {@link #giveAtry()} returning value or {@link #onError()} value.
-         */
-        public Semantics.MappingTransitions perform() {
-            try {
-                return giveAtry();
-            } catch (Exception e) {
-                logError( e);
-                return onError();
-            }
-        }
-
-        /**
-         * Since this class is supposed to be inhered and used on demand the copy
-         * method is not propagated.
-         * @return always null.
-         */
-        @Override
-        public TryMap copy(){
-            logError( this.getClass().getSimpleName() + ".copy() hierarchy noy implemented.");
-            return null;
-        }
-
-        abstract public M getNewState();
-    }
+    // todo add State, Intent, Transitions
 }
