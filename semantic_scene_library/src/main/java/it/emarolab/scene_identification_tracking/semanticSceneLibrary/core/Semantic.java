@@ -1,5 +1,6 @@
 package it.emarolab.scene_identification_tracking.semanticSceneLibrary.core;
 
+import java.util.Collection;
 import java.util.Set;
 
 // describe the semantics of data that can be synchronised with an ontology
@@ -15,13 +16,13 @@ public interface Semantic<O,I,A extends Semantic.Atom<?>> {
         interface Type<O,I,A extends Atom.Family<?>> extends Axiom<O,I,A>{
         }
 
-        interface Hierarchy<O,I,A> extends Semantic<O,I,Atom.Node<A>>{
-        }
+        //interface Hierarchy<O,I,A> extends Semantic<O,I,Atom.Node<A>>{
+        //}
 
         interface Class<O,I,E,C> extends Semantic<O,I,Atom2.ConnectorSet<E,C>>{
         }
 
-        interface Property<O,I,P,V> extends Semantic<O,I,Atom2.Connector<P,V>>{
+        interface Property<O,I,A extends Atom2.Connector<?,?>> extends Axiom<O,I,A>{
         }
 
         interface MultiProperty<O,I,P,V> extends Semantic<O,I,Atom2.ConnectorSet<P,V>>{
@@ -30,8 +31,6 @@ public interface Semantic<O,I,A extends Semantic.Atom<?>> {
         interface Property3D<O,I,P,V> extends Semantic<O,I,Atom2.Connector3D<P,V>>{
         }
     }
-
-
 
     interface Atom<Y> {
 
@@ -48,7 +47,7 @@ public interface Semantic<O,I,A extends Semantic.Atom<?>> {
                 return true;
             }
         }
-        interface FamilySet<Y> extends Set<Family<Y>>, Atom<Y>{}
+        interface FamilySet<Y> extends Collection<Family<Y>>, Atom<Y>{}
 
         interface Node<Y> extends Family<Y> {
             Set<Y> getChildren();
@@ -63,9 +62,8 @@ public interface Semantic<O,I,A extends Semantic.Atom<?>> {
                 return true;
             }
         }
-        interface NodeSet<Y> extends Set<Node<Y>>, Atom<Y> {}
+        interface NodeSet<Y> extends Collection<Node<Y>>, Atom<Y> {}
     }
-
     interface Atom2<Z,Y> extends Atom<Y> {
         interface Container<E,C> extends Atom2<E,C>{
             E getExpression();
@@ -77,7 +75,7 @@ public interface Semantic<O,I,A extends Semantic.Atom<?>> {
             int getCardinality();
             void setCardinality( int cardinality);
         }
-        interface ContainerSet<E,C> extends Set<Container<E,C>>, Atom2<E,C>{}
+        interface ContainerSet<E,C> extends Collection<Container<E,C>>, Atom2<E,C>{}
 
         interface Connector<P,V> extends Atom2<P,V>{
             P getProperty();
@@ -86,7 +84,7 @@ public interface Semantic<O,I,A extends Semantic.Atom<?>> {
             V getValue();
             void setValue( V v);
         }
-        interface ConnectorSet<P,V> extends Set<Connector<P,V>>, Atom2<P,V>{}
+        interface ConnectorSet<P,V> extends Collection<Connector<P,V>>, Atom2<P,V>{}
 
         interface Connector3D<P,V> extends Connector<P,V> {
             P getXproperty();

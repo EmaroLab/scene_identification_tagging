@@ -13,10 +13,10 @@ public interface Descriptor<O,I,X extends Semantic<O,I,?>> {
     interface Type<O,I,X extends Semantic.Axiom.Type<O,I,?>> extends Descriptor<O,I,X>{
     }
 
-    interface Hyerarchy<O,I,X extends Semantic.Axiom.Hierarchy<O,I,?>> extends Descriptor<O,I,X>{
-    }
+    //interface Hyerarchy<O,I,X extends Semantic.Axiom.Hierarchy<O,I,?>> extends Descriptor<O,I,X>{
+    //}
 
-    interface Property<O,I,X extends Semantic.Axiom.Property<O,I,?,?>> extends Descriptor<O,I,X>{
+    interface Property<O,I,X extends Semantic.Axiom.Property<O,I,?>> extends Descriptor<O,I,X>{
     }
 
     interface MultiProperty<O,I,X extends Semantic.Axiom.MultiProperty<O,I,?,?>> extends Descriptor<O,I,X>{
