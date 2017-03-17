@@ -16,18 +16,44 @@ public interface Descriptor<O,I,X extends Semantic<O,I,?>> {
     interface Hyerarchy<O,I,X extends Semantic.Axiom.Hierarchy<O,I,?>> extends Descriptor<O,I,X>{
     }
 
-
-    interface Property<O,I,P,V> extends Descriptor<O,I,Semantic.Axiom.Property<O,I,P,V>>{
+    interface Property<O,I,X extends Semantic.Axiom.Property<O,I,?,?>> extends Descriptor<O,I,X>{
     }
 
-    interface MultiProperty<O,I,P,V> extends Descriptor<O,I,Semantic.Axiom.MultiProperty<O,I,P,V>>{
+    interface MultiProperty<O,I,X extends Semantic.Axiom.MultiProperty<O,I,?,?>> extends Descriptor<O,I,X>{
     }
 
-    interface SynchOutcome<X extends Semantic<?,?,?>>{
+    interface SynchOutcomeInterface<X extends Semantic.Atom<?>>{
         X getSemantic();
 
         Mapping.State getState();
 
         Mapping.Transitions getTrasition();
+    }
+    class SynchOutcome<X extends Semantic.Atom<?>> implements SynchOutcomeInterface<X>{
+
+        private final X semantic;
+        private final Mapping.State state;
+        private final Mapping.Transitions transitions;
+
+        public SynchOutcome(X semantic, Mapping.State state, Mapping.Transitions transitions){
+            this.semantic = semantic;
+            this.state = state;
+            this.transitions = transitions;
+        }
+
+        @Override
+        public X getSemantic() {
+            return null;
+        }
+
+        @Override
+        public Mapping.State getState() {
+            return null;
+        }
+
+        @Override
+        public Mapping.Transitions getTrasition() {
+            return null;
+        }
     }
 }

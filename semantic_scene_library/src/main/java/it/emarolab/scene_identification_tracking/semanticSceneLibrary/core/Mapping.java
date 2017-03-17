@@ -17,17 +17,17 @@ public interface Mapping extends Base{
 
     // [[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[   SEMANTIC CHANGES   ]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]
 // todo add string and equals method (general comment ;) )
-    class Transitions extends ArrayList<MappingIntent<?,?,?,? extends State>> {
+    class Transitions extends ArrayList<MappingIntent<?,?,? extends State>> {
 
         public Transitions(int initialCapacity) {
             super(initialCapacity);
         }
         public Transitions() {
         }
-        public Transitions(Collection<? extends MappingIntent<?, ?, ?, ? extends State>> c) {
+        public Transitions(Collection<? extends MappingIntent<?,?,? extends State>> c) {
             super(c);
         }
-        public Transitions(MappingIntent<?, ?, ?, ? extends State> intent) {
+        public Transitions(MappingIntent<?,?,? extends State> intent) {
             super();
             add( intent);
         }
@@ -69,7 +69,7 @@ public interface Mapping extends Base{
             if (! isEmpty()) {
                 info += LOGGING.NEW_LINE;
                 int cnt = 0;
-                for (MappingIntent<?, ?, ?, ?> i : out) {
+                for (MappingIntent<?,?,?> i : out) {
                     if (++cnt < size())
                         info += "\t\t" + i.toString() + "," + LOGGING.NEW_LINE;
                     else info += "\t\t" + i + LOGGING.NEW_LINE;
@@ -84,13 +84,15 @@ public interface Mapping extends Base{
         }
     }
 
-    class MappingIntent<I,V,S extends Semantic<?,I,V>, M extends State> extends SITBase implements Comparable<MappingIntent<?,?,?,?>>{
+    class MappingIntent<I,A extends Semantic.Atom<?>, M extends State> 
+            extends SITBase 
+            implements Comparable<MappingIntent<?,?,?>>{
 
         private long time = System.currentTimeMillis();
         private String description;
         private M state;
         private I instance;
-        private V javaValue, semanticValue;
+        private A javaValue, semanticValue;
 
         public MappingIntent(){}
         public MappingIntent( I instance, String description){
@@ -103,7 +105,7 @@ public interface Mapping extends Base{
             this.state = state;
         }
 
-        public MappingIntent(MappingIntent<I,V,S,M> copy){
+        public MappingIntent(MappingIntent<I,A,M> copy){
             this.time = copy.time;
             this.description = copy.description;
             this.state.state = copy.state.state;
@@ -112,7 +114,7 @@ public interface Mapping extends Base{
             this.semanticValue = copy.semanticValue;
         }
         @Override
-        public MappingIntent<I,V,S,M> copy() {
+        public MappingIntent<I,A,M> copy() {
             return new MappingIntent<>( this);
         }
 
@@ -138,17 +140,17 @@ public interface Mapping extends Base{
             this.state = state;
         }
 
-        public V getJavaValue() {
+        public A getJavaValue() {
             return javaValue;
         }
-        public void setJavaValue(V javaValue) {
+        public void setJavaValue(A javaValue) {
             this.javaValue = javaValue;
         }
 
-        public V getSemanticValue() {
+        public A getSemanticValue() {
             return semanticValue;
         }
-        public void setSemanticValue(V semanticValue) {
+        public void setSemanticValue(A semanticValue) {
             this.semanticValue = semanticValue;
         }
 
@@ -163,7 +165,7 @@ public interface Mapping extends Base{
             if (this == o) return true;
             if (!(o instanceof MappingIntent)) return false;
 
-            MappingIntent<?, ?, ?, ?> that = (MappingIntent<?, ?, ?, ?>) o;
+            MappingIntent<?,?,?> that = (MappingIntent<?,?,?>) o;
 
             if (getDescription() != null ? !getDescription().equals(that.getDescription()) : that.getDescription() != null)
                 return false;
@@ -186,7 +188,7 @@ public interface Mapping extends Base{
         }
 
         @Override
-        public int compareTo(MappingIntent<?,?,?,?> o) {
+        public int compareTo(MappingIntent<?,?,?> o) {
             return toIntExact( time - o.time);
         }
     }
