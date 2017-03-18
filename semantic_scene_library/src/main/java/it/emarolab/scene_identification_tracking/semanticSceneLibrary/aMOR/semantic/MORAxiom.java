@@ -275,15 +275,15 @@ public interface MORAxiom {
     }
 
     // todo MORDataClassCardinality & MORMultiDataClassCardinality
-    class MORClassCardinality
+    class MORMinCardinalised
             implements Semantic.Axiom.CardinalityConnector<OWLObjectProperty, OWLClass>{
 
         private OWLObjectProperty property;
         private OWLClass range;
         private int cardinality = 0;
 
-        public MORClassCardinality(){}
-        public MORClassCardinality(OWLObjectProperty property, OWLClass range, int cardinality){
+        public MORMinCardinalised(){}
+        public MORMinCardinalised(OWLObjectProperty property, OWLClass range, int cardinality){
             this.property = property;
             this.range = range;
             this.cardinality = cardinality;
@@ -316,16 +316,16 @@ public interface MORAxiom {
             this.cardinality = cardinality;
         }
     }
-    class MORMultiClassCardinality
-            implements Semantic.Axiom.CardinalityConnectorSet<MORClassCardinality>{
+    class MORMultiMinCardinalised
+            implements Semantic.Axiom.CardinalityConnectorSet<MORMinCardinalised>{
 
-        private Set<MORClassCardinality> links = new HashSet<>();
+        private Set<MORMinCardinalised> links = new HashSet<>();
 
-        public MORMultiClassCardinality(){
+        public MORMultiMinCardinalised(){
         }
 
         @Override
-        public Set<MORClassCardinality> getSet(){
+        public Set<MORMinCardinalised> getSet(){
             return links;
         }
 
@@ -342,7 +342,7 @@ public interface MORAxiom {
             return links.contains(o);
         }
         @Override
-        public Iterator<MORClassCardinality> iterator() {
+        public Iterator<MORMinCardinalised> iterator() {
             return links.iterator();
         }
         @Override
@@ -354,11 +354,11 @@ public interface MORAxiom {
             return links.toArray( a);
         }
         @Override
-        public boolean add(MORClassCardinality classCardinality) {
+        public boolean add(MORMinCardinalised classCardinality) {
             return links.add( classCardinality);
         }
         public boolean add( OWLObjectProperty link, OWLClass range, int cardinality) {
-            return links.add( new MORClassCardinality(link, range, cardinality));
+            return links.add( new MORMinCardinalised(link, range, cardinality));
         }
         @Override
         public boolean remove(Object o) {
@@ -369,7 +369,7 @@ public interface MORAxiom {
             return links.containsAll( c);
         }
         @Override
-        public boolean addAll(Collection<? extends MORClassCardinality> c) {
+        public boolean addAll(Collection<? extends MORMinCardinalised> c) {
             return links.addAll( c);
         }
         @Override

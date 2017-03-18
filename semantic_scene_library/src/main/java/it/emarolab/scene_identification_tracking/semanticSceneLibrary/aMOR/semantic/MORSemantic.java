@@ -96,36 +96,40 @@ public interface MORSemantic {
         }
     }
 
-    class MORClassRestrictionRestrictions
-            implements Semantic.ClassRestriction<OWLReferences,OWLClass,MORAxiom.MORMultiClassCardinality> {
+    class MORMinCardinalityRestriction
+            implements Semantic.ClassRestriction<OWLReferences,OWLClass,MORAxiom.MORMultiMinCardinalised> {
 
-        MORAxiom.MORMultiClassCardinality cardinalities = new MORAxiom.MORMultiClassCardinality();
+        MORAxiom.MORMultiMinCardinalised cardinalities = new MORAxiom.MORMultiMinCardinalised();
 
         @Override
-        public void set(MORAxiom.MORMultiClassCardinality atom) {
+        public void set(MORAxiom.MORMultiMinCardinalised atom) {
             this.cardinalities = atom;
         }
 
         @Override
-        public MORAxiom.MORMultiClassCardinality get() {
+        public MORAxiom.MORMultiMinCardinalised get() {
             return cardinalities;
         }
 
 
         @Override
-        public MORAxiom.MORMultiClassCardinality query(OWLReferences ontology, OWLClass instance) {
-            // todo add methods in aMOR
-            return null;
+        public MORAxiom.MORMultiMinCardinalised query(OWLReferences ontology, OWLClass instance) {
+            MORAxiom.MORMultiMinCardinalised out = new MORAxiom.MORMultiMinCardinalised();
+            Set<OWLEnquirer.ClassRestriction> restrictions = ontology.getClassRestrictions(instance);
+            for ( OWLEnquirer.ClassRestriction r : restrictions)
+                if (r.isMinRestriction())
+                    out.add( r.getObjectProperty(), r.getObjectRestriction(), r.getCardinality());
+            return out;
         }
 
         @Override
-        public <P, C> void add(OWLReferences ontology, OWLClass instance, P property, C range) {
-            // todo to implement in aMOR
+        public <P, C> void add(OWLReferences ontology, OWLClass instance, P property, int cardinality, C range) {
+            ontology.addMinObjectClassExpression(instance, (OWLObjectProperty) property, cardinality, (OWLClass) range);
         }
 
         @Override
-        public <P, C> void remove(OWLReferences ontology, OWLClass instance, P property, C range) {
-            // todo to implement in aMOR
+        public <P, C> void remove(OWLReferences ontology, OWLClass instance, P property, int cardinality, C range) {
+            ontology.removeMinObjectClassExpression(instance, (OWLObjectProperty) property, cardinality, (OWLClass) range);
         }
     }
 

@@ -1,6 +1,7 @@
 package it.emarolab.scene_identification_tracking.semanticSceneLibrary.core.representation;
 
 import it.emarolab.scene_identification_tracking.semanticSceneLibrary.core.Semantic;
+import it.emarolab.scene_identification_tracking.semanticSceneLibrary.core.synchronisation.Descriptor;
 
 /**
  * Created by bubx on 16/03/17.

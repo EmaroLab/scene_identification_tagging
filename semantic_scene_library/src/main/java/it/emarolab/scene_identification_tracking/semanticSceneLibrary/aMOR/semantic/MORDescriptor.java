@@ -1,7 +1,7 @@
 package it.emarolab.scene_identification_tracking.semanticSceneLibrary.aMOR.semantic;
 
 import it.emarolab.amor.owlInterface.OWLReferences;
-import it.emarolab.scene_identification_tracking.semanticSceneLibrary.core.representation.Descriptor;
+import it.emarolab.scene_identification_tracking.semanticSceneLibrary.core.synchronisation.Descriptor;
 import org.semanticweb.owlapi.model.OWLNamedIndividual;
 
 /**
@@ -10,7 +10,7 @@ import org.semanticweb.owlapi.model.OWLNamedIndividual;
 public interface MORDescriptor {
 
     class MORTypeDescriptor
-            implements Descriptor.Type<OWLReferences,OWLNamedIndividual,MORSemantic.MORType> {
+            implements Descriptor.Typing<OWLReferences,OWLNamedIndividual,MORSemantic.MORType> {
         @Override
         public ReadOutcome<?> read(OWLReferences ontology, OWLNamedIndividual instance, MORSemantic.MORType semantic) {
             return null;
@@ -33,15 +33,6 @@ public interface MORDescriptor {
         }*/
     }
 
-    class MORLinkDescriptor
-            implements Descriptor.Property<OWLReferences,OWLNamedIndividual,MORSemantic.MORLink> {
-
-    }
-
-    class MORDataDescriptor
-            implements Descriptor.Property<OWLReferences,OWLNamedIndividual,MORSemantic.MORData> {
-
-    }
 
 
 }

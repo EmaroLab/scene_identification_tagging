@@ -1,11 +1,12 @@
 package it.emarolab.scene_identification_tracking.semanticSceneLibrary.core.representation;
 
 import it.emarolab.scene_identification_tracking.semanticSceneLibrary.core.Semantic;
+import it.emarolab.scene_identification_tracking.semanticSceneLibrary.core.synchronisation.Descriptor;
 
 /**
  * Created by bubx on 16/03/17.
  */
-public interface GeometricObject<O,I> extends Descriptor<O,I,Semantic<O,I,?>>{
+public interface GeometricObject<O,I> extends Descriptor<O,I,Semantic<O,I,?>> {
 
     O getOntology();
     void setOntology( O o);

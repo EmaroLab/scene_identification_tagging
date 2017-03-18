@@ -59,21 +59,21 @@ public interface Semantic<O,I,A extends Semantic.Axiom> {
         <Y> void removeChild(O ontology, I instance, Y type);
     }
 
-    interface ClassRestriction<O,I,A extends Axiom.CardinalityConnectorSet<? extends Axiom.Connector<?,?>>>
+    interface ClassRestriction<O,I,A extends Axiom.CardinalityConnectorSet<? extends Axiom.CardinalityConnector<?,?>>>
             extends Semantic<O,I,A>{
         @Override
         default void add(O ontology, I instance, A atom){
-            for( Axiom.Connector<?,?> a : atom)
-                add(ontology,instance,a.getProperty(),a.getValue());
+            for( Axiom.CardinalityConnector<?,?> a : atom)
+                add(ontology,instance,a.getProperty(),a.getCardinality(),a.getValue());
         }
-        <P,C> void add(O ontology, I instance, P property, C range);
+        <P,C> void add(O ontology, I instance, P property, int cardinality, C range);
 
         @Override
         default void remove(O ontology, I instance, A atom){
-            for( Axiom.Connector<?,?> a : atom)
-                remove(ontology,instance,a.getProperty(),a.getValue());
+            for( Axiom.CardinalityConnector<?,?> a : atom)
+                remove(ontology,instance,a.getProperty(),a.getCardinality(),a.getValue());
         }
-        <P,C> void remove(O ontology, I instance, P property, C range);
+        <P,C> void remove(O ontology, I instance, P property, int cardinality, C range);
     }
 
     interface Property<O,I,A extends Axiom.Connector<?,?>>

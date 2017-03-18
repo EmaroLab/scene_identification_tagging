@@ -1,6 +1,5 @@
-package it.emarolab.scene_identification_tracking.semanticSceneLibrary.core.representation;
+package it.emarolab.scene_identification_tracking.semanticSceneLibrary.core.synchronisation;
 
-import it.emarolab.scene_identification_tracking.semanticSceneLibrary.core.Mapping;
 import it.emarolab.scene_identification_tracking.semanticSceneLibrary.core.Semantic;
 
 /**
@@ -11,16 +10,22 @@ public interface Descriptor<O,I,S extends Semantic<O,I,?>> {
     ReadOutcome<?> read(O ontology, I instance, S semantic);
     WriteOutcome<?> write(O ontology, I instance, S semantic);
 
-    interface Type<O,I,S extends Semantic.Type<O,I,?>> extends Descriptor<O,I, S>{
+    interface Typing<O,I,S extends Semantic.Type<O,I,?>> extends Descriptor<O,I, S>{
     }
 
-    interface Hyerarchy<O,I,S extends Semantic.Hierarchy<O,I,?>> extends Descriptor<O,I, S>{
+    interface Hierarching<O,I,S extends Semantic.Hierarchy<O,I,?>> extends Descriptor<O,I, S>{
     }
 
-    interface Property<O,I,S extends Semantic.Property<O,I,?>> extends Descriptor<O,I, S>{
+    interface Properting<O,I,S extends Semantic.Property<O,I,?>> extends Descriptor<O,I, S>{
     }
 
-    interface MultiProperty<O,I,S extends Semantic.MultiProperty<O,I,?>> extends Descriptor<O,I, S>{
+    interface Properting3D<O,I,S extends Semantic.Property<O,I,?>> extends Descriptor<O,I, S>{
+    }
+
+    interface MultiProperting<O,I,S extends Semantic.MultiProperty<O,I,?>> extends Descriptor<O,I, S>{
+    }
+
+    interface ClassRestricting<O,I,S extends Semantic.ClassRestriction<O,I,?>> extends Descriptor<O,I, S>{
     }
 
     // todo to connect with implementation

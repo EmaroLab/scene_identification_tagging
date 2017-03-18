@@ -1,7 +1,8 @@
-package it.emarolab.scene_identification_tracking.semanticSceneLibrary.core;
+package it.emarolab.scene_identification_tracking.semanticSceneLibrary.core.synchronisation;
 
 import com.google.common.base.Objects;
 import it.emarolab.scene_identification_tracking.semanticSceneLibrary.Base;
+import it.emarolab.scene_identification_tracking.semanticSceneLibrary.core.Semantic;
 
 import java.util.ArrayList;
 import java.util.Collection;
