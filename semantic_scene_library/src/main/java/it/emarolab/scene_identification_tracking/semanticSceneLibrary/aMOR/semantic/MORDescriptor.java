@@ -37,7 +37,7 @@ public interface MORDescriptor {
         @Override
         public WriteOutcome<OWLNamedIndividual, MORAxiom.MORTyped>
                 write(OWLReferences ontology, OWLNamedIndividual instance, MORSemantic.MORType semantic) {
-
+ 
             final MORAxiom.MORTyped owl = semantic.query(ontology, instance);
             final MORAxiom.MORTyped java = semantic.get();
             final MORAxiom.MORTyped write = new MORAxiom.MORTyped();
