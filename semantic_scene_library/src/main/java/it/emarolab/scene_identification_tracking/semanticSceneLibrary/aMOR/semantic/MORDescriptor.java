@@ -14,8 +14,8 @@ public interface MORDescriptor {
             implements Descriptor.Type<OWLReferences,OWLNamedIndividual,MORAxiom.MORType> {
         @Override
         public SynchOutcome synchronise(OWLReferences ontology, OWLNamedIndividual instance, MORAxiom.MORType semantic) {
-            MORAtom.MORFamily owl = semantic.query(ontology, instance);
-            MORAtom.MORFamily java = semantic.get();
+            MORAtom.MORTyped owl = semantic.query(ontology, instance);
+            MORAtom.MORTyped java = semantic.get();
             // ...
             return new SynchOutcome(owl, new Mapping.WritingState(), new Mapping.Transitions());
         }
@@ -25,8 +25,8 @@ public interface MORDescriptor {
             implements Descriptor.Property<OWLReferences,OWLNamedIndividual,MORAxiom.MORLink> {
         @Override
         public SynchOutcome synchronise(OWLReferences ontology, OWLNamedIndividual instance, MORAxiom.MORLink semantic) {
-            MORAtom.MORLinkedValue owl = semantic.query(ontology, instance);
-            MORAtom.MORLinkedValue java = semantic.get();
+            MORAtom.MORLinked owl = semantic.query(ontology, instance);
+            MORAtom.MORLinked java = semantic.get();
             // ...
             return new SynchOutcome(owl, new Mapping.WritingState(), new Mapping.Transitions());
         }

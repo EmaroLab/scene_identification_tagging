@@ -1,5 +1,6 @@
 package it.emarolab.scene_identification_tracking.semanticSceneLibrary.aMOR.semantic;
 
+import it.emarolab.amor.owlInterface.OWLEnquirer;
 import it.emarolab.amor.owlInterface.OWLReferences;
 import it.emarolab.scene_identification_tracking.semanticSceneLibrary.core.Semantic;
 import org.semanticweb.owlapi.model.*;
@@ -12,9 +13,9 @@ import java.util.Set;
 public interface MORAxiom {
 
     class MORType
-            implements Semantic.Axiom.Type<OWLReferences,OWLNamedIndividual,MORAtom.MORFamily> {
+            implements Semantic.Axiom.Type<OWLReferences,OWLNamedIndividual,MORAtom.MORTyped> {
 
-        private MORAtom.MORFamily types = new MORAtom.MORFamily();
+        private MORAtom.MORTyped types = new MORAtom.MORTyped();
 
         public MORType(){}
         public MORType( Set<OWLClass> types){
@@ -22,25 +23,36 @@ public interface MORAxiom {
         }
 
         @Override
-        public MORAtom.MORFamily query(OWLReferences ontology, OWLNamedIndividual instance) {
-            return new MORAtom.MORFamily( ontology.getIndividualClasses(instance));
-        }
-
-        @Override
-        public void set( MORAtom.MORFamily types) {
+        public void set( MORAtom.MORTyped types) {
             this.types = types;
         }
 
         @Override
-        public MORAtom.MORFamily get() {
+        public MORAtom.MORTyped get() {
             return types;
+        }
+
+
+        @Override
+        public MORAtom.MORTyped query(OWLReferences ontology, OWLNamedIndividual instance) {
+            return new MORAtom.MORTyped( ontology.getIndividualClasses(instance));
+        }
+
+        @Override
+        public <Y> void add(OWLReferences ontology, OWLNamedIndividual instance, Y type) {
+            ontology.addIndividualB2Class( instance, (OWLClass) type);
+        }
+
+        @Override
+        public <Y> void remove(OWLReferences ontology, OWLNamedIndividual instance, Y type) {
+            ontology.removeIndividualB2Class( instance, (OWLClass) type);
         }
     }
 
     class MORHierarchy
-            implements Semantic.Axiom.Type<OWLReferences,OWLClass,MORAtom.MORNode>{
+            implements Semantic.Axiom.Hierarchy<OWLReferences,OWLClass,MORAtom.MORHierarchised>{
 
-        private MORAtom.MORNode node = new MORAtom.MORNode();
+        private MORAtom.MORHierarchised node = new MORAtom.MORHierarchised();
 
         public MORHierarchy(){}
         public MORHierarchy( Set<OWLClass> parents, Set<OWLClass> children){
@@ -49,29 +61,78 @@ public interface MORAxiom {
         }
 
         @Override
-        public MORAtom.MORNode query(OWLReferences ontology, OWLClass instance) {
-            Set<OWLClass> children = ontology.getSubClassOf(instance);
-            Set<OWLClass> parent = ontology.getSuperClassOf(instance);
-            return new MORAtom.MORNode( parent, children);
-        }
-
-        @Override
-        public void set(MORAtom.MORNode Node) {
+        public void set(MORAtom.MORHierarchised Node) {
             this.node = node;
         }
 
         @Override
-        public MORAtom.MORNode get() {
+        public MORAtom.MORHierarchised get() {
             return node;
+        }
+
+        @Override
+        public MORAtom.MORHierarchised query(OWLReferences ontology, OWLClass instance) {
+            Set<OWLClass> children = ontology.getSubClassOf(instance);
+            Set<OWLClass> parent = ontology.getSuperClassOf(instance);
+            return new MORAtom.MORHierarchised( parent, children);
+        }
+
+        @Override
+        public <Y> void addParent(OWLReferences ontology, OWLClass instance, Y type) {
+            ontology.addSubClassOf( (OWLClass) type, instance);
+        }
+        @Override
+        public <Y> void addChild(OWLReferences ontology, OWLClass instance, Y type) {
+            ontology.addSubClassOf( instance, (OWLClass) type);
+        }
+
+        @Override
+        public <Y> void removeParent(OWLReferences ontology, OWLClass instance, Y type) {
+            ontology.removeSubClassOf( (OWLClass) type, instance);
+        }
+        @Override
+        public <Y> void removeChild(OWLReferences ontology, OWLClass instance, Y type) {
+            ontology.removeSubClassOf( instance, (OWLClass) type);
         }
     }
 
-    // todo MORClass
+    class MORClassRestrictionRestrictions
+            implements Semantic.Axiom.ClassRestriction<OWLReferences,OWLClass,MORAtom.MORMultiClassCardinality> {
+
+        MORAtom.MORMultiClassCardinality cardinalities = new MORAtom.MORMultiClassCardinality();
+
+        @Override
+        public void set(MORAtom.MORMultiClassCardinality atom) {
+            this.cardinalities = atom;
+        }
+
+        @Override
+        public MORAtom.MORMultiClassCardinality get() {
+            return cardinalities;
+        }
+
+
+        @Override
+        public MORAtom.MORMultiClassCardinality query(OWLReferences ontology, OWLClass instance) {
+            // todo add methods in aMOR
+            return null;
+        }
+
+        @Override
+        public <P, C> void add(OWLReferences ontology, OWLClass instance, P property, C range) {
+            // todo to implement in aMOR
+        }
+
+        @Override
+        public <P, C> void remove(OWLReferences ontology, OWLClass instance, P property, C range) {
+            // todo to implement in aMOR
+        }
+    }
 
     class MORLink
-            implements Semantic.Axiom.Property<OWLReferences,OWLNamedIndividual,MORAtom.MORLinkedValue>{
+            implements Semantic.Axiom.Property<OWLReferences,OWLNamedIndividual,MORAtom.MORLinked>{
 
-        private MORAtom.MORLinkedValue link = new MORAtom.MORLinkedValue();
+        private MORAtom.MORLinked link = new MORAtom.MORLinked();
 
         public MORLink(){
         }
@@ -81,24 +142,71 @@ public interface MORAxiom {
         }
 
         @Override
-        public MORAtom.MORLinkedValue query(OWLReferences ontology, OWLNamedIndividual instance) {
-            OWLNamedIndividual value = ontology.getOnlyObjectPropertyB2Individual( instance, link.getProperty());
-            return new MORAtom.MORLinkedValue( link.getProperty(), value);
-        }
-
-        @Override
-        public void set(MORAtom.MORLinkedValue link) {
+        public void set(MORAtom.MORLinked link) {
             this.link = link;
         }
 
         @Override
-        public MORAtom.MORLinkedValue get() {
+        public MORAtom.MORLinked get() {
             return link;
+        }
+
+        @Override
+        public MORAtom.MORLinked query(OWLReferences ontology, OWLNamedIndividual instance) {
+            OWLNamedIndividual value = ontology.getOnlyObjectPropertyB2Individual( instance, link.getProperty());
+            return new MORAtom.MORLinked( link.getProperty(), value);
+        }
+
+        @Override
+        public <P, V> void add(OWLReferences ontology, OWLNamedIndividual instance, P property, V value) {
+            ontology.addObjectPropertyB2Individual( instance, (OWLObjectProperty) property, (OWLNamedIndividual) value);
+        }
+
+        @Override
+        public <P, V> void remove(OWLReferences ontology, OWLNamedIndividual instance, P property, V value) {
+            ontology.removeObjectPropertyB2Individual( instance, (OWLObjectProperty) property, (OWLNamedIndividual) value);
         }
     }
 
-    class MORMultiLink
-            implements Semantic.Atom2
+    class MORLinks
+            implements Semantic.Axiom.MultiProperty<OWLReferences,OWLNamedIndividual,MORAtom.MORMultiLinked>{
+
+        MORAtom.MORMultiLinked links = new MORAtom.MORMultiLinked();
+
+        public MORLinks(){
+        }
+
+        @Override
+        public void set(MORAtom.MORMultiLinked links) {
+            this.links = links;
+        }
+
+        @Override
+        public MORAtom.MORMultiLinked get() {
+            return links;
+        }
+
+
+        @Override
+        public MORAtom.MORMultiLinked query(OWLReferences ontology, OWLNamedIndividual instance) {
+            Set<OWLEnquirer.ObjectPropertyRelations> values = ontology.getObjectPropertyB2Individual(instance);
+            MORAtom.MORMultiLinked links = new MORAtom.MORMultiLinked();
+            for ( OWLEnquirer.ObjectPropertyRelations r : values)
+                links.add( r.getProperty(), r.getValues());
+            return links;
+        }
+
+        @Override
+        public <P,V> void add(OWLReferences ontology, OWLNamedIndividual instance, P property, V value) {
+            ontology.addObjectPropertyB2Individual(instance,
+                    (OWLObjectProperty) property,(OWLNamedIndividual) value);
+        }
+        @Override
+        public <P,V> void remove(OWLReferences ontology, OWLNamedIndividual instance, P property, V value) {
+            ontology.removeObjectPropertyB2Individual(instance,
+                    (OWLObjectProperty) property,(OWLNamedIndividual) value);
+        }
+    }
 
     class MORData
             implements Semantic.Axiom.Property<OWLReferences,OWLNamedIndividual,MORAtom.MORDataValue>{
@@ -113,12 +221,6 @@ public interface MORAxiom {
         }
 
         @Override
-        public MORAtom.MORDataValue query(OWLReferences ontology, OWLNamedIndividual instance) {
-            OWLLiteral value = ontology.getOnlyDataPropertyB2Individual( instance, link.getProperty());
-            return new MORAtom.MORDataValue( link.getProperty(), value);
-        }
-
-        @Override
         public void set(MORAtom.MORDataValue link) {
             this.link = link;
         }
@@ -127,8 +229,72 @@ public interface MORAxiom {
         public MORAtom.MORDataValue get() {
             return link;
         }
+
+
+        @Override
+        public MORAtom.MORDataValue query(OWLReferences ontology, OWLNamedIndividual instance) {
+            OWLLiteral value = ontology.getOnlyDataPropertyB2Individual( instance, link.getProperty());
+            return new MORAtom.MORDataValue( link.getProperty(), value);
+        }
+
+        @Override
+        public <P, V> void add(OWLReferences ontology, OWLNamedIndividual instance, P property, V value) {
+            ontology.addDataPropertyB2Individual( instance, (OWLDataProperty) property, (OWLLiteral) value);
+        }
+
+        @Override
+        public <P, V> void remove(OWLReferences ontology, OWLNamedIndividual instance, P property, V value) {
+            ontology.removeDataPropertyB2Individual( instance, (OWLDataProperty) property, (OWLLiteral) value);
+        }
     }
 
+    class MORData3D
+            implements Semantic.Axiom.Property3D<OWLReferences,OWLNamedIndividual,MORAtom.MORDataValue3D>{
+
+        private MORAtom.MORDataValue3D link3D;
+
+        public MORData3D(){
+            link3D = new MORAtom.MORDataValue3D();
+        }
+        public MORData3D(OWLReferences onto, String prefix, String xSuff, String ySuff, String zSuff){
+            link3D = new MORAtom.MORDataValue3D( onto, prefix, xSuff, ySuff, zSuff);
+        }
+
+        @Override
+        public void set(MORAtom.MORDataValue3D atom) {
+            link3D = atom;
+        }
+
+        @Override
+        public MORAtom.MORDataValue3D get() {
+            return link3D;
+        }
 
 
+        @Override
+        public MORAtom.MORDataValue3D query(OWLReferences ontology, OWLNamedIndividual instance) {
+            MORAtom.MORDataValue3D queriedLink = new MORAtom.MORDataValue3D();
+            queriedLink.setXproperty( link3D.getXproperty());
+            queriedLink.setXvalue(
+                    ontology.getOnlyDataPropertyB2Individual( instance, queriedLink.getXproperty()));
+            queriedLink.setYproperty( link3D.getYproperty());
+            queriedLink.setYvalue(
+                    ontology.getOnlyDataPropertyB2Individual( instance, queriedLink.getYproperty()));
+            queriedLink.setZproperty( link3D.getZproperty());
+            queriedLink.setZvalue(
+                    ontology.getOnlyDataPropertyB2Individual( instance, queriedLink.getZproperty()));
+            return queriedLink;
+        }
+
+        @Override
+        public <P, V> void add(OWLReferences ontology, OWLNamedIndividual instance, P property, V value) {
+            ontology.addDataPropertyB2Individual( instance, (OWLDataProperty) property, (OWLLiteral) value);
+
+        }
+
+        @Override
+        public <P, V> void remove(OWLReferences ontology, OWLNamedIndividual instance, P property, V value) {
+            ontology.removeDataPropertyB2Individual( instance, (OWLDataProperty) property, (OWLLiteral) value);
+        }
+    }
 }

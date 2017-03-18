@@ -19,17 +19,17 @@ public interface Descriptor<O,I,X extends Semantic<O,I,?>> {
     interface Property<O,I,X extends Semantic.Axiom.Property<O,I,?>> extends Descriptor<O,I,X>{
     }
 
-    interface MultiProperty<O,I,X extends Semantic.Axiom.MultiProperty<O,I,?,?>> extends Descriptor<O,I,X>{
+    interface MultiProperty<O,I,X extends Semantic.Axiom.MultiProperty<O,I,?>> extends Descriptor<O,I,X>{
     }
 
-    interface SynchOutcomeInterface<X extends Semantic.Atom<?>>{
+    interface SynchOutcomeInterface<X extends Semantic.Atom>{
         X getSemantic();
 
         Mapping.State getState();
 
         Mapping.Transitions getTrasition();
     }
-    class SynchOutcome<X extends Semantic.Atom<?>> implements SynchOutcomeInterface<X>{
+    class SynchOutcome<X extends Semantic.Atom> implements SynchOutcomeInterface<X>{
 
         private final X semantic;
         private final Mapping.State state;
