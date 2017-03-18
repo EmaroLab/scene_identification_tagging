@@ -3,6 +3,8 @@ package it.emarolab.scene_identification_tracking.semanticSceneLibrary.core;
 import java.util.Collection;
 import java.util.Set;
 
+// todo ground with SITBase
+
 // describe the semantics of data that can be synchronised with an ontology
 public interface Semantic<O,I,A extends Semantic.Axiom> {
 

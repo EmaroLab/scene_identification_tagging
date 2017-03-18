@@ -10,7 +10,7 @@ import java.util.Set;
 /**
  * Created by bubx on 17/03/17.
  */
-public interface MORSemantic {
+public interface MORSemantic extends Semantic{
 
     class MORType
             implements Semantic.Type<OWLReferences,OWLNamedIndividual,MORAxiom.MORTyped> {

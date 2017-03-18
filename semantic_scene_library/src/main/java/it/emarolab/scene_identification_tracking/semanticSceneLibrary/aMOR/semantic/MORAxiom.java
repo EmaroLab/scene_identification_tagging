@@ -12,9 +12,10 @@ import java.util.Set;
 /**
  * Created by bubx on 17/03/17.
  */
-public interface MORAxiom {
+public interface MORAxiom extends Semantic.Axiom{
 
-    class MORTyped implements Semantic.Axiom.Family<OWLClass> {
+    class MORTyped
+            implements Semantic.Axiom.Family<OWLClass>, MORAxiom {
 
         private Set<OWLClass> parents = new HashSet<>();
 
@@ -36,7 +37,7 @@ public interface MORAxiom {
 
     class MORHierarchised
             extends MORTyped
-            implements Semantic.Axiom.Node<OWLClass> {
+            implements Semantic.Axiom.Node<OWLClass>, MORAxiom {
 
         private Set<OWLClass> children = new HashSet<>();
 
@@ -60,7 +61,7 @@ public interface MORAxiom {
     }
 
     class MORLinked
-            implements Semantic.Axiom.Connector<OWLObjectProperty,OWLNamedIndividual>{
+            implements Semantic.Axiom.Connector<OWLObjectProperty,OWLNamedIndividual>, MORAxiom{
 
         private OWLObjectProperty property;
         private OWLNamedIndividual value;
@@ -95,7 +96,7 @@ public interface MORAxiom {
         }
     }
     class MORMultiLinked
-            implements Semantic.Axiom.ConnectorSet<MORLinked> {
+            implements Semantic.Axiom.ConnectorSet<MORLinked>, MORAxiom {
 
         private Set<MORLinked> links = new HashSet<>();
 
@@ -167,7 +168,7 @@ public interface MORAxiom {
     }
 
     class MORDataValue
-            implements Semantic.Axiom.Connector<OWLDataProperty,OWLLiteral>{
+            implements Semantic.Axiom.Connector<OWLDataProperty,OWLLiteral>, MORAxiom{
 
         private OWLDataProperty property;
         private OWLLiteral value;
@@ -203,7 +204,7 @@ public interface MORAxiom {
     }
 
     class MORDataValue3D
-            implements Semantic.Axiom.Connector3D<OWLDataProperty,OWLLiteral>{
+            implements Semantic.Axiom.Connector3D<OWLDataProperty,OWLLiteral>, MORAxiom{
 
         private OWLDataProperty propertyX, propertyY, propertyZ;
         private OWLLiteral valueX, valueY, valueZ;
@@ -276,7 +277,7 @@ public interface MORAxiom {
 
     // todo MORDataClassCardinality & MORMultiDataClassCardinality
     class MORMinCardinalised
-            implements Semantic.Axiom.CardinalityConnector<OWLObjectProperty, OWLClass>{
+            implements Semantic.Axiom.CardinalityConnector<OWLObjectProperty, OWLClass>, MORAxiom{
 
         private OWLObjectProperty property;
         private OWLClass range;
@@ -317,7 +318,7 @@ public interface MORAxiom {
         }
     }
     class MORMultiMinCardinalised
-            implements Semantic.Axiom.CardinalityConnectorSet<MORMinCardinalised>{
+            implements Semantic.Axiom.CardinalityConnectorSet<MORMinCardinalised>, MORAxiom{
 
         private Set<MORMinCardinalised> links = new HashSet<>();
 

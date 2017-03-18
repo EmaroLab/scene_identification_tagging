@@ -18,33 +18,34 @@ public interface Mapping extends Base{
 
     // [[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[   SEMANTIC CHANGES   ]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]
 // todo add string and equals method (general comment ;) )
-    class Transitions extends ArrayList<MappingIntent<?,?,? extends State>> {
+    class Transitions<T extends Intent<?,? extends Semantic.Axiom,? extends State>>
+            extends ArrayList<T> {
 
         public Transitions(int initialCapacity) {
             super(initialCapacity);
         }
         public Transitions() {
         }
-        public Transitions(Collection<? extends MappingIntent<?,?,? extends State>> c) {
+        public Transitions(Collection<T> c) {
             super(c);
         }
-        public Transitions(MappingIntent<?,?,? extends State> intent) {
+        public Transitions(T intent) {
             super();
             add( intent);
         }
 
         // todo add merge policy for different state types
-        public State merge(){ // tested only on same MappingStates
+        public <M extends State> M merge(){ // tested only on same MappingStates
             sort();
             String info = "Merging mapping states: [";
             if( ! isEmpty()){
-                State state = (State) get(0).getState().copy();
+                M state = (M) get(0).getState().copy();
                 info += state;// + "[" + state.getTypeName() + "]";
                 if ( size() > 1)
                     for( int i = 1; i < size(); i++) {
-                        State stateJ = (State) get(i).getState().copy();
+                        M stateJ = (M) get(i).getState().copy();
                         info += "~" + stateJ;// + "[" + stateJ.getTypeName() + "]";
-                        state = stateJ.merge(state);
+                        state = (M) stateJ.merge(state);
                         info += " = " + state;// + "[" + state.getTypeName() + "]";
                     }
                 Logger.LOG( info + "]");
@@ -62,7 +63,7 @@ public interface Mapping extends Base{
         @Override
         public String toString() {
 
-            List<MappingIntent> out = new ArrayList<>(this);
+            List<Intent> out = new ArrayList<>(this);
             Collections.sort( out);
 
             String info = "Mapping transition intents: {";
@@ -70,7 +71,7 @@ public interface Mapping extends Base{
             if (! isEmpty()) {
                 info += LOGGING.NEW_LINE;
                 int cnt = 0;
-                for (MappingIntent<?,?,?> i : out) {
+                for (Intent<?,?,?> i : out) {
                     if (++cnt < size())
                         info += "\t\t" + i.toString() + "," + LOGGING.NEW_LINE;
                     else info += "\t\t" + i + LOGGING.NEW_LINE;
@@ -85,9 +86,9 @@ public interface Mapping extends Base{
         }
     }
 
-    class MappingIntent<I,A extends Semantic.Axiom<?>, M extends State>
+    class Intent<I,A extends Semantic.Axiom, M extends State>
             extends SITBase 
-            implements Comparable<MappingIntent<?,?,?>>{
+            implements Comparable<Intent<?,?,?>>{
 
         private long time = System.currentTimeMillis();
         private String description;
@@ -95,18 +96,18 @@ public interface Mapping extends Base{
         private I instance;
         private A javaValue, semanticValue;
 
-        public MappingIntent(){}
-        public MappingIntent( I instance, String description){
+        public Intent(){}
+        public Intent(I instance, String description){
             this.instance = instance;
             this.description = description;
         }
-        public MappingIntent( I instance, String description, M state){
+        public Intent(I instance, M state, String description){
             this.instance = instance;
             this.description = description;
             this.state = state;
         }
 
-        public MappingIntent(MappingIntent<I,A,M> copy){
+        public Intent(Intent<I,A,M> copy){
             this.time = copy.time;
             this.description = copy.description;
             this.state.state = copy.state.state;
@@ -115,8 +116,8 @@ public interface Mapping extends Base{
             this.semanticValue = copy.semanticValue;
         }
         @Override
-        public MappingIntent<I,A,M> copy() {
-            return new MappingIntent<>( this);
+        public Intent<I,A,M> copy() {
+            return new Intent<>( this);
         }
 
         public long getTime() {
@@ -164,9 +165,9 @@ public interface Mapping extends Base{
         @Override
         public boolean equals(Object o) {
             if (this == o) return true;
-            if (!(o instanceof MappingIntent)) return false;
+            if (!(o instanceof Intent)) return false;
 
-            MappingIntent<?,?,?> that = (MappingIntent<?,?,?>) o;
+            Intent<?,?,?> that = (Intent<?,?,?>) o;
 
             if (getDescription() != null ? !getDescription().equals(that.getDescription()) : that.getDescription() != null)
                 return false;
@@ -189,11 +190,10 @@ public interface Mapping extends Base{
         }
 
         @Override
-        public int compareTo(MappingIntent<?,?,?> o) {
+        public int compareTo(Intent<?,?,?> o) {
             return toIntExact( time - o.time);
         }
     }
-
 
     /**
      * Describes the common states between reading and writing from semantic.
@@ -220,7 +220,8 @@ public interface Mapping extends Base{
      * @see WritingState
      * @see ReadingState
      */
-    abstract class State extends Base.SITBase {
+    abstract class State
+            extends Base.SITBase {
 
         /**
          * The internal state of this instance.
@@ -494,7 +495,8 @@ public interface Mapping extends Base{
      * @see STATEMAPPING
      * @see State
      */
-    class WritingState extends State {
+    class WritingState
+            extends State {
 
         /**
          * Copy constrcutors, it creates a new object by coping all its fields.
@@ -769,7 +771,8 @@ public interface Mapping extends Base{
      * @see STATEMAPPING
      * @see State
      */
-    class ReadingState extends State {
+    class ReadingState
+            extends State {
 
         /**
          * Copy constrcutors, it creates a new object by coping all its fields.
@@ -962,4 +965,119 @@ public interface Mapping extends Base{
         }
     }
 
+    interface TrierInterface<I, A extends Semantic.Axiom, M extends Mapping.State> {
+        Mapping.Transitions< ? extends Intent<I,A,M>> getStateTransitions();
+
+        M getNewState();
+
+        Mapping.Transitions perform();
+        Transitions giveAtry();
+
+        Intent<I,A,M> getNewIntent(I instance, String description);
+        Intent<I,A,M> getNewIntent(I instance, String description, A java);
+        Intent<I,A,M> getNewIntent(I instance, String description, A java, A owl);
+
+        Transitions onError(Exception e);
+    }
+
+    /**
+     * This is an helper to manage {Semantics.MappingState#ERROR} states for {Semantics} operations.
+     * <p>
+     *     It automatically catches for {@link Exception} and return {Semantics.MappingState#ERROR}
+     *     in the {@link #perform()} method, to be implemented called. In turn, it executes (in a safety manner)
+     *     the operation defined in the method {@link #giveAtry()} to be implemented.<br>
+     *     Otherwise, the method {@link #onError(Exception)} will determine the value of the {@link #perform()} results.
+     *
+     * <div style="text-align:center;"><small>
+     * <b>File</b>:        {@link it.emarolab.scene_identification_tracking.semanticSceneLibrary.Base} <br>
+     * <b>Licence</b>:     GNU GENERAL PUBLIC LICENSE. Version 3, 29 June 2007 <br>
+     * <b>Author</b>:      Buoncompagni Luca (luca.buoncompagni@edu.unige.it) <br>
+     * <b>affiliation</b>: DIBRIS, EMAROLab, University of Genoa. <br>
+     * <b>date</b>:        04/02/2017 <br>
+     * </small></div>
+     */
+    abstract class Trier<I,A extends Semantic.Axiom,M extends State>
+            extends SITBase implements TrierInterface<I, A, M> {
+
+        private Transitions< Intent<I,A,M>> transiton;
+
+        public Trier(){
+            transiton = new Transitions<>();
+        }
+
+        /** Constructs and sets the message for an eventually {@link #onError(Exception)} state. */
+        public Trier(Intent<I,A,M> intent) {
+            transiton = new Transitions<>( intent);
+        }
+
+        @Override
+        public Transitions getStateTransitions(){
+            return transiton;
+        }
+
+        /**
+         *  make your semantic operations safety from Java {@link Exception}
+         *  @return the actual mapping state of the operation or {@link #onError(Exception)} if Exception occurs.
+        @Override
+        abstract public Transitions giveAtry();
+         */
+
+        @Override
+        public Intent<I,A,M> getNewIntent(I instance, String description) {
+            Intent<I,A,M> intent = new Intent( instance, getNewState(), description);
+            transiton.add( intent);
+            return intent;
+        }
+        @Override
+        public Intent<I,A,M> getNewIntent(I instance, String description, A java) {
+            Intent<I,A,M> intent = getNewIntent( instance, description);
+            intent.setJavaValue( java);
+            return intent;
+        }
+        @Override
+        public Intent<I,A,M> getNewIntent(I instance, String description, A java, A owl) {
+            Intent<I,A,M> intent = getNewIntent( instance, description, java);
+            intent.setSemanticValue( owl);
+            return intent;
+        }
+
+        /**
+         * Called when a Java {@link Exception} occurs in the {@link #perform()} method.
+         * @return the generated {Semantics.MappingState#ERROR} to be propagated.
+         */
+        @Override
+        public Transitions onError(Exception e){
+            logError( e);
+            transiton.get( transiton.size() - 1).getState().asError();
+            return transiton;
+        }
+
+        // todo add OnInconsisent
+
+        /**
+         * Perform the {@link #giveAtry()} method safely from Java {@link Exception}
+         * also notified by {@link #logError(Exception)}.
+         * @return the state of this mapping operation. It can be the
+         * {@link #giveAtry()} returning value or {@link #onError(Exception)} value.
+         */
+        @Override
+        public Transitions perform() {
+            try {
+                return giveAtry();
+            } catch (Exception e) {
+                return onError( e);
+            }
+        }
+
+        /**
+         * Since this class is supposed to be inhered and used on demand the copy
+         * method is not propagated.
+         * @return always null.
+         */
+        @Override
+        public Trier copy(){
+            logError( this.getClass().getSimpleName() + ".copy() hierarchy noy implemented.");
+            return null;
+        }
+    }
 }
