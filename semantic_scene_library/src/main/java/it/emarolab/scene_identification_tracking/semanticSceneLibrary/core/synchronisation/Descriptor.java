@@ -11,34 +11,34 @@ public interface Descriptor<O,I,S extends Semantic<O,I,?>> {
     WriteOutcome<I,?> write(O ontology, I instance, S semantic);
 
     interface Typing<O,I,S extends Semantic.Type<O,I,?>>
-            extends Descriptor<O,I, S>{
+            extends Descriptor<O,I,S>{
     }
 
     interface Hierarching<O,I,S extends Semantic.Hierarchy<O,I,?>>
-            extends Descriptor<O,I, S>{
+            extends Descriptor<O,I,S>{
     }
 
     interface Properting<O,I,S extends Semantic.Property<O,I,?>>
-            extends Descriptor<O,I, S>{
+            extends Descriptor<O,I,S>{
     }
 
-    interface Properting3D<O,I,S extends Semantic.Property<O,I,?>>
-            extends Descriptor<O,I, S>{
+    interface Properting3D<O,I,S extends Semantic.Property3D<O,I,?>>
+            extends Descriptor<O,I,S>{
     }
 
     interface MultiProperting<O,I,S extends Semantic.MultiProperty<O,I,?>>
-            extends Descriptor<O,I, S>{
+            extends Descriptor<O,I,S>{
     }
 
     interface ClassRestricting<O,I,S extends Semantic.ClassRestriction<O,I,?>>
-            extends Descriptor<O,I, S>{
+            extends Descriptor<O,I,S>{
     }
 
     // todo to connect with implementation
     interface SynchOutcomeInterface<I,A extends Semantic.Axiom>{
-        I getInstance();
+        I getInstance(); // todo check if necessery
 
-        A getAxiom();
+        A getAxiom(); // todo check if necessery
 
         Mapping.State getState();
 

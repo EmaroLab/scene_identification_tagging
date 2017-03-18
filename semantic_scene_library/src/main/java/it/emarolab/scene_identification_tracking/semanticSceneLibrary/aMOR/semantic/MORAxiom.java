@@ -13,6 +13,7 @@ import java.util.Set;
  * Created by bubx on 17/03/17.
  */
 public interface MORAxiom extends Semantic.Axiom{
+    // todo add equal and toString
 
     class MORTyped
             implements Semantic.Axiom.Family<OWLClass>, MORAxiom {
@@ -20,8 +21,11 @@ public interface MORAxiom extends Semantic.Axiom{
         private Set<OWLClass> parents = new HashSet<>();
 
         public MORTyped(){}
-        public MORTyped(Set<OWLClass> parent){
-            this.parents = parent;
+        public MORTyped(OWLClass parent){
+            this.parents.add( parent);
+        }
+        public MORTyped(Set<OWLClass> parents){
+            this.parents = parents;
         }
 
         @Override

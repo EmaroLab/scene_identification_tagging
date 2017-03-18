@@ -974,7 +974,6 @@ public interface Mapping extends Base{
         Transitions giveAtry();
 
         Intent<I,A,M> getNewIntent(I instance, String description);
-        Intent<I,A,M> getNewIntent(I instance, String description, A java);
         Intent<I,A,M> getNewIntent(I instance, String description, A java, A owl);
 
         Transitions onError(Exception e);
@@ -1029,14 +1028,9 @@ public interface Mapping extends Base{
             return intent;
         }
         @Override
-        public Intent<I,A,M> getNewIntent(I instance, String description, A java) {
+        public Intent<I,A,M> getNewIntent(I instance, String description, A java, A owl) {
             Intent<I,A,M> intent = getNewIntent( instance, description);
             intent.setJavaValue( java);
-            return intent;
-        }
-        @Override
-        public Intent<I,A,M> getNewIntent(I instance, String description, A java, A owl) {
-            Intent<I,A,M> intent = getNewIntent( instance, description, java);
             intent.setSemanticValue( owl);
             return intent;
         }
@@ -1061,7 +1055,7 @@ public interface Mapping extends Base{
          * {@link #giveAtry()} returning value or {@link #onError(Exception)} value.
          */
         @Override
-        public Transitions perform() {
+        public Transitions<Intent<I,A,M>> perform() {
             try {
                 return giveAtry();
             } catch (Exception e) {
