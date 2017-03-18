@@ -1,6 +1,7 @@
 package it.emarolab.scene_identification_tracking.semanticSceneLibrary.aMOR.semantic;
 
 import it.emarolab.amor.owlInterface.OWLReferences;
+import it.emarolab.scene_identification_tracking.semanticSceneLibrary.core.Semantic;
 import it.emarolab.scene_identification_tracking.semanticSceneLibrary.core.synchronisation.Descriptor;
 import it.emarolab.scene_identification_tracking.semanticSceneLibrary.core.synchronisation.Mapping;
 import org.semanticweb.owlapi.model.OWLClass;
@@ -174,21 +175,45 @@ public interface MORDescriptor {
         }
     }
 
-    class MORDataDescriptor
-            implements Descriptor.Properting<OWLReferences,OWLNamedIndividual,MORSemantic.MORData>{
+    class MORLiteralDescriptor
+            implements Descriptor.Properting<OWLReferences,OWLNamedIndividual,MORSemantic.MORLiteral>{
 
         @Override
-        public ReadOutcome<OWLNamedIndividual,MORAxiom.MORDataValue>
-                read(OWLReferences ontology, OWLNamedIndividual instance, MORSemantic.MORData semantic) {
+        public ReadOutcome<OWLNamedIndividual,MORAxiom.MORLiteralValue>
+                read(OWLReferences ontology, OWLNamedIndividual instance, MORSemantic.MORLiteral semantic) {
 
-            final MORAxiom.MORDataValue owl = semantic.query(ontology, instance);
-            final MORAxiom.MORDataValue java = semantic.get();
+            final MORAxiom.MORLiteralValue owl = semantic.query(ontology, instance);
+            final MORAxiom.MORLiteralValue java = semantic.get();
 
-            Mapping.Transitions<Mapping.Intent<OWLNamedIndividual,MORAxiom.MORDataValue,Mapping.ReadingState>>
-                    transitions = new MORTryRead<OWLNamedIndividual, MORAxiom.MORDataValue>() {
+            Mapping.Transitions<Mapping.Intent<OWLNamedIndividual,MORAxiom.MORLiteralValue,Mapping.ReadingState>>
+                    transitions = new MORTryRead<OWLNamedIndividual, MORAxiom.MORLiteralValue>() {
                 @Override
                 public Mapping.Transitions giveAtry() {
-                    // todo implement
+
+                    Mapping.Intent<OWLNamedIndividual, MORAxiom.MORLiteralValue, Mapping.ReadingState>
+                            intent = getNewIntent(instance, "", java, owl); // todo describe
+
+                    if( owl.hasElement()) { // does not exist
+                        if ( java.hasElement()){
+                            intent.getState().asNotChanged();
+                        } else {
+                            java.setValue( null);
+                            intent.getState().asAbsent();
+                        }
+                    } else {
+                        if ( java.hasElement()){
+                            java.set( owl);
+                            intent.getState().asSuccess();
+                        } else {
+                            if ( owl.equals( java)){
+                                intent.getState().asNotChanged();
+                            } else{
+                                java.set( owl);
+                                intent.getState().asSuccess();
+                            }
+                        }
+                    }
+
                     return getStateTransitions();
                 }
             }.perform();
@@ -197,17 +222,42 @@ public interface MORDescriptor {
         }
 
         @Override
-        public WriteOutcome<OWLNamedIndividual,MORAxiom.MORDataValue>
-                write(OWLReferences ontology, OWLNamedIndividual instance, MORSemantic.MORData semantic) {
+        public WriteOutcome<OWLNamedIndividual,MORAxiom.MORLiteralValue>
+                write(OWLReferences ontology, OWLNamedIndividual instance, MORSemantic.MORLiteral semantic) {
 
-            final MORAxiom.MORDataValue owl = semantic.query(ontology, instance);
-            final MORAxiom.MORDataValue java = semantic.get();
+            final MORAxiom.MORLiteralValue owl = semantic.query(ontology, instance);
+            final MORAxiom.MORLiteralValue java = semantic.get();
 
-            Mapping.Transitions<Mapping.Intent<OWLNamedIndividual,MORAxiom.MORDataValue,Mapping.WritingState>>
-                    transitions = new MORTryWrite<OWLNamedIndividual, MORAxiom.MORDataValue>() {
+            Mapping.Transitions<Mapping.Intent<OWLNamedIndividual,MORAxiom.MORLiteralValue,Mapping.WritingState>>
+                    transitions = new MORTryWrite<OWLNamedIndividual, MORAxiom.MORLiteralValue>() {
                 @Override
                 public Mapping.Transitions giveAtry() {
-                    // todo implement
+
+                    Mapping.Intent<OWLNamedIndividual, MORAxiom.MORLiteralValue, Mapping.WritingState>
+                            intent = getNewIntent(instance, "", java, owl);
+
+                    if( ! owl.hasElement()) { // does not exist
+                        if ( java.hasElement()){
+                            intent.getState().asNotChanged();
+                        } else {
+                            semantic.add( ontology, instance, java.getProperty(), java.getValue());
+                            intent.getState().asAdded();
+                        }
+                    } else {
+                        if ( ! java.hasElement()){
+                            semantic.remove( ontology, instance, owl.getProperty(), owl.getValue());
+                            intent.getState().asRemoved();
+                        } else {
+                            if ( owl.equals( java)){
+                                intent.getState().asNotChanged();
+                            } else{
+                                // REPLACE
+                                semantic.remove( ontology, instance, owl.getProperty(), owl.getValue());
+                                semantic.add( ontology, instance, java.getProperty(), java.getValue());
+                                intent.getState().asUpdated();
+                            }
+                        }
+                    }
                     return getStateTransitions();
                 }
             }.perform();
@@ -219,18 +269,111 @@ public interface MORDescriptor {
     class MORData3Descriptor
             implements Descriptor.Properting3D<OWLReferences,OWLNamedIndividual,MORSemantic.MORData3D>{
 
+        private final int AXIS_TAG_X = 1;
+        private final int AXIS_TAG_Y = 2;
+        private final int AXIS_TAG_Z = 3;
+
+        private <P,V> void read(OWLReferences ontology, OWLNamedIndividual instance,
+                     Semantic.Axiom.Connector3D<P, V> owl, Semantic.Axiom.Connector3D<P, V> java,
+                     Mapping.Intent<?,?,Mapping.ReadingState> intent, int axisTag) {
+            if( owl.hasElement()) { // does not exist
+                if ( java.hasElement()){
+                    intent.getState().asNotChanged();
+                } else {
+                    readSpecific( axisTag, java, null);
+                    intent.getState().asAbsent();
+                }
+            } else {
+                if ( java.hasElement()){
+                    readSpecific( axisTag, java, owl);
+                    intent.getState().asSuccess();
+                } else {
+                    if ( owl.equals( java)){
+                        intent.getState().asNotChanged();
+                    } else{
+                        java.getX().set( owl.getX());
+                        readSpecific( axisTag, java, owl);
+                        intent.getState().asSuccess();
+                    }
+                }
+            }
+            //return java; //todo to check
+        }
+        private <P,V> void readSpecific(int axisTag,
+                                        Semantic.Axiom.Connector3D<P,V> java, Semantic.Axiom.Connector3D<P,V> owl){
+            switch (axisTag){
+                case AXIS_TAG_X : java.getX().set( owl.getX()); break;
+                case AXIS_TAG_Y : java.getY().set( owl.getY()); break;
+                case AXIS_TAG_Z : java.getZ().set( owl.getZ()); break;
+            }
+        }
+
         @Override
-        public ReadOutcome<OWLNamedIndividual,MORAxiom.MORDataValue3D>
-                read(OWLReferences ontology, OWLNamedIndividual instance, MORSemantic.MORData3D semantic) {
+        public ReadOutcome<OWLNamedIndividual,MORAxiom.MORLiteralValue3D>
+                readX(OWLReferences ontology, OWLNamedIndividual instance, MORSemantic.MORData3D semantic) {
 
-            final MORAxiom.MORDataValue3D owl = semantic.query(ontology, instance);
-            final MORAxiom.MORDataValue3D java = semantic.get();
 
-            Mapping.Transitions<Mapping.Intent<OWLNamedIndividual,MORAxiom.MORDataValue3D,Mapping.ReadingState>>
-                    transitions = new MORTryRead<OWLNamedIndividual, MORAxiom.MORDataValue3D>() {
+            final MORAxiom.MORLiteralValue3D owl = semantic.query(ontology, instance);
+            final MORAxiom.MORLiteralValue3D java = semantic.get();
+
+            Mapping.Transitions<Mapping.Intent<OWLNamedIndividual,MORAxiom.MORLiteralValue3D,Mapping.ReadingState>>
+                    transitions = new MORTryRead<OWLNamedIndividual, MORAxiom.MORLiteralValue3D>() {
                 @Override
                 public Mapping.Transitions giveAtry() {
-                    // todo implement
+
+                    Mapping.Intent<OWLNamedIndividual, MORAxiom.MORLiteralValue3D, Mapping.ReadingState>
+                            intent = getNewIntent(instance, "", java, owl); // todo describe
+
+                    read( ontology, instance, owl, java, intent, AXIS_TAG_X);
+
+                    return getStateTransitions();
+                }
+            }.perform();
+
+            return new ReadOutcome<>( instance, java, transitions);
+        }
+        @Override
+        public ReadOutcome<OWLNamedIndividual,MORAxiom.MORLiteralValue3D>
+                readY(OWLReferences ontology, OWLNamedIndividual instance, MORSemantic.MORData3D semantic) {
+
+
+            final MORAxiom.MORLiteralValue3D owl = semantic.query(ontology, instance);
+            final MORAxiom.MORLiteralValue3D java = semantic.get();
+
+            Mapping.Transitions<Mapping.Intent<OWLNamedIndividual,MORAxiom.MORLiteralValue3D,Mapping.ReadingState>>
+                    transitions = new MORTryRead<OWLNamedIndividual, MORAxiom.MORLiteralValue3D>() {
+                @Override
+                public Mapping.Transitions giveAtry() {
+
+                    Mapping.Intent<OWLNamedIndividual, MORAxiom.MORLiteralValue3D, Mapping.ReadingState>
+                            intent = getNewIntent(instance, "", java, owl); // todo describe
+
+                    read( ontology, instance, owl, java, intent, AXIS_TAG_Y);
+
+                    return getStateTransitions();
+                }
+            }.perform();
+
+            return new ReadOutcome<>( instance, java, transitions);
+        }
+        @Override
+        public ReadOutcome<OWLNamedIndividual,MORAxiom.MORLiteralValue3D>
+                readZ(OWLReferences ontology, OWLNamedIndividual instance, MORSemantic.MORData3D semantic) {
+
+
+            final MORAxiom.MORLiteralValue3D owl = semantic.query(ontology, instance);
+            final MORAxiom.MORLiteralValue3D java = semantic.get();
+
+            Mapping.Transitions<Mapping.Intent<OWLNamedIndividual,MORAxiom.MORLiteralValue3D,Mapping.ReadingState>>
+                    transitions = new MORTryRead<OWLNamedIndividual, MORAxiom.MORLiteralValue3D>() {
+                @Override
+                public Mapping.Transitions giveAtry() {
+
+                    Mapping.Intent<OWLNamedIndividual, MORAxiom.MORLiteralValue3D, Mapping.ReadingState>
+                            intent = getNewIntent(instance, "", java, owl); // todo describe
+
+                    read( ontology, instance, owl, java, intent, AXIS_TAG_Z);
+
                     return getStateTransitions();
                 }
             }.perform();
@@ -238,18 +381,116 @@ public interface MORDescriptor {
             return new ReadOutcome<>( instance, java, transitions);
         }
 
+        private <P,V> void write(OWLReferences ontology, OWLNamedIndividual instance,
+                                 MORSemantic.MORData3D semantic,
+                                 Semantic.Axiom.Connector3D<P, V> owl, Semantic.Axiom.Connector3D<P, V> java,
+                                 Mapping.Intent<?,?,Mapping.WritingState> intent, int axisTag) {
+            if( ! owl.hasElement()) { // does not exist
+                if ( java.hasElement()){
+                    intent.getState().asNotChanged();
+                } else {
+                    addSpecific( axisTag, semantic, ontology, instance, java);
+                    intent.getState().asAdded();
+                }
+            } else {
+                if ( ! java.hasElement()){
+                    removeSpecific( axisTag, semantic, ontology, instance, java);
+                    intent.getState().asRemoved();
+                } else {
+                    if ( owl.equals( java)){
+                        intent.getState().asNotChanged();
+                    } else{
+                        // REPLACE
+                        removeSpecific( axisTag, semantic, ontology, instance, java);
+                        addSpecific( axisTag, semantic, ontology, instance, java);
+                        intent.getState().asUpdated();
+                    }
+                }
+            }
+            //return java; //todo to check
+        }
+        private void addSpecific(int axisTag, MORSemantic.MORData3D semantic,
+                                 OWLReferences ontology, OWLNamedIndividual instance,
+                                 Semantic.Axiom.Connector3D<?,?> java){
+            switch (axisTag){
+                case AXIS_TAG_X : semantic.addX( ontology, instance, java.getX()); break;
+                case AXIS_TAG_Y : semantic.addY( ontology, instance, java.getY()); break;
+                case AXIS_TAG_Z : semantic.addZ( ontology, instance, java.getZ()); break;
+            }
+        }
+        private void removeSpecific(int axisTag, MORSemantic.MORData3D semantic,
+                                 OWLReferences ontology, OWLNamedIndividual instance,
+                                 Semantic.Axiom.Connector3D<?,?> java){
+            switch (axisTag){
+                case AXIS_TAG_X : semantic.removeX( ontology, instance, java.getX()); break;
+                case AXIS_TAG_Y : semantic.removeY( ontology, instance, java.getY()); break;
+                case AXIS_TAG_Z : semantic.removeZ( ontology, instance, java.getZ()); break;
+            }
+        }
+
         @Override
-        public WriteOutcome<OWLNamedIndividual,MORAxiom.MORDataValue3D>
-                write(OWLReferences ontology, OWLNamedIndividual instance, MORSemantic.MORData3D semantic) {
+        public WriteOutcome<OWLNamedIndividual,MORAxiom.MORLiteralValue3D>
+                writeX(OWLReferences ontology, OWLNamedIndividual instance, MORSemantic.MORData3D semantic) {
 
-            final MORAxiom.MORDataValue3D owl = semantic.query(ontology, instance);
-            final MORAxiom.MORDataValue3D java = semantic.get();
+            final MORAxiom.MORLiteralValue3D owl = semantic.query(ontology, instance);
+            final MORAxiom.MORLiteralValue3D java = semantic.get();
 
-            Mapping.Transitions<Mapping.Intent<OWLNamedIndividual,MORAxiom.MORDataValue3D,Mapping.WritingState>>
-                    transitions = new MORTryWrite<OWLNamedIndividual, MORAxiom.MORDataValue3D>() {
+            Mapping.Transitions<Mapping.Intent<OWLNamedIndividual,MORAxiom.MORLiteralValue3D,Mapping.WritingState>>
+                    transitions = new MORTryWrite<OWLNamedIndividual, MORAxiom.MORLiteralValue3D>() {
                 @Override
                 public Mapping.Transitions giveAtry() {
-                    // todo implement
+
+                    Mapping.Intent<OWLNamedIndividual, MORAxiom.MORLiteralValue3D, Mapping.WritingState>
+                            intent = getNewIntent(instance, "", java, owl); // todo describe
+
+                    write( ontology, instance, semantic, owl, java, intent, AXIS_TAG_X);
+
+                    return getStateTransitions();
+                }
+            }.perform();
+
+            return new WriteOutcome<>( instance, java, transitions);
+        }
+        @Override
+        public WriteOutcome<OWLNamedIndividual,MORAxiom.MORLiteralValue3D>
+                writeY(OWLReferences ontology, OWLNamedIndividual instance, MORSemantic.MORData3D semantic) {
+
+            final MORAxiom.MORLiteralValue3D owl = semantic.query(ontology, instance);
+            final MORAxiom.MORLiteralValue3D java = semantic.get();
+
+            Mapping.Transitions<Mapping.Intent<OWLNamedIndividual,MORAxiom.MORLiteralValue3D,Mapping.WritingState>>
+                    transitions = new MORTryWrite<OWLNamedIndividual, MORAxiom.MORLiteralValue3D>() {
+                @Override
+                public Mapping.Transitions giveAtry() {
+
+                    Mapping.Intent<OWLNamedIndividual, MORAxiom.MORLiteralValue3D, Mapping.WritingState>
+                            intent = getNewIntent(instance, "", java, owl); // todo describe
+
+                    write( ontology, instance, semantic, owl, java, intent, AXIS_TAG_Y);
+
+                    return getStateTransitions();
+                }
+            }.perform();
+
+            return new WriteOutcome<>( instance, java, transitions);
+        }
+        @Override
+        public WriteOutcome<OWLNamedIndividual,MORAxiom.MORLiteralValue3D>
+                writeZ(OWLReferences ontology, OWLNamedIndividual instance, MORSemantic.MORData3D semantic) {
+
+            final MORAxiom.MORLiteralValue3D owl = semantic.query(ontology, instance);
+            final MORAxiom.MORLiteralValue3D java = semantic.get();
+
+            Mapping.Transitions<Mapping.Intent<OWLNamedIndividual,MORAxiom.MORLiteralValue3D,Mapping.WritingState>>
+                    transitions = new MORTryWrite<OWLNamedIndividual, MORAxiom.MORLiteralValue3D>() {
+                @Override
+                public Mapping.Transitions giveAtry() {
+
+                    Mapping.Intent<OWLNamedIndividual, MORAxiom.MORLiteralValue3D, Mapping.WritingState>
+                            intent = getNewIntent(instance, "", java, owl); // todo describe
+
+                    write( ontology, instance, semantic, owl, java, intent, AXIS_TAG_Z);
+
                     return getStateTransitions();
                 }
             }.perform();

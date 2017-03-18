@@ -171,17 +171,17 @@ public interface MORAxiom extends Semantic.Axiom{
         }
     }
 
-    class MORDataValue
+    class MORLiteralValue
             implements Semantic.Axiom.Connector<OWLDataProperty,OWLLiteral>, MORAxiom{
 
         private OWLDataProperty property;
         private OWLLiteral value;
 
-        public MORDataValue(){}
-        public MORDataValue(OWLDataProperty property){
+        public MORLiteralValue(){}
+        public MORLiteralValue(OWLDataProperty property){
             this.property = property;
         }
-        public MORDataValue(OWLDataProperty property, OWLLiteral value){
+        public MORLiteralValue(OWLDataProperty property, OWLLiteral value){
             this.property = property;
             this.value = value;
         }
@@ -207,75 +207,38 @@ public interface MORAxiom extends Semantic.Axiom{
         }
     }
 
-    class MORDataValue3D
+    class MORLiteralValue3D
             implements Semantic.Axiom.Connector3D<OWLDataProperty,OWLLiteral>, MORAxiom{
 
-        private OWLDataProperty propertyX, propertyY, propertyZ;
-        private OWLLiteral valueX, valueY, valueZ;
+        private MORLiteralValue x = new MORLiteralValue();
+        private MORLiteralValue y = new MORLiteralValue();
+        private MORLiteralValue z = new MORLiteralValue();
 
-        public MORDataValue3D(){}
-        public MORDataValue3D(OWLReferences onto, String prefix, String xSuff, String ySuff, String zSuff){
-            if (prefix == null){
-                propertyX = onto.getOWLDataProperty( xSuff);
-                propertyY = onto.getOWLDataProperty( ySuff);
-                propertyZ = onto.getOWLDataProperty( zSuff);
+        public MORLiteralValue3D(){}
+        public MORLiteralValue3D(OWLReferences onto, String prefix, String xSuff, String ySuff, String zSuff){
+            if (prefix == null | prefix.isEmpty()){
+                x.setProperty( onto.getOWLDataProperty( xSuff));
+                y.setProperty( onto.getOWLDataProperty( ySuff));
+                z.setProperty( onto.getOWLDataProperty( zSuff));
             } else {
-                propertyX = onto.getOWLDataProperty(prefix + xSuff);
-                propertyY = onto.getOWLDataProperty(prefix + ySuff);
-                propertyZ = onto.getOWLDataProperty(prefix + zSuff);
+                x.setProperty( onto.getOWLDataProperty( prefix + xSuff));
+                y.setProperty( onto.getOWLDataProperty( prefix + ySuff));
+                z.setProperty( onto.getOWLDataProperty( prefix + zSuff));
             }
         }
 
 
         @Override
-        public OWLDataProperty getXproperty() {
-            return propertyX;
+        public MORLiteralValue getX() {
+            return x;
         }
         @Override
-        public void setXproperty(OWLDataProperty property) {
-            this.propertyX = property;
+        public MORLiteralValue getY() {
+            return y;
         }
         @Override
-        public OWLLiteral getXvalue() {
-            return valueX;
-        }
-        @Override
-        public void setXvalue(OWLLiteral literal) {
-            this.valueX = literal;
-        }
-
-        @Override
-        public OWLDataProperty getYproperty() {
-            return propertyY;
-        }
-        @Override
-        public void setYproperty(OWLDataProperty property) {
-            this.propertyY = property;
-        }
-        @Override
-        public OWLLiteral getYvalue() {
-            return valueY;
-        }
-        @Override
-        public void setYvalue(OWLLiteral literal) {
-            this.valueY = literal;
-        }
-
-        @Override
-        public OWLDataProperty getZproperty() {
-            return propertyZ;
-        }
-        @Override
-        public void setZproperty(OWLDataProperty property) {
-            this.propertyZ = property;
-        }
-        @Override
-        public OWLLiteral getZvalue() {
-            return valueZ;
-        }
-        @Override
-        public void setZvalue(OWLLiteral literal) {
-            this.valueZ = literal;
+        public MORLiteralValue getZ() {
+            return z;
         }
     }
 
@@ -285,7 +248,7 @@ public interface MORAxiom extends Semantic.Axiom{
 
         private OWLObjectProperty property;
         private OWLClass range;
-        private int cardinality = 0;
+        private Integer cardinality = 0;
 
         public MORMinCardinalised(){}
         public MORMinCardinalised(OWLObjectProperty property, OWLClass range, int cardinality){
@@ -313,11 +276,11 @@ public interface MORAxiom extends Semantic.Axiom{
         }
 
         @Override
-        public int getCardinality() {
+        public Integer getCardinality() {
             return cardinality;
         }
         @Override
-        public void setCardinality(int cardinality) {
+        public void setCardinality(Integer cardinality) {
             this.cardinality = cardinality;
         }
     }

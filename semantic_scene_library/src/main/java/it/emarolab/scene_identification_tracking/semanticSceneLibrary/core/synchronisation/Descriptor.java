@@ -24,6 +24,27 @@ public interface Descriptor<O,I,S extends Semantic<O,I,?>> {
 
     interface Properting3D<O,I,S extends Semantic.Property3D<O,I,?>>
             extends Descriptor<O,I,S>{
+        @Override
+        default ReadOutcome<I,?> read(O ontology, I instance, S semantic){
+            ReadOutcome<I, ?> outcome = readX(ontology, instance, semantic);
+            outcome.merge( readY( ontology, instance, semantic));
+            outcome.merge( readZ( ontology, instance, semantic));
+            return outcome;
+        }
+        ReadOutcome<I,?> readX(O ontology, I instance, S semantic);
+        ReadOutcome<I,?> readY(O ontology, I instance, S semantic);
+        ReadOutcome<I,?> readZ(O ontology, I instance, S semantic);
+
+        @Override
+        default WriteOutcome<I, ?> write(O ontology, I instance, S semantic){
+            WriteOutcome<I, ?> outcome = writeX(ontology, instance, semantic);
+            outcome.merge( writeY( ontology, instance, semantic));
+            outcome.merge( writeZ( ontology, instance, semantic));
+            return outcome;
+        }
+        WriteOutcome<I,?> writeX(O ontology, I instance, S semantic);
+        WriteOutcome<I,?> writeY(O ontology, I instance, S semantic);
+        WriteOutcome<I,?> writeZ(O ontology, I instance, S semantic);
     }
 
     interface MultiProperting<O,I,S extends Semantic.MultiProperty<O,I,?>>
@@ -34,7 +55,6 @@ public interface Descriptor<O,I,S extends Semantic<O,I,?>> {
             extends Descriptor<O,I,S>{
     }
 
-    // todo to connect with implementation
     interface SynchOutcomeInterface<I,A extends Semantic.Axiom>{
         I getInstance(); // todo check if necessery
 
@@ -43,14 +63,16 @@ public interface Descriptor<O,I,S extends Semantic<O,I,?>> {
         Mapping.State getState();
 
         Mapping.Transitions getTrasition();
+
+
     }
     class SynchOutcome<I,A extends Semantic.Axiom, M extends Mapping.State>
             implements SynchOutcomeInterface<I,A>{
 
-        private final I instance;
-        private final A axiom;
-        private final M state;
-        private final Mapping.Transitions transitions;
+        private I instance;
+        private A axiom;
+        private M state;
+        private Mapping.Transitions transitions;
 
         // todo: check <-> to be copied????
         public SynchOutcome(I instance, A axiom, Mapping.Transitions<Mapping.Intent<I,A,M>> transitions){
@@ -78,6 +100,13 @@ public interface Descriptor<O,I,S extends Semantic<O,I,?>> {
         @Override
         public Mapping.Transitions getTrasition() {
             return null;
+        }
+
+        public void merge( SynchOutcome outcome){
+            this.instance = (I) outcome.getInstance();
+            this.axiom = (A) outcome.getAxiom();
+            this.state = (M) state.merge( outcome.getState());
+            transitions.addAll( outcome.getTrasition());
         }
     }
     class ReadOutcome<I,A extends Semantic.Axiom>

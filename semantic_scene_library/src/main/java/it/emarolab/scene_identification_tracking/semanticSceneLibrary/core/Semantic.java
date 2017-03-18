@@ -15,6 +15,8 @@ public interface Semantic<O,I,A extends Semantic.Axiom> {
     void add( O ontology, I instance, A atom);
     void remove( O ontology, I instance, A atom);
 
+    // todo: remove P from query, add & remove
+
     interface Type<O,I,A extends Axiom.Family<?>>
             extends Semantic<O,I,A>{
         @Override
@@ -112,21 +114,51 @@ public interface Semantic<O,I,A extends Semantic.Axiom> {
 
     interface Property3D<O,I,A extends Axiom.Connector3D<?,?>>
             extends Semantic<O,I,A>{
+
         @Override
         default void add(O ontology, I instance, A atom){
-            add( ontology, instance, atom.getXproperty(), atom.getXvalue());
-            add( ontology, instance, atom.getYproperty(), atom.getYvalue());
-            add( ontology, instance, atom.getZproperty(), atom.getZvalue());
+            addX( ontology, instance, atom.getX());
+            addY( ontology, instance, atom.getY());
+            addZ( ontology, instance, atom.getZ());
         }
-        <P,V> void add( O ontology, I instance, P property, V value);
+
+        default <P,V> void addX(O ontology, I instance, Axiom.Connector<P,V> connector){
+            addX( ontology, instance, connector.getProperty(), connector.getValue());
+        }
+        <P,V> void addX(O ontology, I instance, P property, V value);
+
+        default <P,V> void addY(O ontology, I instance, Axiom.Connector<P,V> connector){
+            addY( ontology, instance, connector.getProperty(), connector.getValue());
+        }
+        <P,V> void addY(O ontology, I instance, P property, V value);
+
+        default <P,V> void addZ(O ontology, I instance, Axiom.Connector<P,V> connector){
+            addZ( ontology, instance, connector.getProperty(), connector.getValue());
+        }
+        <P,V> void addZ(O ontology, I instance, P property, V value);
+
 
         @Override
         default void remove(O ontology, I instance, A atom){
-            remove( ontology, instance, atom.getXproperty(), atom.getXvalue());
-            remove( ontology, instance, atom.getYproperty(), atom.getYvalue());
-            remove( ontology, instance, atom.getZproperty(), atom.getZvalue());
+            removeX( ontology, instance, atom.getX());
+            removeY( ontology, instance, atom.getY());
+            removeZ( ontology, instance, atom.getZ());
         }
-        <P,V> void remove( O ontology, I instance, P property, V value);
+
+        default <P,V> void removeX( O ontology, I instance, Axiom.Connector<P,V> connector){
+            removeX( ontology, instance, connector.getProperty(), connector.getValue());
+        }
+        <P,V> void removeX( O ontology, I instance, P property, V value);
+
+        default <P,V> void removeY( O ontology, I instance, Axiom.Connector<P,V> connector){
+            removeY( ontology, instance, connector.getProperty(), connector.getValue());
+        }
+        <P,V> void removeY( O ontology, I instance, P property, V value);
+
+        default <P,V> void removeZ( O ontology, I instance, Axiom.Connector<P,V> connector){
+            removeZ( ontology, instance, connector.getProperty(), connector.getValue());
+        }
+        <P,V> void removeZ( O ontology, I instance, P property, V value);
     }
 
     interface Axiom {
@@ -177,8 +209,14 @@ public interface Semantic<O,I,A extends Semantic.Axiom> {
             C getRange(); // codominio ( owl classes)
             void setRange( C r);
 
-            int getCardinality();
-            void setCardinality( int cardinality);
+            Integer getCardinality();
+            void setCardinality( Integer cardinality);
+
+            default boolean hasElement(){
+                if (getExpression() == null | getRange() == null | getCardinality() == null)
+                    return false;
+                return true;
+            }
         }
         interface ContainerSet<A extends Container<?,?>>
                 extends Collection<A>, Axiom {
@@ -192,6 +230,20 @@ public interface Semantic<O,I,A extends Semantic.Axiom> {
 
             V getValue();
             void setValue( V v);
+
+            default void set( P p, V v){
+                setProperty( p);
+                setValue( v);
+            }
+            default <C extends Connector<P,V>> void set( C connector){
+                set( connector.getProperty(), connector.getValue());
+            }
+
+            default boolean hasElement(){
+                if( getProperty() == null | getValue() == null)
+                    return false;
+                return true;
+            }
         }
         interface ConnectorSet<A extends Connector<?,?>>
                 extends Collection<A>, Axiom {
@@ -200,8 +252,17 @@ public interface Semantic<O,I,A extends Semantic.Axiom> {
 
         interface CardinalityConnector<P,V>
                 extends Connector<P,V>{
-            int getCardinality();
-            void setCardinality( int cardinality);
+            Integer getCardinality();
+            void setCardinality( Integer cardinality);
+
+            @Override
+            default boolean hasElement() {
+                if ( ! Connector.super.hasElement())
+                    return false;
+                if ( getCardinality() == null)
+                    return false;
+                return true;
+            }
         }
         interface CardinalityConnectorSet<A extends CardinalityConnector<?,?>>
                 extends  Collection<A>, Axiom {
@@ -210,20 +271,34 @@ public interface Semantic<O,I,A extends Semantic.Axiom> {
 
         interface Connector3D<P,V>
                 extends Axiom {
-            P getXproperty();
-            void setXproperty( P p);
-            V getXvalue();
-            void setXvalue( V v);
 
-            P getYproperty();
-            void setYproperty( P p);
-            V getYvalue();
-            void setYvalue( V v);
+            Connector<P,V> getX();
+            Connector<P,V> getY();
+            Connector<P,V> getZ();
 
-            P getZproperty();
-            void setZproperty( P p);
-            V getZvalue();
-            void setZvalue( V v);
+            default boolean hasXelement() {
+                Connector<P, V> x = getX();
+                if ( x.getProperty() == null | x.getValue() == null)
+                    return false;
+                return true;
+            }
+            default boolean hasYelement() {
+                Connector<P, V> y = getY();
+                if ( y.getProperty() == null | y.getValue() == null)
+                    return false;
+                return true;
+            }
+            default boolean hasZelement() {
+                Connector<P, V> z = getZ();
+                if ( z.getProperty() == null | z.getValue() == null)
+                    return false;
+                return true;
+            }
+            default boolean hasElement() {
+                if ( hasXelement() & hasYelement() & hasZelement())
+                    return true;
+                return false;
+            }
         }
     }
 }

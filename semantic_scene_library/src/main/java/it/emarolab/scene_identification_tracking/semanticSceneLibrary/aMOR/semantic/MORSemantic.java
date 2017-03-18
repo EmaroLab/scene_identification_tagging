@@ -212,33 +212,35 @@ public interface MORSemantic extends Semantic{
         }
     }
 
-    class MORData
-            implements Semantic.Property<OWLReferences,OWLNamedIndividual,MORAxiom.MORDataValue>{
+    class MORLiteral
+            implements Semantic.Property<OWLReferences,OWLNamedIndividual,MORAxiom.MORLiteralValue>{
 
-        private MORAxiom.MORDataValue link = new MORAxiom.MORDataValue();
+        private MORAxiom.MORLiteralValue link = new MORAxiom.MORLiteralValue();
 
-        public MORData(){
+        public MORLiteral(){
         }
-        public MORData(OWLDataProperty property, OWLLiteral value){
+        public MORLiteral(OWLDataProperty property, OWLLiteral value){
             this.link.setProperty( property);
             this.link.setValue( value);
         }
 
         @Override
-        public void set(MORAxiom.MORDataValue link) {
+        public void set(MORAxiom.MORLiteralValue link) {
             this.link = link;
         }
 
         @Override
-        public MORAxiom.MORDataValue get() {
+        public MORAxiom.MORLiteralValue get() {
             return link;
         }
 
 
         @Override
-        public MORAxiom.MORDataValue query(OWLReferences ontology, OWLNamedIndividual instance) {
+        public MORAxiom.MORLiteralValue query(OWLReferences ontology, OWLNamedIndividual instance) {
+            ontology.setOWLEnquirerIncludesInferences( false);
             OWLLiteral value = ontology.getOnlyDataPropertyB2Individual( instance, link.getProperty());
-            return new MORAxiom.MORDataValue( link.getProperty(), value);
+            ontology.setOWLEnquirerIncludesInferences( true);
+            return new MORAxiom.MORLiteralValue( link.getProperty(), value);
         }
 
         @Override
@@ -253,52 +255,78 @@ public interface MORSemantic extends Semantic{
     }
 
     class MORData3D
-            implements Semantic.Property3D<OWLReferences,OWLNamedIndividual,MORAxiom.MORDataValue3D>{
+            implements Semantic.Property3D<OWLReferences,OWLNamedIndividual,MORAxiom.MORLiteralValue3D>{
 
-        private MORAxiom.MORDataValue3D link3D;
+        private MORAxiom.MORLiteralValue3D link3D;
 
         public MORData3D(){
-            link3D = new MORAxiom.MORDataValue3D();
+            link3D = new MORAxiom.MORLiteralValue3D();
         }
         public MORData3D(OWLReferences onto, String prefix, String xSuff, String ySuff, String zSuff){
-            link3D = new MORAxiom.MORDataValue3D( onto, prefix, xSuff, ySuff, zSuff);
+            link3D = new MORAxiom.MORLiteralValue3D( onto, prefix, xSuff, ySuff, zSuff);
         }
 
         @Override
-        public void set(MORAxiom.MORDataValue3D atom) {
+        public void set(MORAxiom.MORLiteralValue3D atom) {
             link3D = atom;
         }
 
         @Override
-        public MORAxiom.MORDataValue3D get() {
+        public MORAxiom.MORLiteralValue3D get() {
             return link3D;
         }
 
 
         @Override
-        public MORAxiom.MORDataValue3D query(OWLReferences ontology, OWLNamedIndividual instance) {
-            MORAxiom.MORDataValue3D queriedLink = new MORAxiom.MORDataValue3D();
-            queriedLink.setXproperty( link3D.getXproperty());
-            queriedLink.setXvalue(
-                    ontology.getOnlyDataPropertyB2Individual( instance, queriedLink.getXproperty()));
-            queriedLink.setYproperty( link3D.getYproperty());
-            queriedLink.setYvalue(
-                    ontology.getOnlyDataPropertyB2Individual( instance, queriedLink.getYproperty()));
-            queriedLink.setZproperty( link3D.getZproperty());
-            queriedLink.setZvalue(
-                    ontology.getOnlyDataPropertyB2Individual( instance, queriedLink.getZproperty()));
+        public MORAxiom.MORLiteralValue3D query(OWLReferences ontology, OWLNamedIndividual instance) {
+            MORAxiom.MORLiteralValue3D queriedLink = new MORAxiom.MORLiteralValue3D();
+            queriedLink.getX().setProperty( link3D.getX().getProperty());
+            queriedLink.getX().setValue(
+                    ontology.getOnlyDataPropertyB2Individual( instance, queriedLink.getX().getProperty()));
+            queriedLink.getY().setProperty( link3D.getY().getProperty());
+            queriedLink.getY().setValue(
+                    ontology.getOnlyDataPropertyB2Individual( instance, queriedLink.getY().getProperty()));
+            queriedLink.getZ().setProperty( link3D.getZ().getProperty());
+            queriedLink.getZ().setValue(
+                    ontology.getOnlyDataPropertyB2Individual( instance, queriedLink.getZ().getProperty()));
             return queriedLink;
         }
 
-        @Override
-        public <P, V> void add(OWLReferences ontology, OWLNamedIndividual instance, P property, V value) {
+        private <P,V> void add(OWLReferences ontology, OWLNamedIndividual instance, P property, V value) {
             ontology.addDataPropertyB2Individual( instance, (OWLDataProperty) property, (OWLLiteral) value);
+        }
+        private <P,V> void remove(OWLReferences ontology, OWLNamedIndividual instance, P property, V value) {
+            ontology.removeDataPropertyB2Individual( instance, (OWLDataProperty) property, (OWLLiteral) value);
+        }
+
+        @Override
+        public <P, V> void addX(OWLReferences ontology, OWLNamedIndividual instance, P property, V value) {
+            add(ontology,instance,property,value);
+        }
+
+        @Override
+        public <P, V> void addY(OWLReferences ontology, OWLNamedIndividual instance, P property, V value) {
 
         }
 
         @Override
-        public <P, V> void remove(OWLReferences ontology, OWLNamedIndividual instance, P property, V value) {
-            ontology.removeDataPropertyB2Individual( instance, (OWLDataProperty) property, (OWLLiteral) value);
+        public <P, V> void addZ(OWLReferences ontology, OWLNamedIndividual instance, P property, V value) {
+
+        }
+
+        @Override
+        public <P, V> void removeX(OWLReferences ontology, OWLNamedIndividual instance, P property, V value) {
+
+        }
+
+        @Override
+        public <P, V> void removeY(OWLReferences ontology, OWLNamedIndividual instance, P property, V value) {
+
+        }
+
+        @Override
+        public <P, V> void removeZ(OWLReferences ontology, OWLNamedIndividual instance, P property, V value) {
+
         }
     }
 }
