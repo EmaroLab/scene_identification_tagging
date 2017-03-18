@@ -6,54 +6,68 @@ import it.emarolab.scene_identification_tracking.semanticSceneLibrary.core.Seman
 /**
  * Created by bubx on 16/03/17.
  */
-public interface Descriptor<O,I,X extends Semantic<O,I,?>> {
+public interface Descriptor<O,I,S extends Semantic<O,I,?>> {
 
-    SynchOutcome synchronise(O ontology, I instance, X semantic);
+    ReadOutcome<?> read(O ontology, I instance, S semantic);
+    WriteOutcome<?> write(O ontology, I instance, S semantic);
 
-    interface Type<O,I,X extends Semantic.Axiom.Type<O,I,?>> extends Descriptor<O,I,X>{
+    interface Type<O,I,S extends Semantic.Type<O,I,?>> extends Descriptor<O,I, S>{
     }
 
-    //interface Hyerarchy<O,I,X extends Semantic.Axiom.Hierarchy<O,I,?>> extends Descriptor<O,I,X>{
-    //}
-
-    interface Property<O,I,X extends Semantic.Axiom.Property<O,I,?>> extends Descriptor<O,I,X>{
+    interface Hyerarchy<O,I,S extends Semantic.Hierarchy<O,I,?>> extends Descriptor<O,I, S>{
     }
 
-    interface MultiProperty<O,I,X extends Semantic.Axiom.MultiProperty<O,I,?>> extends Descriptor<O,I,X>{
+    interface Property<O,I,S extends Semantic.Property<O,I,?>> extends Descriptor<O,I, S>{
     }
 
-    interface SynchOutcomeInterface<X extends Semantic.Atom>{
-        X getSemantic();
+    interface MultiProperty<O,I,S extends Semantic.MultiProperty<O,I,?>> extends Descriptor<O,I, S>{
+    }
+
+    // todo to connect with implementation
+    interface SynchOutcomeInterface<A extends Semantic.Axiom>{
+        A getSemantic();
 
         Mapping.State getState();
 
         Mapping.Transitions getTrasition();
     }
-    class SynchOutcome<X extends Semantic.Atom> implements SynchOutcomeInterface<X>{
+    class SynchOutcome<A extends Semantic.Axiom, M extends Mapping.State> implements SynchOutcomeInterface<A>{
 
-        private final X semantic;
-        private final Mapping.State state;
+        private final A semantic;
+        private final M state;
         private final Mapping.Transitions transitions;
 
-        public SynchOutcome(X semantic, Mapping.State state, Mapping.Transitions transitions){
+        public SynchOutcome(A semantic, M state, Mapping.Transitions transitions){
             this.semantic = semantic;
             this.state = state;
             this.transitions = transitions;
         }
 
         @Override
-        public X getSemantic() {
+        public A getSemantic() {
             return null;
         }
 
         @Override
-        public Mapping.State getState() {
+        public M getState() {
             return null;
         }
 
         @Override
         public Mapping.Transitions getTrasition() {
             return null;
+        }
+    }
+    class ReadOutcome<A extends Semantic.Axiom>
+            extends SynchOutcome<A,Mapping.ReadingState>{
+        public ReadOutcome(A semantic, Mapping.ReadingState state, Mapping.Transitions transitions) {
+            super(semantic, state, transitions);
+        }
+    }
+    class WriteOutcome<A extends Semantic.Axiom>
+            extends SynchOutcome<A,Mapping.ReadingState>{
+        public WriteOutcome(A semantic, Mapping.ReadingState state, Mapping.Transitions transitions) {
+            super(semantic, state, transitions);
         }
     }
 }

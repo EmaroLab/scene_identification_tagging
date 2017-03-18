@@ -84,7 +84,7 @@ public interface Mapping extends Base{
         }
     }
 
-    class MappingIntent<I,A extends Semantic.Atom<?>, M extends State> 
+    class MappingIntent<I,A extends Semantic.Axiom<?>, M extends State>
             extends SITBase 
             implements Comparable<MappingIntent<?,?,?>>{
 

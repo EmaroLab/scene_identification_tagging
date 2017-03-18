@@ -4,7 +4,7 @@ import java.util.Collection;
 import java.util.Set;
 
 // describe the semantics of data that can be synchronised with an ontology
-public interface Semantic<O,I,A extends Semantic.Atom> {
+public interface Semantic<O,I,A extends Semantic.Axiom> {
 
     void set( A atom); // set this semantic descriptor
     A get(); // get this semantic descriptor
@@ -13,127 +13,124 @@ public interface Semantic<O,I,A extends Semantic.Atom> {
     void add( O ontology, I instance, A atom);
     void remove( O ontology, I instance, A atom);
 
-    interface Axiom<O,I,A extends Semantic.Atom> extends Semantic<O,I,A>{
-
-        interface Type<O,I,A extends Atom.Family<?>>
-                extends Axiom<O,I,A>{
-            @Override
-            default void add(O ontology, I instance, A atom){
-                if (atom.hasParents())
-                    for ( Object y : atom.getParents())
-                        add( ontology, instance, y);
-            }
-            <Y> void add(O ontology, I instance, Y type);
-
-            @Override
-            default void remove(O ontology, I instance, A atom){
-                if (atom.hasParents())
-                    for ( Object y : atom.getParents())
-                        remove( ontology, instance, y);
-            }
-            <Y> void remove(O ontology, I instance, Y type);
+    interface Type<O,I,A extends Axiom.Family<?>>
+            extends Semantic<O,I,A>{
+        @Override
+        default void add(O ontology, I instance, A atom){
+            if (atom.hasParents())
+                for ( Object y : atom.getParents())
+                    add( ontology, instance, y);
         }
+        <Y> void add(O ontology, I instance, Y type);
 
-        interface Hierarchy<O,I,A extends Atom.Node<?>>
-                extends Axiom<O,I,A>{
-            @Override
-            default void add(O ontology, I instance, A atom){
-                if ( atom.hasParents())
-                    for ( Object y : atom.getParents())
-                        addParent( ontology, instance, y);
-                if ( atom.hasChildren())
-                    for ( Object y : atom.getChildren())
-                        addChild( ontology, instance, y);
-            }
-            <Y> void addParent(O ontology, I instance, Y type);
-            <Y> void addChild(O ontology, I instance, Y type);
-
-            @Override
-            default void remove(O ontology, I instance, A atom){
-                if ( atom.hasParents())
-                    for ( Object y : atom.getParents())
-                        removeParent( ontology, instance, y);
-                if ( atom.hasChildren())
-                    for ( Object y : atom.getChildren())
-                        removeChild( ontology, instance, y);
-            }
-            <Y> void removeParent(O ontology, I instance, Y type);
-            <Y> void removeChild(O ontology, I instance, Y type);
+        @Override
+        default void remove(O ontology, I instance, A atom){
+            if (atom.hasParents())
+                for ( Object y : atom.getParents())
+                    remove( ontology, instance, y);
         }
-
-        interface ClassRestriction<O,I,A extends Atom.CardinalityConnectorSet<? extends Atom.Connector<?,?>>>
-                extends Axiom<O,I,A>{
-            @Override
-            default void add(O ontology, I instance, A atom){
-                for( Atom.Connector<?,?> a : atom)
-                    add(ontology,instance,a.getProperty(),a.getValue());
-            }
-            <P,C> void add(O ontology, I instance, P property, C range);
-
-            @Override
-            default void remove(O ontology, I instance, A atom){
-                for( Atom.Connector<?,?> a : atom)
-                    remove(ontology,instance,a.getProperty(),a.getValue());
-            }
-            <P,C> void remove(O ontology, I instance, P property, C range);
-        }
-
-        interface Property<O,I,A extends Atom.Connector<?,?>>
-                extends Axiom<O,I,A>{
-            @Override
-            default void add(O ontology, I instance, A atom){
-                add( ontology, instance, atom.getProperty(), atom.getValue());
-            }
-            <P,V> void add( O ontology, I instance, P property, V value);
-
-            @Override
-            default void remove(O ontology, I instance, A atom){
-                remove( ontology, instance, atom.getProperty(), atom.getValue());
-            }
-            <P,V> void remove( O ontology, I instance, P property, V value);
-        }
-
-        interface MultiProperty<O,I,A extends Atom.ConnectorSet<? extends Atom.Connector<?,?>>>
-                extends Axiom<O,I,A>{
-            @Override
-            default void add(O ontology, I instance, A atom){
-                for( Atom.Connector<?,?> a : atom.getSet())
-                    add(ontology,instance,a.getProperty(),a.getValue());
-            }
-            <P,V> void add( O ontology, I instance, P property, V value);
-
-            @Override
-            default void remove(O ontology, I instance, A atom){
-                for( Atom.Connector<?,?> a : atom.getSet())
-                    remove(ontology,instance,a.getProperty(),a.getValue());
-            }
-            <P,V> void remove( O ontology, I instance, P property, V value);
-        }
-
-        interface Property3D<O,I,A extends Atom.Connector3D<?,?>>
-                extends Axiom<O,I,A>{
-            @Override
-            default void add(O ontology, I instance, A atom){
-                add( ontology, instance, atom.getXproperty(), atom.getXvalue());
-                add( ontology, instance, atom.getYproperty(), atom.getYvalue());
-                add( ontology, instance, atom.getZproperty(), atom.getZvalue());
-            }
-            <P,V> void add( O ontology, I instance, P property, V value);
-
-            @Override
-            default void remove(O ontology, I instance, A atom){
-                remove( ontology, instance, atom.getXproperty(), atom.getXvalue());
-                remove( ontology, instance, atom.getYproperty(), atom.getYvalue());
-                remove( ontology, instance, atom.getZproperty(), atom.getZvalue());
-            }
-            <P,V> void remove( O ontology, I instance, P property, V value);
-        }
+        <Y> void remove(O ontology, I instance, Y type);
     }
 
-    interface Atom {
+    interface Hierarchy<O,I,A extends Axiom.Node<?>>
+            extends Semantic<O,I,A>{
+        @Override
+        default void add(O ontology, I instance, A atom){
+            if ( atom.hasParents())
+                for ( Object y : atom.getParents())
+                    addParent( ontology, instance, y);
+            if ( atom.hasChildren())
+                for ( Object y : atom.getChildren())
+                    addChild( ontology, instance, y);
+        }
+        <Y> void addParent(O ontology, I instance, Y type);
+        <Y> void addChild(O ontology, I instance, Y type);
+
+        @Override
+        default void remove(O ontology, I instance, A atom){
+            if ( atom.hasParents())
+                for ( Object y : atom.getParents())
+                    removeParent( ontology, instance, y);
+            if ( atom.hasChildren())
+                for ( Object y : atom.getChildren())
+                    removeChild( ontology, instance, y);
+        }
+        <Y> void removeParent(O ontology, I instance, Y type);
+        <Y> void removeChild(O ontology, I instance, Y type);
+    }
+
+    interface ClassRestriction<O,I,A extends Axiom.CardinalityConnectorSet<? extends Axiom.Connector<?,?>>>
+            extends Semantic<O,I,A>{
+        @Override
+        default void add(O ontology, I instance, A atom){
+            for( Axiom.Connector<?,?> a : atom)
+                add(ontology,instance,a.getProperty(),a.getValue());
+        }
+        <P,C> void add(O ontology, I instance, P property, C range);
+
+        @Override
+        default void remove(O ontology, I instance, A atom){
+            for( Axiom.Connector<?,?> a : atom)
+                remove(ontology,instance,a.getProperty(),a.getValue());
+        }
+        <P,C> void remove(O ontology, I instance, P property, C range);
+    }
+
+    interface Property<O,I,A extends Axiom.Connector<?,?>>
+            extends Semantic<O,I,A>{
+        @Override
+        default void add(O ontology, I instance, A atom){
+            add( ontology, instance, atom.getProperty(), atom.getValue());
+        }
+        <P,V> void add( O ontology, I instance, P property, V value);
+
+        @Override
+        default void remove(O ontology, I instance, A atom){
+            remove( ontology, instance, atom.getProperty(), atom.getValue());
+        }
+        <P,V> void remove( O ontology, I instance, P property, V value);
+    }
+
+    interface MultiProperty<O,I,A extends Axiom.ConnectorSet<? extends Axiom.Connector<?,?>>>
+            extends Semantic<O,I,A>{
+        @Override
+        default void add(O ontology, I instance, A atom){
+            for( Axiom.Connector<?,?> a : atom.getSet())
+                add(ontology,instance,a.getProperty(),a.getValue());
+        }
+        <P,V> void add( O ontology, I instance, P property, V value);
+
+        @Override
+        default void remove(O ontology, I instance, A atom){
+            for( Axiom.Connector<?,?> a : atom.getSet())
+                remove(ontology,instance,a.getProperty(),a.getValue());
+        }
+        <P,V> void remove( O ontology, I instance, P property, V value);
+    }
+
+    interface Property3D<O,I,A extends Axiom.Connector3D<?,?>>
+            extends Semantic<O,I,A>{
+        @Override
+        default void add(O ontology, I instance, A atom){
+            add( ontology, instance, atom.getXproperty(), atom.getXvalue());
+            add( ontology, instance, atom.getYproperty(), atom.getYvalue());
+            add( ontology, instance, atom.getZproperty(), atom.getZvalue());
+        }
+        <P,V> void add( O ontology, I instance, P property, V value);
+
+        @Override
+        default void remove(O ontology, I instance, A atom){
+            remove( ontology, instance, atom.getXproperty(), atom.getXvalue());
+            remove( ontology, instance, atom.getYproperty(), atom.getYvalue());
+            remove( ontology, instance, atom.getZproperty(), atom.getZvalue());
+        }
+        <P,V> void remove( O ontology, I instance, P property, V value);
+    }
+
+    interface Axiom {
 
         interface Family<Y>
-                extends Atom {
+                extends Axiom {
             Set<Y> getParents();
 
             void setParents(Set<Y> parents);
@@ -147,7 +144,7 @@ public interface Semantic<O,I,A extends Semantic.Atom> {
             }
         }
         interface FamilySet<A extends Family<?>>
-                extends Collection<A>, Atom{
+                extends Collection<A>, Axiom {
             Collection<A> getSet();
         }
 
@@ -166,12 +163,12 @@ public interface Semantic<O,I,A extends Semantic.Atom> {
             }
         }
         interface NodeSet<A extends Node<?>>
-                extends Collection<A>, Atom {
+                extends Collection<A>, Axiom {
             Collection<A> getSet();
         }
 
         interface Container<E,C>
-                extends Atom{
+                extends Axiom {
             E getExpression();
             void setExpression( E e);
 
@@ -182,12 +179,12 @@ public interface Semantic<O,I,A extends Semantic.Atom> {
             void setCardinality( int cardinality);
         }
         interface ContainerSet<A extends Container<?,?>>
-                extends Collection<A>, Atom{
+                extends Collection<A>, Axiom {
             Collection<A> getSet();
         }
 
         interface Connector<P,V>
-                extends Atom{
+                extends Axiom {
             P getProperty();
             void setProperty( P p);
 
@@ -195,7 +192,7 @@ public interface Semantic<O,I,A extends Semantic.Atom> {
             void setValue( V v);
         }
         interface ConnectorSet<A extends Connector<?,?>>
-                extends Collection<A>, Atom{
+                extends Collection<A>, Axiom {
             Collection<A> getSet();
         }
 
@@ -205,12 +202,12 @@ public interface Semantic<O,I,A extends Semantic.Atom> {
             void setCardinality( int cardinality);
         }
         interface CardinalityConnectorSet<A extends CardinalityConnector<?,?>>
-                extends  Collection<A>, Atom{
+                extends  Collection<A>, Axiom {
             Collection<A> getSet();
         }
 
         interface Connector3D<P,V>
-                extends Atom{
+                extends Axiom {
             P getXproperty();
             void setXproperty( P p);
             V getXvalue();
