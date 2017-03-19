@@ -78,6 +78,10 @@ public interface MORAxiom extends Semantic.Axiom{
             this.property = property;
             this.value = value;
         }
+        public MORLinked(MORLinked linked) {
+            this.property = linked.getProperty();
+            this.value = linked.value;
+        }
 
         @Override
         public OWLObjectProperty getProperty() {
@@ -105,6 +109,9 @@ public interface MORAxiom extends Semantic.Axiom{
         private Set<MORLinked> links = new HashSet<>();
 
         public MORMultiLinked(){
+        }
+        public MORMultiLinked(MORLinked v){
+            links.add( v);
         }
 
         public Set<MORLinked> getSet(){
@@ -168,6 +175,13 @@ public interface MORAxiom extends Semantic.Axiom{
         @Override
         public void clear() {
             links.clear();
+        }
+
+        public MORLinked get(OWLObjectProperty property) {
+            for( MORLinked l : this)
+                if ( l.getProperty().equals( property))
+                    return l;
+            return null;
         }
     }
 

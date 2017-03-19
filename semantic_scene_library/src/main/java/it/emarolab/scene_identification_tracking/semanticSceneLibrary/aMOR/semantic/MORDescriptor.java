@@ -35,8 +35,8 @@ public interface MORDescriptor {
                     Mapping.Intent<OWLNamedIndividual, MORAxiom.MORTyped, Mapping.ReadingState>
                             intent = getNewIntent(instance, LOGGING.INTENT_BELONG, java, owl);
 
-                    if ( java.hasParents()) {
-                        if ( owl.hasParents()) {
+                    if ( java.hasElement()) {
+                        if ( owl.hasElement()) {
                             // both red, nothing changed
                             if ( java.equals( owl)) {
                                 intent.getState().asNotChanged();
@@ -512,7 +512,50 @@ public interface MORDescriptor {
                     transitions = new MORTryRead<OWLNamedIndividual, MORAxiom.MORMultiLinked>() {
                 @Override
                 public Mapping.Transitions giveAtry() {
-                    // todo implement
+
+                    Mapping.Intent<OWLNamedIndividual, MORAxiom.MORMultiLinked, Mapping.ReadingState>
+                            intent = getNewIntent(instance, LOGGING.INTENT_BELONG, java, owl);
+
+                    if ( ! owl.hasElement()){
+                        for ( MORAxiom.MORLinked v : java){
+
+                            Mapping.Intent<OWLNamedIndividual, MORAxiom.MORMultiLinked, Mapping.ReadingState>
+                                    otherIntent = getNewIntent(instance, LOGGING.INTENT_BELONG,
+                                             new MORAxiom.MORMultiLinked( v), null);
+                            java.remove( v);
+                            otherIntent.getState().asAbsent()
+                        }
+                    } else {
+                        for ( MORAxiom.MORLinked o : owl) {
+                            MORAxiom.MORLinked j = java.get(o.getProperty());
+
+                            Mapping.Intent<OWLNamedIndividual, MORAxiom.MORMultiLinked, Mapping.ReadingState>
+                                    otherIntent = getNewIntent(instance, "",
+                                    new MORAxiom.MORMultiLinked( j), new MORAxiom.MORMultiLinked( o)); // todo describe
+
+                            if( o.hasElement()) { // does not exist
+                                if ( j.hasElement()){
+                                    otherIntent.getState().asNotChanged();
+                                } else {
+                                    j.setValue( null);
+                                    otherIntent.getState().asAbsent();
+                                }
+                            } else {
+                                if ( j.hasElement()){
+                                    j.set( o);
+                                    otherIntent.getState().asSuccess();
+                                } else {
+                                    if ( o.equals( j)){
+                                        otherIntent.getState().asNotChanged();
+                                    } else{
+                                        j.set( o);
+                                        otherIntent.getState().asSuccess();
+                                    }
+                                }
+                            }
+                        }
+                    }
+
                     return getStateTransitions();
                 }
             }.perform();

@@ -175,7 +175,7 @@ public interface MORSemantic extends Semantic{
     class MORLinks
             implements Semantic.MultiProperty<OWLReferences,OWLNamedIndividual,MORAxiom.MORMultiLinked>{
 
-        MORAxiom.MORMultiLinked links = new MORAxiom.MORMultiLinked();
+        MORAxiom.MORMultiLinked links = new MORAxiom.MORMultiLinked(v);
 
         public MORLinks(){
         }
@@ -193,8 +193,10 @@ public interface MORSemantic extends Semantic{
 
         @Override
         public MORAxiom.MORMultiLinked query(OWLReferences ontology, OWLNamedIndividual instance) {
+            //ontology.setOWLEnquirerIncludesInferences( false);
             Set<OWLEnquirer.ObjectPropertyRelations> values = ontology.getObjectPropertyB2Individual(instance);
-            MORAxiom.MORMultiLinked links = new MORAxiom.MORMultiLinked();
+            //ontology.setOWLEnquirerIncludesInferences( true);
+            MORAxiom.MORMultiLinked links = new MORAxiom.MORMultiLinked(v);
             for ( OWLEnquirer.ObjectPropertyRelations r : values)
                 links.add( r.getProperty(), r.getValues());
             return links;
@@ -237,9 +239,9 @@ public interface MORSemantic extends Semantic{
 
         @Override
         public MORAxiom.MORLiteralValue query(OWLReferences ontology, OWLNamedIndividual instance) {
-            ontology.setOWLEnquirerIncludesInferences( false);
+            //ontology.setOWLEnquirerIncludesInferences( false);
             OWLLiteral value = ontology.getOnlyDataPropertyB2Individual( instance, link.getProperty());
-            ontology.setOWLEnquirerIncludesInferences( true);
+            //ontology.setOWLEnquirerIncludesInferences( true);
             return new MORAxiom.MORLiteralValue( link.getProperty(), value);
         }
 
