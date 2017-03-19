@@ -7,7 +7,7 @@ import it.emarolab.scene_identification_tracking.semanticSceneLibrary.core.Seman
  */
 public interface Descriptor<O,I,S extends Semantic<O,I,?>> {
 
-    ReadOutcome<I,?> read(O ontology, I instance, S semantic);
+    ReadOutcome<I,?> read(O ontology, I instance);
     WriteOutcome<I,?> write(O ontology, I instance, S semantic);
 
     interface Typing<O,I,S extends Semantic.Type<O,I,?>>
@@ -18,7 +18,7 @@ public interface Descriptor<O,I,S extends Semantic<O,I,?>> {
             extends Descriptor<O,I,S>{
     }
 
-    interface Properting<O,I,S extends Semantic.Property<O,I,?>>
+/*    interface Properting<O,I,S extends Semantic.Property<O,I,?>>
             extends Descriptor<O,I,S>{
     }
 
@@ -54,7 +54,7 @@ public interface Descriptor<O,I,S extends Semantic<O,I,?>> {
     interface ClassRestricting<O,I,S extends Semantic.ClassRestriction<O,I,?>>
             extends Descriptor<O,I,S>{
     }
-
+*/
     interface SynchOutcomeInterface<I,A extends Semantic.Axiom>{
         I getInstance(); // todo check if necessery
 
@@ -107,6 +107,16 @@ public interface Descriptor<O,I,S extends Semantic<O,I,?>> {
             this.axiom = (A) outcome.getAxiom();
             this.state = (M) state.merge( outcome.getState());
             transitions.addAll( outcome.getTrasition());
+        }
+
+        @Override
+        public String toString() {
+            return "SynchOutcome{" +
+                    "instance=" + instance +
+                    ", axiom=" + axiom +
+                    ", state=" + state +
+                    ", transitions=" + transitions +
+                    '}';
         }
     }
     class ReadOutcome<I,A extends Semantic.Axiom>

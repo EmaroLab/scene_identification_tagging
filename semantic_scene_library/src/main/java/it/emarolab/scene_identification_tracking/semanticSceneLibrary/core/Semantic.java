@@ -1,12 +1,115 @@
 package it.emarolab.scene_identification_tracking.semanticSceneLibrary.core;
 
-import java.util.Collection;
 import java.util.Set;
 
 // todo ground with SITBase
 
-// describe the semantics of data that can be synchronised with an ontology
+
 public interface Semantic<O,I,A extends Semantic.Axiom> {
+
+    void set( A atom); // set this semantic descriptor
+    A get(); // get this semantic descriptor
+
+    A query( O ontology, I instance); // retrieve from ontology
+    void add( O ontology, I instance, A atom);
+    void remove( O ontology, I instance, A atom);
+
+    interface Type<O,I,A extends Axiom.Family<?>>
+            extends Semantic<O,I,A>{
+        @Override
+        default void add(O ontology, I instance, A atom){
+            if ( atom.hasParents())
+                for ( Object y : atom.getParents())
+                    add( ontology, instance, y);
+        }
+        <Y> void add(O ontology, I instance, Y type);
+
+        @Override
+        default void remove(O ontology, I instance, A atom){
+            if ( atom.hasParents())
+                for ( Object y : atom.getParents())
+                    remove( ontology, instance, y);
+        }
+        <Y> void remove(O ontology, I instance, Y type);
+    }
+
+    interface Hierarchy<O,I,A extends Axiom.Node<?>>
+            extends Semantic<O,I,A>{
+        @Override
+        default void add(O ontology, I instance, A atom){
+            if ( atom.hasParents())
+                for ( Object y : atom.getParents())
+                    addParents( ontology, instance, y);
+            if ( atom.hasChildren())
+                for ( Object y : atom.getChildren())
+                    addChildren( ontology, instance, y);
+        }
+        <Y> void addParents(O ontology, I instance, Y type);
+        <Y> void addChildren(O ontology, I instance, Y type);
+
+        @Override
+        default void remove(O ontology, I instance, A atom){
+            if ( atom.hasParents())
+                for ( Object y : atom.getParents())
+                    removeParents( ontology, instance, y);
+            if ( atom.hasChildren())
+                for ( Object y : atom.getChildren())
+                    removeChildren( ontology, instance, y);
+        }
+        <Y> void removeParents(O ontology, I instance, Y type);
+        <Y> void removeChildren(O ontology, I instance, Y type);
+    }
+
+
+
+
+
+    interface Axiom{
+
+        boolean exists();
+
+        interface Family<Y>
+                extends Axiom {
+
+            Set<Y> getParents();
+
+            default boolean hasParents(){
+                if (getParents() == null)
+                    return false;
+                if (getParents().isEmpty())
+                    return false;
+                return true;
+            }
+
+            @Override
+            default boolean exists() {
+                return hasParents();
+            }
+        }
+        // todo add FamilySet
+
+        interface Node<Y>
+                extends Family<Y> {
+            Set<Y> getChildren();
+
+            default boolean hasChildren() {
+                if (getParents() == null)
+                    return false;
+                if (getParents().isEmpty())
+                    return false;
+                return true;
+            }
+
+            @Override
+            default boolean exists() {
+                return Family.super.exists() & hasChildren();
+            }
+        }
+    }
+}
+
+// describe the semantics of data that can be synchronised with an ontology
+/*public interface Semantic<O,I,A extends Semantic.Axiom> {
 
     void set( A atom); // set this semantic descriptor
     A get(); // get this semantic descriptor
@@ -39,22 +142,22 @@ public interface Semantic<O,I,A extends Semantic.Axiom> {
         @Override
         default void add(O ontology, I instance, A atom){
             for ( Object y : atom.getParents())
-                addParent( ontology, instance, y);
+                addParents( ontology, instance, y);
             for ( Object y : atom.getChildren())
-                addChild( ontology, instance, y);
+                addChildren( ontology, instance, y);
         }
-        <Y> void addParent(O ontology, I instance, Y type);
-        <Y> void addChild(O ontology, I instance, Y type);
+        <Y> void addParents(O ontology, I instance, Y type);
+        <Y> void addChildren(O ontology, I instance, Y type);
 
         @Override
         default void remove(O ontology, I instance, A atom){
             for ( Object y : atom.getParents())
-                removeParent( ontology, instance, y);
+                removeParents( ontology, instance, y);
             for ( Object y : atom.getChildren())
-                removeChild( ontology, instance, y);
+                removeChildren( ontology, instance, y);
         }
-        <Y> void removeParent(O ontology, I instance, Y type);
-        <Y> void removeChild(O ontology, I instance, Y type);
+        <Y> void removeParents(O ontology, I instance, Y type);
+        <Y> void removeChildren(O ontology, I instance, Y type);
     }
 
     interface ClassRestriction<O,I,A extends Axiom.CardinalityConnectorSet<? extends Axiom.CardinalityConnector<?,?>>>
@@ -157,7 +260,7 @@ public interface Semantic<O,I,A extends Semantic.Axiom> {
 
     interface Axiom {
 
-        boolean hasElement();
+        boolean exists();
 
         interface Family<Y>
                 extends Axiom {
@@ -174,7 +277,7 @@ public interface Semantic<O,I,A extends Semantic.Axiom> {
             }
 
             @Override
-            default boolean hasElement() {
+            default boolean exists() {
                 return hasParents();
             }
         }
@@ -183,7 +286,7 @@ public interface Semantic<O,I,A extends Semantic.Axiom> {
             Collection<A> getSet();
 
             @Override
-            default boolean hasElement(){
+            default boolean exists(){
                 if( getSet() == null)
                     return false;
                 return ! isEmpty();
@@ -205,8 +308,8 @@ public interface Semantic<O,I,A extends Semantic.Axiom> {
             }
 
             @Override
-            default boolean hasElement() {
-                return Family.super.hasElement() & hasChildren();
+            default boolean exists() {
+                return Family.super.exists() & hasChildren();
             }
         }
         interface NodeSet<A extends Node<?>>
@@ -214,7 +317,7 @@ public interface Semantic<O,I,A extends Semantic.Axiom> {
             Collection<A> getSet();
 
             @Override
-            default boolean hasElement(){
+            default boolean exists(){
                 if( getSet() == null)
                     return false;
                 return ! isEmpty();
@@ -233,7 +336,7 @@ public interface Semantic<O,I,A extends Semantic.Axiom> {
             void setCardinality( Integer cardinality);
 
             @Override
-            default boolean hasElement(){
+            default boolean exists(){
                 if (getExpression() == null | getRange() == null | getCardinality() == null)
                     return false;
                 return true;
@@ -244,7 +347,7 @@ public interface Semantic<O,I,A extends Semantic.Axiom> {
             Collection<A> getSet();
 
             @Override
-            default boolean hasElement(){
+            default boolean exists(){
                 if( getSet() == null)
                     return false;
                 return ! isEmpty();
@@ -268,7 +371,7 @@ public interface Semantic<O,I,A extends Semantic.Axiom> {
             }
 
             @Override
-            default boolean hasElement(){
+            default boolean exists(){
                 if( getProperty() == null | getValue() == null)
                     return false;
                 return true;
@@ -279,7 +382,7 @@ public interface Semantic<O,I,A extends Semantic.Axiom> {
             Collection<A> getSet();
 
             @Override
-            default boolean hasElement(){
+            default boolean exists(){
                 if( getSet() == null)
                     return false;
                 return ! isEmpty();
@@ -292,8 +395,8 @@ public interface Semantic<O,I,A extends Semantic.Axiom> {
             void setCardinality( Integer cardinality);
 
             @Override
-            default boolean hasElement() {
-                if ( ! Connector.super.hasElement())
+            default boolean exists() {
+                if ( ! Connector.super.exists())
                     return false;
                 if ( getCardinality() == null)
                     return false;
@@ -305,7 +408,7 @@ public interface Semantic<O,I,A extends Semantic.Axiom> {
             Collection<A> getSet();
 
             @Override
-            default boolean hasElement(){
+            default boolean exists(){
                 if( getSet() == null)
                     return false;
                 return ! isEmpty();
@@ -338,11 +441,12 @@ public interface Semantic<O,I,A extends Semantic.Axiom> {
                 return true;
             }
             @Override
-            default boolean hasElement() {
+            default boolean exists() {
                 if ( hasXelement() & hasYelement() & hasZelement())
                     return true;
                 return false;
             }
         }
     }
-}
+}*/
+

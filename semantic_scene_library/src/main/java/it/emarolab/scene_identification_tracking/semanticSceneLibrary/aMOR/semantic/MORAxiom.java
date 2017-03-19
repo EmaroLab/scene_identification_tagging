@@ -1,12 +1,9 @@
 package it.emarolab.scene_identification_tracking.semanticSceneLibrary.aMOR.semantic;
 
-import it.emarolab.amor.owlInterface.OWLReferences;
 import it.emarolab.scene_identification_tracking.semanticSceneLibrary.core.Semantic;
-import org.semanticweb.owlapi.model.*;
+import org.semanticweb.owlapi.model.OWLClass;
 
-import java.util.Collection;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.Set;
 
 /**
@@ -15,6 +12,67 @@ import java.util.Set;
 public interface MORAxiom extends Semantic.Axiom{
     // todo add equal and toString
 
+    class MORTyped
+            implements Semantic.Axiom.Family<OWLClass>, MORAxiom {
+
+        private Set<OWLClass> types = new HashSet<>();
+
+        public MORTyped(){}
+        public MORTyped(OWLClass parent){
+            this.types.add( parent);
+        }
+        public MORTyped(Set<OWLClass> parents){
+            this.types = parents;
+        }
+
+        @Override
+        public Set<OWLClass> getParents() {
+            return types;
+        }
+
+        @Override
+        public String toString() {
+            return "MORTyped{" +
+                    "types=" + types +
+                    '}';
+        }
+    }
+
+    class MORHierarchised
+            extends MORTyped
+            implements Semantic.Axiom.Node<OWLClass>, MORAxiom {
+
+        private Set<OWLClass> children = new HashSet<>();
+
+        public MORHierarchised(){
+            super();
+        }
+        public MORHierarchised(Set<OWLClass> parents, Set<OWLClass> children) {
+            super( parents);
+            this.children = children;
+        }
+        public MORHierarchised( OWLClass parent, OWLClass child) {
+            super();
+            if ( parent != null)
+                this.getParents().add( parent);
+            if ( child != null)
+                this.getChildren().add( child);
+        }
+
+        @Override
+        public Set<OWLClass> getChildren() {
+            return children;
+        }
+
+        @Override
+        public String toString() {
+            return super.toString() + "MORHierarchised{" +
+                    "children=" + children +
+                    '}';
+        }
+    }
+
+    /*
     class MORTyped
             implements Semantic.Axiom.Family<OWLClass>, MORAxiom {
 
@@ -36,31 +94,6 @@ public interface MORAxiom extends Semantic.Axiom{
         @Override
         public void setParents(Set<OWLClass> parents) {
             this.parents = parents;
-        }
-    }
-
-    class MORHierarchised
-            extends MORTyped
-            implements Semantic.Axiom.Node<OWLClass>, MORAxiom {
-
-        private Set<OWLClass> children = new HashSet<>();
-
-        public MORHierarchised(){
-            super();
-        }
-        public MORHierarchised(Set<OWLClass> parents, Set<OWLClass> children) {
-            super( parents);
-            this.children = children;
-        }
-
-        @Override
-        public Set<OWLClass> getChildren() {
-            return children;
-        }
-
-        @Override
-        public void setChildren(Set<OWLClass> children) {
-            this.children = children;
         }
     }
 
@@ -367,4 +400,5 @@ public interface MORAxiom extends Semantic.Axiom{
             links.clear();
         }
     }
+    */
 }

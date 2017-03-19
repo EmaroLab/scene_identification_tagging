@@ -1,7 +1,6 @@
 package it.emarolab.scene_identification_tracking.semanticSceneLibrary.aMOR.semantic;
 
 import it.emarolab.amor.owlInterface.OWLReferences;
-import it.emarolab.scene_identification_tracking.semanticSceneLibrary.core.Semantic;
 import it.emarolab.scene_identification_tracking.semanticSceneLibrary.core.synchronisation.Descriptor;
 import it.emarolab.scene_identification_tracking.semanticSceneLibrary.core.synchronisation.Mapping;
 import org.semanticweb.owlapi.model.OWLClass;
@@ -10,21 +9,48 @@ import org.semanticweb.owlapi.model.OWLNamedIndividual;
 import org.semanticweb.owlapi.model.OWLObject;
 import org.semanticweb.owlapi.reasoner.OWLReasonerRuntimeException;
 
-import java.util.HashSet;
-import java.util.Set;
-
 /**
  * Created by bubx on 17/03/17.
  */
+@SuppressWarnings("ALL")
 public interface MORDescriptor {
+
+    interface MORTrier<I extends OWLObject, A extends MORAxiom, M extends Mapping.State>
+            extends Mapping.TrierInterface<I,A,M>{
+
+        default Mapping.Transitions onJavaError(Exception e){
+            // todo logError(e)
+            getStateTransitions().get( getStateTransitions().size() - 1).getState().asError();
+            return getStateTransitions();
+        }
+        default Mapping.Transitions onOWLError(Exception e){
+            // todo logError( "OWL" + e)
+            getStateTransitions().get( getStateTransitions().size() - 1).getState().asError();
+            return getStateTransitions();
+        }
+        default Mapping.Transitions onInconsistency(Exception e){
+            // todo logError(e)
+            getStateTransitions().get( getStateTransitions().size() - 1).getState().asInconsistent();
+            return getStateTransitions();
+        }
+
+        @Override
+        default Mapping.Transitions onError(Exception e){
+            if ( e instanceof OWLReasonerRuntimeException)
+                return onInconsistency( e);
+            if ( e instanceof OWLException)
+                return onOWLError( e);
+            return onJavaError( e);
+        }
+    }
 
     class MORTypeDescriptor
             implements Descriptor.Typing<OWLReferences,OWLNamedIndividual,MORSemantic.MORType> {
         @Override
         public ReadOutcome<OWLNamedIndividual, MORAxiom.MORTyped>
-                read(OWLReferences ontology, OWLNamedIndividual instance, MORSemantic.MORType semantic) {
+                read(OWLReferences ontology, OWLNamedIndividual instance) {
 
-            final MORAxiom.MORTyped owl = semantic.query(ontology, instance);
+            final MORSemantic.MORType semantic = new MORSemantic.MORType();
             final MORAxiom.MORTyped java = semantic.get();
 
             Mapping.Transitions<Mapping.Intent<OWLNamedIndividual,MORAxiom.MORTyped,Mapping.ReadingState>>
@@ -32,59 +58,33 @@ public interface MORDescriptor {
                 @Override
                 public Mapping.Transitions giveAtry() {
 
+                    MORAxiom.MORTyped owl = semantic.query(ontology, instance);
+
                     Mapping.Intent<OWLNamedIndividual, MORAxiom.MORTyped, Mapping.ReadingState>
                             intent = getNewIntent(instance, LOGGING.INTENT_BELONG, java, owl);
 
-                    if ( java.hasElement()) {
-                        if ( owl.hasElement()) {
-                            // both red, nothing changed
-                            if ( java.equals( owl)) {
-                                intent.getState().asNotChanged();
-                            } else {
-                                Set<OWLClass> javaValueCopy = new HashSet<>( java.getParents());
-                                for (OWLClass cl : owl.getParents()) {
-
-                                    Mapping.Intent<OWLNamedIndividual, MORAxiom.MORTyped, Mapping.ReadingState>
-                                            otherIntent = getNewIntent(instance, LOGGING.INTENT_BELONG_ADD,
-                                                null, new MORAxiom.MORTyped( cl));
-
-                                    if ( java.getParents().contains(cl)) {
-                                        // both read, not changed
-                                        otherIntent.getState().asNotChanged();
-                                        // it does not do nothing on the set
-                                        // take track of what has not beet added, to be removed later
-                                        javaValueCopy.remove(cl);
-                                    } else {
-                                        // both read, added
-                                        otherIntent.getState().asSuccess();
-                                        java.getParents().add( cl);
-                                    }
-                                }
-                                for (OWLClass rm : javaValueCopy) {
-
-                                    Mapping.Intent<OWLNamedIndividual, MORAxiom.MORTyped, Mapping.ReadingState>
-                                            removeIntent = getNewIntent(instance, LOGGING.INTENT_BELONG_REMOVE,
-                                                new MORAxiom.MORTyped( rm), null);
-
-                                    // remove remaining value
-                                    removeIntent.getState().asAbsent();
-                                    java.getParents().remove( rm);
-                                }
-                            }
-                        } else {
-                            // nothing read, nothing changed
-                            if ( java.getParents().isEmpty()) {
-                                intent.getState().asNotChanged();
-                            } else {
-                                // nothing read, remove all
-                                java.getParents().clear();
-                                intent.getState().asSuccess();
-                            }
+                    new MORSynchronise.SetReader<OWLNamedIndividual, MORAxiom.MORTyped, OWLClass>( intent) {
+                        @Override
+                        void trigger_JavaNOTExists_OWLExists() {
+                            java.getParents().addAll( owl.getParents());
+                            super.trigger_JavaNOTExists_OWLExists();
                         }
-                    } else { // java cannot be read
-                        logError("Cannot write null types for: " + instance);
-                        intent.getState().asError();
-                    }
+                        @Override
+                        void trigger_JavaExists_OWLNotExists() {
+                            java.getParents().clear();
+                            super.trigger_JavaExists_OWLNotExists();
+                        }
+                        @Override
+                        void trigger_JavaExists_OWLExists() {
+                            update( java.getParents(), owl.getParents());
+                        }
+                        @Override
+                        Mapping.Intent<OWLNamedIndividual, MORAxiom.MORTyped, Mapping.ReadingState>
+                        getUpdateIntent( OWLClass j, OWLClass o, String description) {
+                            return getNewIntent(instance, LOGGING.INTENT_BELONG + description,
+                                    new MORAxiom.MORTyped(j), new MORAxiom.MORTyped(o));
+                        }
+                    }.synchronise( java, owl);
 
                     return getStateTransitions();
                 }
@@ -97,7 +97,6 @@ public interface MORDescriptor {
         public WriteOutcome<OWLNamedIndividual, MORAxiom.MORTyped>
                 write(OWLReferences ontology, OWLNamedIndividual instance, MORSemantic.MORType semantic) {
 
-            final MORAxiom.MORTyped owl = semantic.query(ontology, instance);
             final MORAxiom.MORTyped java = semantic.get();
 
             Mapping.Transitions<Mapping.Intent<OWLNamedIndividual,MORAxiom.MORTyped,Mapping.WritingState>>
@@ -105,67 +104,40 @@ public interface MORDescriptor {
                 @Override
                 public Mapping.Transitions giveAtry() {
 
+                    MORAxiom.MORTyped owl = semantic.query(ontology, instance);
+
                     Mapping.Intent<OWLNamedIndividual, MORAxiom.MORTyped, Mapping.WritingState>
                             intent = getNewIntent(instance, "€", java, owl); // todo add in VOCABULARY
 
-                    if( java.hasParents()) {
-                        if ( owl.hasParents()) {
-                            // both red, nothing changed
-                            if( owl.equals( java)) {
-                                intent.getState().asNotChanged();
-                            } else {
-                                HashSet<OWLClass> semanticValueCopy = new HashSet<>( owl.getParents());
-                                for (OWLClass cl : java.getParents()){
-
-                                    Mapping.Intent<OWLNamedIndividual, MORAxiom.MORTyped, Mapping.WritingState>
-                                            otherIntent = getNewIntent(instance, LOGGING.INTENT_BELONG_ADD,
-                                                new MORAxiom.MORTyped( cl), null);
-
-                                    if ( owl.getParents().contains( cl)){
-                                        // both read, not changed
-                                        otherIntent.getState().asNotChanged();
-                                        // it does not do nothing on the set
-                                        // take track of what has not beet added, to be removed later
-                                        semanticValueCopy.remove( cl);
-                                    } else {
-                                        // both read, added
-                                        otherIntent.getState().asAdded();
-                                        semantic.add( ontology, instance, cl);
-                                    }
-                                }
-                                for (OWLClass rm : semanticValueCopy){
-
-                                    Mapping.Intent<OWLNamedIndividual, MORAxiom.MORTyped, Mapping.WritingState>
-                                            removeIntent = getNewIntent(instance, LOGGING.INTENT_BELONG_REMOVE,
-                                                null, new MORAxiom.MORTyped(rm));
-
-                                    // remove remaining value
-                                    semantic.remove( ontology, instance, rm);
-                                    removeIntent.getState().asRemoved();
-                                }
-                            }
-                        } else {
-                            // nothing read, nothing changed
-                            if ( java.getParents().isEmpty()){
-                                intent.getState().asNotChanged();
-                            } else {
-                                // nothing read, write all
-                                for (OWLClass cl : java.getParents()){
-                                    //Semantics.WritingState writeAllState = getTypeIntent( getOWLName( cl), javaValue, semanticValue);
-
-                                    Mapping.Intent<OWLNamedIndividual, MORAxiom.MORTyped, Mapping.WritingState>
-                                            otherIntent = getNewIntent(instance, LOGGING.INTENT_BELONG_ADD,
-                                                new MORAxiom.MORTyped(cl), null);
-
-                                    otherIntent.getState().asAdded();
-                                    semantic.add( ontology, instance, cl);
-                                }
-                            }
+                    new MORSynchronise.SetWriter<OWLNamedIndividual, MORAxiom.MORTyped, OWLClass>( intent) {
+                        @Override
+                        void trigger_JavaNOTExists_OWLExists() {
+                            semantic.remove( ontology, instance, owl.getParents());
+                            super.trigger_JavaNOTExists_OWLExists();
                         }
-                    } else { // java cannot be read
-                        logError( "Cannot write null types for: " + instance);
-                        intent.getState().asError();
-                    }
+                        @Override
+                        void trigger_JavaExists_OWLNotExists() {
+                            semantic.add( ontology, instance, java.getParents());
+                            super.trigger_JavaExists_OWLNotExists();
+                        }
+                        @Override
+                        void trigger_JavaExists_OWLExists() {
+                            update( java.getParents(), owl.getParents());
+                        }
+                        @Override
+                        Mapping.Intent<OWLNamedIndividual, MORAxiom.MORTyped, Mapping.WritingState> getUpdateIntent(OWLClass j, OWLClass o, String description) {
+                            return getNewIntent(instance, LOGGING.INTENT_BELONG + description,
+                                    new MORAxiom.MORTyped(j), new MORAxiom.MORTyped(o));
+                        }
+                        @Override
+                        void addToSemantic(OWLClass t) {
+                            semantic.add( ontology, instance, t);
+                        }
+                        @Override
+                        void removeFromSemantic(OWLClass t) {
+                            semantic.remove( ontology, instance, t);
+                        }
+                    }.synchronise( java, owl);
 
                     return getStateTransitions();
                 }
@@ -175,12 +147,12 @@ public interface MORDescriptor {
         }
     }
 
-    class MORLiteralDescriptor
+   /* class MORLiteralDescriptor
             implements Descriptor.Properting<OWLReferences,OWLNamedIndividual,MORSemantic.MORLiteral>{
 
         @Override
-        public ReadOutcome<OWLNamedIndividual,MORAxiom.MORLiteralValue>
-                read(OWLReferences ontology, OWLNamedIndividual instance, MORSemantic.MORLiteral semantic) {
+        public Descriptor.ReadOutcome<OWLNamedIndividual,MORAxiom.MORLiteralValue>
+                synchronise(OWLReferences ontology, OWLNamedIndividual instance, MORSemantic.MORLiteral semantic) {
 
             final MORAxiom.MORLiteralValue owl = semantic.query(ontology, instance);
             final MORAxiom.MORLiteralValue java = semantic.get();
@@ -193,36 +165,17 @@ public interface MORDescriptor {
                     Mapping.Intent<OWLNamedIndividual, MORAxiom.MORLiteralValue, Mapping.ReadingState>
                             intent = getNewIntent(instance, "", java, owl); // todo describe
 
-                    if( owl.hasElement()) { // does not exist
-                        if ( java.hasElement()){
-                            intent.getState().asNotChanged();
-                        } else {
-                            java.setValue( null);
-                            intent.getState().asAbsent();
-                        }
-                    } else {
-                        if ( java.hasElement()){
-                            java.set( owl);
-                            intent.getState().asSuccess();
-                        } else {
-                            if ( owl.equals( java)){
-                                intent.getState().asNotChanged();
-                            } else{
-                                java.set( owl);
-                                intent.getState().asSuccess();
-                            }
-                        }
-                    }
+                    // todo implement
 
                     return getStateTransitions();
                 }
-            }.perform();
+            }.synchronise();
 
-            return new ReadOutcome<>( instance, java, transitions);
+            return new Descriptor.ReadOutcome<>( instance, java, transitions);
         }
 
         @Override
-        public WriteOutcome<OWLNamedIndividual,MORAxiom.MORLiteralValue>
+        public Descriptor.WriteOutcome<OWLNamedIndividual,MORAxiom.MORLiteralValue>
                 write(OWLReferences ontology, OWLNamedIndividual instance, MORSemantic.MORLiteral semantic) {
 
             final MORAxiom.MORLiteralValue owl = semantic.query(ontology, instance);
@@ -236,33 +189,13 @@ public interface MORDescriptor {
                     Mapping.Intent<OWLNamedIndividual, MORAxiom.MORLiteralValue, Mapping.WritingState>
                             intent = getNewIntent(instance, "", java, owl);
 
-                    if( ! owl.hasElement()) { // does not exist
-                        if ( java.hasElement()){
-                            intent.getState().asNotChanged();
-                        } else {
-                            semantic.add( ontology, instance, java.getProperty(), java.getValue());
-                            intent.getState().asAdded();
-                        }
-                    } else {
-                        if ( ! java.hasElement()){
-                            semantic.remove( ontology, instance, owl.getProperty(), owl.getValue());
-                            intent.getState().asRemoved();
-                        } else {
-                            if ( owl.equals( java)){
-                                intent.getState().asNotChanged();
-                            } else{
-                                // REPLACE
-                                semantic.remove( ontology, instance, owl.getProperty(), owl.getValue());
-                                semantic.add( ontology, instance, java.getProperty(), java.getValue());
-                                intent.getState().asUpdated();
-                            }
-                        }
-                    }
+                    // todo implement
+
                     return getStateTransitions();
                 }
-            }.perform();
+            }.synchronise();
 
-            return new WriteOutcome<>( instance, java, transitions);
+            return new Descriptor.WriteOutcome<>( instance, java, transitions);
         }
     }
 
@@ -273,18 +206,18 @@ public interface MORDescriptor {
         private final int AXIS_TAG_Y = 2;
         private final int AXIS_TAG_Z = 3;
 
-        private <P,V> void read(OWLReferences ontology, OWLNamedIndividual instance,
+        private <P,V> void synchronise(OWLReferences ontology, OWLNamedIndividual instance,
                      Semantic.Axiom.Connector3D<P, V> owl, Semantic.Axiom.Connector3D<P, V> java,
                      Mapping.Intent<?,?,Mapping.ReadingState> intent, int axisTag) {
-            if( owl.hasElement()) { // does not exist
-                if ( java.hasElement()){
+            if( owl.exists()) { // does not exist
+                if ( java.exists()){
                     intent.getState().asNotChanged();
                 } else {
                     readSpecific( axisTag, java, null);
                     intent.getState().asAbsent();
                 }
             } else {
-                if ( java.hasElement()){
+                if ( java.exists()){
                     readSpecific( axisTag, java, owl);
                     intent.getState().asSuccess();
                 } else {
@@ -324,11 +257,11 @@ public interface MORDescriptor {
                     Mapping.Intent<OWLNamedIndividual, MORAxiom.MORLiteralValue3D, Mapping.ReadingState>
                             intent = getNewIntent(instance, "", java, owl); // todo describe
 
-                    read( ontology, instance, owl, java, intent, AXIS_TAG_X);
+                    synchronise( ontology, instance, owl, java, intent, AXIS_TAG_X);
 
                     return getStateTransitions();
                 }
-            }.perform();
+            }.synchronise();
 
             return new ReadOutcome<>( instance, java, transitions);
         }
@@ -348,11 +281,11 @@ public interface MORDescriptor {
                     Mapping.Intent<OWLNamedIndividual, MORAxiom.MORLiteralValue3D, Mapping.ReadingState>
                             intent = getNewIntent(instance, "", java, owl); // todo describe
 
-                    read( ontology, instance, owl, java, intent, AXIS_TAG_Y);
+                    synchronise( ontology, instance, owl, java, intent, AXIS_TAG_Y);
 
                     return getStateTransitions();
                 }
-            }.perform();
+            }.synchronise();
 
             return new ReadOutcome<>( instance, java, transitions);
         }
@@ -372,11 +305,11 @@ public interface MORDescriptor {
                     Mapping.Intent<OWLNamedIndividual, MORAxiom.MORLiteralValue3D, Mapping.ReadingState>
                             intent = getNewIntent(instance, "", java, owl); // todo describe
 
-                    read( ontology, instance, owl, java, intent, AXIS_TAG_Z);
+                    synchronise( ontology, instance, owl, java, intent, AXIS_TAG_Z);
 
                     return getStateTransitions();
                 }
-            }.perform();
+            }.synchronise();
 
             return new ReadOutcome<>( instance, java, transitions);
         }
@@ -385,15 +318,15 @@ public interface MORDescriptor {
                                  MORSemantic.MORData3D semantic,
                                  Semantic.Axiom.Connector3D<P, V> owl, Semantic.Axiom.Connector3D<P, V> java,
                                  Mapping.Intent<?,?,Mapping.WritingState> intent, int axisTag) {
-            if( ! owl.hasElement()) { // does not exist
-                if ( java.hasElement()){
+            if( ! owl.exists()) { // does not exist
+                if ( java.exists()){
                     intent.getState().asNotChanged();
                 } else {
                     addSpecific( axisTag, semantic, ontology, instance, java);
                     intent.getState().asAdded();
                 }
             } else {
-                if ( ! java.hasElement()){
+                if ( ! java.exists()){
                     removeSpecific( axisTag, semantic, ontology, instance, java);
                     intent.getState().asRemoved();
                 } else {
@@ -447,7 +380,7 @@ public interface MORDescriptor {
 
                     return getStateTransitions();
                 }
-            }.perform();
+            }.synchronise();
 
             return new WriteOutcome<>( instance, java, transitions);
         }
@@ -470,7 +403,7 @@ public interface MORDescriptor {
 
                     return getStateTransitions();
                 }
-            }.perform();
+            }.synchronise();
 
             return new WriteOutcome<>( instance, java, transitions);
         }
@@ -493,7 +426,7 @@ public interface MORDescriptor {
 
                     return getStateTransitions();
                 }
-            }.perform();
+            }.synchronise();
 
             return new WriteOutcome<>( instance, java, transitions);
         }
@@ -502,8 +435,8 @@ public interface MORDescriptor {
     class MORLinksDescriptor
             implements Descriptor.MultiProperting<OWLReferences,OWLNamedIndividual,MORSemantic.MORLinks>{
         @Override
-        public ReadOutcome<OWLNamedIndividual,MORAxiom.MORMultiLinked>
-                read(OWLReferences ontology, OWLNamedIndividual instance, MORSemantic.MORLinks semantic) {
+        public Descriptor.ReadOutcome<OWLNamedIndividual,MORAxiom.MORMultiLinked>
+                synchronise(OWLReferences ontology, OWLNamedIndividual instance, MORSemantic.MORLinks semantic) {
 
             final MORAxiom.MORMultiLinked owl = semantic.query(ontology, instance);
             final MORAxiom.MORMultiLinked java = semantic.get();
@@ -516,51 +449,13 @@ public interface MORDescriptor {
                     Mapping.Intent<OWLNamedIndividual, MORAxiom.MORMultiLinked, Mapping.ReadingState>
                             intent = getNewIntent(instance, LOGGING.INTENT_BELONG, java, owl);
 
-                    if ( ! owl.hasElement()){
-                        for ( MORAxiom.MORLinked v : java){
-
-                            Mapping.Intent<OWLNamedIndividual, MORAxiom.MORMultiLinked, Mapping.ReadingState>
-                                    otherIntent = getNewIntent(instance, LOGGING.INTENT_BELONG,
-                                             new MORAxiom.MORMultiLinked( v), null);
-                            java.remove( v);
-                            otherIntent.getState().asAbsent()
-                        }
-                    } else {
-                        for ( MORAxiom.MORLinked o : owl) {
-                            MORAxiom.MORLinked j = java.get(o.getProperty());
-
-                            Mapping.Intent<OWLNamedIndividual, MORAxiom.MORMultiLinked, Mapping.ReadingState>
-                                    otherIntent = getNewIntent(instance, "",
-                                    new MORAxiom.MORMultiLinked( j), new MORAxiom.MORMultiLinked( o)); // todo describe
-
-                            if( o.hasElement()) { // does not exist
-                                if ( j.hasElement()){
-                                    otherIntent.getState().asNotChanged();
-                                } else {
-                                    j.setValue( null);
-                                    otherIntent.getState().asAbsent();
-                                }
-                            } else {
-                                if ( j.hasElement()){
-                                    j.set( o);
-                                    otherIntent.getState().asSuccess();
-                                } else {
-                                    if ( o.equals( j)){
-                                        otherIntent.getState().asNotChanged();
-                                    } else{
-                                        j.set( o);
-                                        otherIntent.getState().asSuccess();
-                                    }
-                                }
-                            }
-                        }
-                    }
+                    // todo implement
 
                     return getStateTransitions();
                 }
-            }.perform();
+            }.synchronise();
 
-            return new ReadOutcome<>( instance, java, transitions);
+            return new Descriptor.ReadOutcome<>( instance, java, transitions);
         }
 
         @Override
@@ -577,51 +472,9 @@ public interface MORDescriptor {
                     // todo implement
                     return getStateTransitions();
                 }
-            }.perform();
+            }.synchronise();
 
-            return new WriteOutcome<>( instance, java, transitions);
-        }
-    }
-
-    class MORHierarchyDescriptor
-            implements Descriptor.Hierarching<OWLReferences,OWLClass,MORSemantic.MORHierarchy>{
-
-        @Override
-        public ReadOutcome<OWLClass,MORAxiom.MORHierarchised>
-                read(OWLReferences ontology, OWLClass instance, MORSemantic.MORHierarchy semantic) {
-
-            final MORAxiom.MORHierarchised owl = semantic.query(ontology, instance);
-            final MORAxiom.MORHierarchised java = semantic.get();
-
-            Mapping.Transitions<Mapping.Intent<OWLClass,MORAxiom.MORHierarchised,Mapping.ReadingState>>
-                    transitions = new MORTryRead<OWLClass, MORAxiom.MORHierarchised>() {
-                @Override
-                public Mapping.Transitions giveAtry() {
-                    // todo implement
-                    return getStateTransitions();
-                }
-            }.perform();
-
-            return new ReadOutcome<>( instance, java, transitions);
-        }
-
-        @Override
-        public WriteOutcome<OWLClass,MORAxiom.MORHierarchised>
-                write(OWLReferences ontology, OWLClass instance, MORSemantic.MORHierarchy semantic) {
-
-            final MORAxiom.MORHierarchised owl = semantic.query(ontology, instance);
-            final MORAxiom.MORHierarchised java = semantic.get();
-
-            Mapping.Transitions<Mapping.Intent<OWLClass,MORAxiom.MORHierarchised,Mapping.WritingState>>
-                    transitions = new MORTryWrite<OWLClass, MORAxiom.MORHierarchised>() {
-                @Override
-                public Mapping.Transitions giveAtry() {
-                    // todo implement
-                    return getStateTransitions();
-                }
-            }.perform();
-
-            return new WriteOutcome<>( instance, java, transitions);
+            return new Descriptor.WriteOutcome<>( instance, java, transitions);
         }
     }
 
@@ -630,7 +483,7 @@ public interface MORDescriptor {
 
         @Override
         public ReadOutcome<OWLClass,MORAxiom.MORMultiMinCardinalised>
-                read(OWLReferences ontology, OWLClass instance, MORSemantic.MORMinCardinalityRestriction semantic) {
+                synchronise(OWLReferences ontology, OWLClass instance, MORSemantic.MORMinCardinalityRestriction semantic) {
 
             final MORAxiom.MORMultiMinCardinalised owl = semantic.query(ontology, instance);
             final MORAxiom.MORMultiMinCardinalised java = semantic.get();
@@ -642,7 +495,7 @@ public interface MORDescriptor {
                     // todo implement
                     return getStateTransitions();
                 }
-            }.perform();
+            }.synchronise();
 
             return new ReadOutcome<>( instance, java, transitions);
         }
@@ -661,39 +514,126 @@ public interface MORDescriptor {
                     // todo implement
                     return getStateTransitions();
                 }
-            }.perform();
+            }.synchronise();
 
             return new WriteOutcome<>( instance, java, transitions);
         }
     }
+*/
 
+    class MORHierarchyDescriptor
+            implements Descriptor.Hierarching<OWLReferences,OWLClass,MORSemantic.MORHierarchy>{
 
-    interface MORTrier<I extends OWLObject, A extends MORAxiom, M extends Mapping.State>
-            extends Mapping.TrierInterface<I,A,M>{
+        @Override
+        public Descriptor.ReadOutcome<OWLClass,MORAxiom.MORHierarchised>
+        read(OWLReferences ontology, OWLClass instance) {
 
-        default Mapping.Transitions onJavaError(Exception e){
-            // todo logError(e)
-            getStateTransitions().get( getStateTransitions().size() - 1).getState().asError();
-            return getStateTransitions();
-        }
-        default Mapping.Transitions onOWLError(Exception e){
-            // todo logError( "OWL" + e)
-            getStateTransitions().get( getStateTransitions().size() - 1).getState().asError();
-            return getStateTransitions();
-        }
-        default Mapping.Transitions onInconsistency(Exception e){
-            // todo logError(e)
-            getStateTransitions().get( getStateTransitions().size() - 1).getState().asInconsistent();
-            return getStateTransitions();
+            final MORSemantic.MORHierarchy semantic = new MORSemantic.MORHierarchy();
+            final MORAxiom.MORHierarchised java = semantic.get();
+
+            Mapping.Transitions<Mapping.Intent<OWLClass,MORAxiom.MORHierarchised,Mapping.ReadingState>>
+                    transitions = new MORTryRead<OWLClass, MORAxiom.MORHierarchised>() {
+                @Override
+                public Mapping.Transitions giveAtry() {
+                    MORAxiom.MORHierarchised owl = semantic.query(ontology, instance);
+
+                    Mapping.Intent<OWLClass, MORAxiom.MORHierarchised, Mapping.ReadingState>
+                            intent = getNewIntent(instance, "", java, owl); // to describe
+
+                    new MORSynchronise.SetReader<OWLClass, MORAxiom.MORHierarchised, OWLClass>( intent) {
+                        @Override
+                        void trigger_JavaNOTExists_OWLExists() {
+                            java.getParents().addAll( owl.getParents());
+                            java.getChildren().addAll( owl.getChildren());
+                            super.trigger_JavaNOTExists_OWLExists();
+                        }
+                        @Override
+                        void trigger_JavaExists_OWLNotExists() {
+                            java.getParents().clear();
+                            java.getChildren().clear();
+                            super.trigger_JavaExists_OWLNotExists();
+                        }
+                        @Override
+                        void trigger_JavaExists_OWLExists() {
+                            update( java.getParents(), owl.getParents());
+                            update( java.getChildren(), owl.getChildren());
+                        }
+                        @Override
+                        Mapping.Intent<OWLClass, MORAxiom.MORHierarchised, Mapping.ReadingState>
+                        getUpdateIntent( OWLClass j, OWLClass o, String description) {
+                            // todo add descriptor str for parent & child?
+                            return getNewIntent(instance, LOGGING.INTENT_BELONG + description,
+                                    new MORAxiom.MORHierarchised(j,null), new MORAxiom.MORHierarchised(o,null));
+                        }
+                    }.synchronise( java, owl);
+
+                    return getStateTransitions();
+                }
+            }.perform();
+
+            return new Descriptor.ReadOutcome<>( instance, java, transitions);
         }
 
         @Override
-        default Mapping.Transitions onError(Exception e){
-            if ( e instanceof OWLReasonerRuntimeException)
-                return onInconsistency( e);
-            if ( e instanceof OWLException)
-                return onOWLError( e);
-            return onJavaError( e);
+        public WriteOutcome<OWLClass,MORAxiom.MORHierarchised>
+        write(OWLReferences ontology, OWLClass instance, MORSemantic.MORHierarchy semantic) {
+
+            final MORAxiom.MORHierarchised java = semantic.get();
+
+            Mapping.Transitions<Mapping.Intent<OWLClass,MORAxiom.MORHierarchised,Mapping.WritingState>>
+                    transitions = new MORTryWrite<OWLClass, MORAxiom.MORHierarchised>() {
+                @Override
+                public Mapping.Transitions giveAtry() {
+
+                    MORAxiom.MORHierarchised owl = semantic.query(ontology, instance);
+
+                    Mapping.Intent<OWLClass, MORAxiom.MORHierarchised, Mapping.WritingState>
+                            intent = getNewIntent(instance, "€", java, owl); // todo add in VOCABULARY
+
+                    new MORSynchronise.SetWriter<OWLClass, MORAxiom.MORHierarchised, OWLClass>( intent) {
+                        boolean updateParent = true; // false: updateChildren
+                        @Override
+                        void trigger_JavaNOTExists_OWLExists() {
+                            semantic.removeParents( ontology, instance, owl.getParents());
+                            semantic.removeChildren( ontology, instance, owl.getChildren());
+                            super.trigger_JavaNOTExists_OWLExists();
+                        }
+                        @Override
+                        void trigger_JavaExists_OWLNotExists() {
+                            semantic.addParents( ontology, instance, java.getParents());
+                            semantic.addChildren( ontology, instance, java.getChildren());
+                            super.trigger_JavaExists_OWLNotExists();
+                        }
+                        @Override
+                        void trigger_JavaExists_OWLExists() {
+                            update( java.getParents(), owl.getParents());
+                            updateParent = false;
+                            update( java.getChildren(), owl.getChildren());
+                        }
+                        @Override
+                        Mapping.Intent<OWLClass, MORAxiom.MORHierarchised, Mapping.WritingState> getUpdateIntent(OWLClass j, OWLClass o, String description) {
+                            return getNewIntent(instance, LOGGING.INTENT_BELONG + description,
+                                    new MORAxiom.MORHierarchised(j,null), new MORAxiom.MORHierarchised(o,null));
+                        }
+                        @Override
+                        void addToSemantic(OWLClass t) {
+                            if( updateParent)
+                                semantic.addParents( ontology, instance, t);
+                            else semantic.addChildren( ontology, instance, t);
+                        }
+                        @Override
+                        void removeFromSemantic(OWLClass t) {
+                            if ( updateParent)
+                                semantic.removeParents( ontology, instance, t);
+                            else semantic.removeChildren( ontology, instance, t);
+                        }
+                    }.synchronise( java, owl);
+
+                    return getStateTransitions();
+                }
+            }.perform();
+
+            return new WriteOutcome<>( instance, java, transitions);
         }
     }
 

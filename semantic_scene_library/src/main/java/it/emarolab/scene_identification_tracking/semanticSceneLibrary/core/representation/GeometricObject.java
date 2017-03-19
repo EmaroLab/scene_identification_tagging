@@ -13,7 +13,7 @@ public interface GeometricObject<O,I> extends Descriptor<O,I,Semantic<O,I,?>> {
 
     I getInstance();
     void setInstance( I i);
-
+/*
     interface Primitive<O,I,DP,L> extends GeometricObject<O,I>{
         Semantic.Connector3DAtom<DP,L> getCenter();
     }
@@ -39,4 +39,5 @@ public interface GeometricObject<O,I> extends Descriptor<O,I,Semantic<O,I,?>> {
 
     interface Cylinder<O,I,DP,L> extends Cone<O,I,DP,L>{
     }
+*/
 }

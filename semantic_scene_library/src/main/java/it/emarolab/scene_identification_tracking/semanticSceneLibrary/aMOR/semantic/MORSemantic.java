@@ -1,17 +1,19 @@
 package it.emarolab.scene_identification_tracking.semanticSceneLibrary.aMOR.semantic;
 
-import it.emarolab.amor.owlInterface.OWLEnquirer;
 import it.emarolab.amor.owlInterface.OWLReferences;
 import it.emarolab.scene_identification_tracking.semanticSceneLibrary.core.Semantic;
-import org.semanticweb.owlapi.model.*;
+import org.semanticweb.owlapi.model.OWLClass;
+import org.semanticweb.owlapi.model.OWLNamedIndividual;
 
 import java.util.Set;
 
 /**
  * Created by bubx on 17/03/17.
  */
+@SuppressWarnings("ALL")
 public interface MORSemantic extends Semantic{
 
+    @SuppressWarnings("Duplicates")
     class MORType
             implements Semantic.Type<OWLReferences,OWLNamedIndividual,MORAxiom.MORTyped> {
 
@@ -40,12 +42,39 @@ public interface MORSemantic extends Semantic{
 
         @Override
         public <Y> void add(OWLReferences ontology, OWLNamedIndividual instance, Y type) {
-            ontology.addIndividualB2Class( instance, (OWLClass) type);
+            if ( type instanceof Set){
+                for ( Object t : (Set) type){
+                    if ( t instanceof OWLClass)
+                        add( ontology, instance, (OWLClass) t);
+                }
+            } else if ( type instanceof OWLClass)
+                add( ontology, instance, (OWLClass) type);
+            //todo log error
+        }
+        private void add( OWLReferences ontology, OWLNamedIndividual instance, OWLClass type){
+            ontology.addIndividualB2Class( instance, type);
         }
 
         @Override
         public <Y> void remove(OWLReferences ontology, OWLNamedIndividual instance, Y type) {
-            ontology.removeIndividualB2Class( instance, (OWLClass) type);
+            if ( type instanceof Set){
+                for ( Object t : (Set) type){
+                    if ( t instanceof OWLClass)
+                        remove( ontology, instance, (OWLClass) t);
+                }
+            } else if ( type instanceof OWLClass)
+                remove( ontology, instance, (OWLClass) type);
+            //todo log error
+        }
+        private void remove(OWLReferences ontology, OWLNamedIndividual instance, OWLClass type) {
+            ontology.removeIndividualB2Class( instance, type);
+        }
+
+        @Override
+        public String toString() {
+            return "MORType{" +
+                    "types=" + types +
+                    '}';
         }
     }
 
@@ -56,12 +85,22 @@ public interface MORSemantic extends Semantic{
 
         public MORHierarchy(){}
         public MORHierarchy( Set<OWLClass> parents, Set<OWLClass> children){
-            this.node.setParents( parents);
-            this.node.setChildren( children);
+            this.node.getParents().addAll( parents);
+            this.node.getChildren().addAll( children);
+        }
+        public MORHierarchy( OWLClass parent, OWLClass child){
+            if (parent != null)
+                this.node.getParents().add( parent);
+            if (child != null)
+                this.node.getChildren().add( child);
+        }
+        public MORHierarchy(MORAxiom.MORHierarchised axiom) {
+            this.get().getParents().addAll( axiom.getParents());
+            this.get().getChildren().addAll( axiom.getChildren());
         }
 
         @Override
-        public void set(MORAxiom.MORHierarchised Node) {
+        public void set(MORAxiom.MORHierarchised node) {
             this.node = node;
         }
 
@@ -78,24 +117,58 @@ public interface MORSemantic extends Semantic{
         }
 
         @Override
-        public <Y> void addParent(OWLReferences ontology, OWLClass instance, Y type) {
-            ontology.addSubClassOf( (OWLClass) type, instance);
+        public <Y> void addParents(OWLReferences ontology, OWLClass instance, Y type) {
+            if ( type instanceof Set){
+                for ( Object t : (Set) type){
+                    if ( t instanceof OWLClass)
+                        add( ontology, (OWLClass) t, instance);
+                }
+            } else if ( type instanceof OWLClass)
+                add( ontology, (OWLClass) type, instance);
+            //todo log error
         }
         @Override
-        public <Y> void addChild(OWLReferences ontology, OWLClass instance, Y type) {
-            ontology.addSubClassOf( instance, (OWLClass) type);
+        public <Y> void addChildren(OWLReferences ontology, OWLClass instance, Y type) {
+            if ( type instanceof Set){
+                for ( Object t : (Set) type){
+                    if ( t instanceof OWLClass)
+                        add( ontology, instance, (OWLClass) t);
+                }
+            } else if ( type instanceof OWLClass)
+                add( ontology, instance, (OWLClass) type);
+            //todo log error
+        }
+        private void add( OWLReferences ontology, OWLClass parent, OWLClass child){
+            ontology.addSubClassOf( parent, child);
         }
 
         @Override
-        public <Y> void removeParent(OWLReferences ontology, OWLClass instance, Y type) {
-            ontology.removeSubClassOf( (OWLClass) type, instance);
+        public <Y> void removeParents(OWLReferences ontology, OWLClass instance, Y type) {
+            if ( type instanceof Set){
+                for ( Object t : (Set) type){
+                    if ( t instanceof OWLClass)
+                        remove( ontology, (OWLClass) t, instance);
+                }
+            } else if ( type instanceof OWLClass)
+                remove( ontology, (OWLClass) type, instance);
+            //todo log error
         }
         @Override
-        public <Y> void removeChild(OWLReferences ontology, OWLClass instance, Y type) {
-            ontology.removeSubClassOf( instance, (OWLClass) type);
+        public <Y> void removeChildren(OWLReferences ontology, OWLClass instance, Y type) {
+            if ( type instanceof Set){
+                for ( Object t : (Set) type){
+                    if ( t instanceof OWLClass)
+                        remove( ontology, instance, (OWLClass) t);
+                }
+            } else if ( type instanceof OWLClass)
+                remove( ontology, instance, (OWLClass) type);
+            //todo log error
+        }
+        private void remove( OWLReferences ontology, OWLClass parent, OWLClass child){
+            ontology.removeSubClassOf( parent, child);
         }
     }
-
+/*
     class MORMinCardinalityRestriction
             implements Semantic.ClassRestriction<OWLReferences,OWLClass,MORAxiom.MORMultiMinCardinalised> {
 
@@ -331,4 +404,5 @@ public interface MORSemantic extends Semantic{
 
         }
     }
+    */
 }
