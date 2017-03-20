@@ -3,12 +3,10 @@ package it.emarolab.scene_identification_tracking.semanticSceneLibrary.test;
 import it.emarolab.amor.owlDebugger.Logger;
 import it.emarolab.amor.owlInterface.OWLReferences;
 import it.emarolab.amor.owlInterface.OWLReferencesInterface;
-import it.emarolab.scene_identification_tracking.semanticSceneLibrary.aMOR.semantic.MORAxiom;
 import it.emarolab.scene_identification_tracking.semanticSceneLibrary.aMOR.semantic.MORDescriptor;
 import it.emarolab.scene_identification_tracking.semanticSceneLibrary.aMOR.semantic.MORSemantic;
 import org.semanticweb.owlapi.model.OWLClass;
 import org.semanticweb.owlapi.model.OWLDataProperty;
-import org.semanticweb.owlapi.model.OWLLiteral;
 import org.semanticweb.owlapi.model.OWLNamedIndividual;
 
 import static it.emarolab.scene_identification_tracking.semanticSceneLibrary.Base.Logger.LOG;
@@ -56,14 +54,60 @@ public class ArchitectureTest {
         //Semantics.Base.shutDownLoggers( true);
         showDebugs( logging);
 
+        OWLNamedIndividual ind = ontoRef.getOWLIndividual("ind");
+        OWLClass sphere = ontoRef.getOWLClass("Sphere");
+        OWLDataProperty prop = ontoRef.getOWLDataProperty("data-prop");
 
+        // TEST TYPED DESCRIPTOR
+        MORDescriptor.MORTypeDescriptor typeDescriptor = new MORDescriptor.MORTypeDescriptor();
+        MORSemantic.MORType typeSemantic = new MORSemantic.MORType();
+        // read empty
+        LOG(" EMPTY READ\t\t" + typeDescriptor.read( ontoRef, ind, typeSemantic));
+        // modify-read
+        typeSemantic.get().getParents().add( sphere);
+        LOG(" MODIFY READ\t\t" + typeDescriptor.read( ontoRef, ind, typeSemantic));
+        // modify-write
+        typeSemantic.get().getParents().add( sphere);
+        LOG(" MODIFY WRITE\t\t" + typeDescriptor.write( ontoRef, ind, typeSemantic));
+ /*       // read
+        MORSemantic.MORType readType = new MORSemantic.MORType();
+        LOG(" FULLY READ\t\t" + typeDescriptor.read( ontoRef, ind, readType));
+
+        LOG( "\n\t--------------------------------------------------------------------------\n");
+
+        // TEST HIERARCHY DESCRIPTOR
+        MORDescriptor.MORHierarchyDescriptor hierarchyDescriptor = new MORDescriptor.MORHierarchyDescriptor();
+        MORSemantic.MORHierarchy hierarchySemantic = new MORSemantic.MORHierarchy();
+        // read empty
+        LOG(" EMPTY READ\t\t" + hierarchyDescriptor.read( ontoRef, sphere, hierarchySemantic));
+        // modify-read
+        hierarchySemantic.get().getParents().add( ontoRef.getOWLClass("P"));
+        hierarchySemantic.get().getChildren().add( ontoRef.getOWLClass("C"));
+        LOG(" MODIFY READ\t\t" + hierarchyDescriptor.read( ontoRef, sphere, hierarchySemantic));
+        // modify-write
+        hierarchySemantic.get().getParents().add( ontoRef.getOWLClass( "P1"));
+        Set<OWLClass> cl = new HashSet<>();
+        cl.add( ontoRef.getOWLClass( "C-1"));
+        cl.add( ontoRef.getOWLClass( "C-2"));
+        hierarchySemantic.get().getParents().addAll( cl);
+        LOG(" MODIFY WRITE\t\t" + hierarchyDescriptor.write( ontoRef, sphere, hierarchySemantic));
+        // read
+        MORSemantic.MORHierarchy readHierarchy = new MORSemantic.MORHierarchy();
+        LOG(" FULLY READ\t\t" + hierarchyDescriptor.read( ontoRef, sphere, readHierarchy));
+*/
+
+
+
+
+
+/*
         OWLNamedIndividual ind = ontoRef.getOWLIndividual("ind");
         OWLClass sphere = ontoRef.getOWLClass("Sphere");
         ontoRef.addIndividualB2Class( ind, sphere);
         OWLDataProperty prop = ontoRef.getOWLDataProperty("data-prop");
         //ontoRef.synchronizeReasoner();
 
-/*      // TEST TYPED DESCRIPTOR
+      // TEST TYPED DESCRIPTOR
         MORDescriptor.MORTypeDescriptor descr = new MORDescriptor.MORTypeDescriptor();
 
         Descriptor.ReadOutcome<OWLNamedIndividual, MORAxiom.MORTyped> d = descr.read(ontoRef, ind);
@@ -111,7 +155,7 @@ public class ArchitectureTest {
         literalsSem.get().add( ontoRef.getOWLLiteral( "new"));
         LOG( " !!!!!! "  + descr.write( ontoRef, ind, literalsSem));
 */
-
+/*
         // TEST LITERAL 3D
         String prefix = "has3D-";
         String xSuffix = "X"; String ySuffix = "Y"; String zSuffix = "Z";
@@ -130,7 +174,7 @@ public class ArchitectureTest {
         LOG("!!!!!! " + desc.write( ontoRef, ind, sem3D));
         sem3D.get().setZ( x);
         LOG("!!!!!! " + desc.write( ontoRef, ind, sem3D));
-
+*/
         // todo test: link, multiLink
         // todo test: intent, state, transition
 

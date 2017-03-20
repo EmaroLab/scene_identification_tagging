@@ -61,6 +61,19 @@ public interface Base {
     default String padString(Object message, int length, boolean right){
         return Logger.padString( message.toString(), length, right);
     }
+    default String padString(String message, int length){
+        return Logger.padString( message, length, false);
+    }
+    default String padString(Object message, int length){
+        return Logger.padString( message.toString(), length, false);
+    }
+
+    default String simplifyIRI( Object o){
+        return Logger.simplifyIRI( o);
+    }
+    default String simplifyIRI( String text){
+        return Logger.simplifyIRI( text);
+    }
 
     /**
      * This method should be based on a copy constructor that takes the
@@ -73,37 +86,6 @@ public interface Base {
 
     // [[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[     CONSTANTS   ]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]
     //                                                todo document
-    /**
-     * Contains all the constants of the architecture.
-     * <p>
-     *     The actual values are divided into sub classes describing:<ul>
-     *        <li> constants for {@link LOGGING},
-     *        <li> constants for the {@link STATEMAPPING} semantic operations,
-     *        <li> constants for {@link ONTOLOGY} entities. Currently:
-     *        <ul>
-     *            <li> for classes: {@link CLASS},
-     *            <li> for individuals: {@link INDIVIDUAL},
-     *            <li> for object properties: {@link OBJECTPROPERTY}
-     *            <li> for data properties: {@link DATAPROPERTY}.
-     *        </ul>
-     *     </ul>
-     *
-     * <div style="text-align:center;"><small>
-     * <b>File</b>:        it.emarolab.scene_identification_tracking.semanticSceneLibrary.Base <br>
-     * <b>Licence</b>:     GNU GENERAL PUBLIC LICENSE. Version 3, 29 June 2007 <br>
-     * <b>Author</b>:      Buoncompagni Luca (luca.buoncompagni@edu.unige.it) <br>
-     * <b>affiliation</b>: DIBRIS, EMAROLab, University of Genoa. <br>
-     * <b>date</b>:        04/02/2017 <br>
-     * </small></div>
-     *
-     * @see LOGGING
-     * @see ONTOLOGY
-     * @see Base
-     */
-    static class Vocabolary implements LOGGING, ONTOLOGY, STATEMAPPING {
-        private Vocabolary(){}// not instanciable
-    }
-
     /**
      * Contains all the constants fields of the architecture regarding logging.
      * <p>
@@ -247,6 +229,7 @@ public interface Base {
         String DEFAULT_3d_ySUFFIX = "Y";
         String DEFAULT_3d_zSUFFIX = "Z";
     }
+
     /**
      * Static container for for constants relate to classes in the {@link ONTOLOGY}.
      *
@@ -375,9 +358,41 @@ public interface Base {
 
     }
 
+    /**
+     * Contains all the constants of the architecture.
+     * <p>
+     *     The actual values are divided into sub classes describing:<ul>
+     *        <li> constants for {@link LOGGING},
+     *        <li> constants for the {@link STATEMAPPING} semantic operations,
+     *        <li> constants for {@link ONTOLOGY} entities. Currently:
+     *        <ul>
+     *            <li> for classes: {@link CLASS},
+     *            <li> for individuals: {@link INDIVIDUAL},
+     *            <li> for object properties: {@link OBJECTPROPERTY}
+     *            <li> for data properties: {@link DATAPROPERTY}.
+     *        </ul>
+     *     </ul>
+     *
+     * <div style="text-align:center;"><small>
+     * <b>File</b>:        it.emarolab.scene_identification_tracking.semanticSceneLibrary.Base <br>
+     * <b>Licence</b>:     GNU GENERAL PUBLIC LICENSE. Version 3, 29 June 2007 <br>
+     * <b>Author</b>:      Buoncompagni Luca (luca.buoncompagni@edu.unige.it) <br>
+     * <b>affiliation</b>: DIBRIS, EMAROLab, University of Genoa. <br>
+     * <b>date</b>:        04/02/2017 <br>
+     * </small></div>
+     *
+     * @see LOGGING
+     * @see ONTOLOGY
+     * @see Base
+     */
+    static class Vocabolary implements LOGGING, ONTOLOGY, STATEMAPPING {
+        private Vocabolary(){}// not instanciable
+    }
+
 
 
     // [[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[  STATIC LOGGER  ]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]
+
     /**
      * Contains common utilities for static logging.
      * <p>
@@ -456,6 +471,14 @@ public interface Base {
             for (int i = 0; i < size; i++)
                 out += " ";
             return out;
+        }
+
+        public static String simplifyIRI( Object o){
+            return simplifyIRI( o.toString());
+        }
+        public static String simplifyIRI( String text){
+            text = text.replaceAll( "\\<(.*?\\#)", "");
+            return text.replaceAll( ">", "");
         }
 
         /**
