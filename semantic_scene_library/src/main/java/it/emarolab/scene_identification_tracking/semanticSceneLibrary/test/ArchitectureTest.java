@@ -131,6 +131,9 @@ public class ArchitectureTest {
         sem3D.get().setZ( x);
         LOG("!!!!!! " + desc.write( ontoRef, ind, sem3D));
 
+        // todo test: link, multiLink
+        // todo test: intent, state, transition
+
         return ontoRef;
     }
 }

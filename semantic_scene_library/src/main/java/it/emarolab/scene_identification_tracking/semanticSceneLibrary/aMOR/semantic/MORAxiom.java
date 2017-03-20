@@ -3,6 +3,7 @@ package it.emarolab.scene_identification_tracking.semanticSceneLibrary.aMOR.sema
 import it.emarolab.scene_identification_tracking.semanticSceneLibrary.core.Semantic;
 import org.semanticweb.owlapi.model.OWLClass;
 import org.semanticweb.owlapi.model.OWLLiteral;
+import org.semanticweb.owlapi.model.OWLNamedIndividual;
 
 import java.util.Collection;
 import java.util.HashSet;
@@ -75,9 +76,52 @@ public interface MORAxiom extends Semantic.Axiom{
         }
     }
 
-    // todo make MORLinked
+    class MORLinked
+            implements Semantic.Axiom.Atom<OWLNamedIndividual>, MORAxiom{
+
+        private OWLNamedIndividual value;
+
+        public MORLinked(){
+        }
+        public MORLinked( OWLNamedIndividual value){
+            this.value = this.value;
+        }
+
+        @Override
+        public OWLNamedIndividual getAtom() {
+            return value;
+        }
+
+        @Override
+        public void setAtom(OWLNamedIndividual value) {
+            this.value = value;
+        }
+
+        @Override
+        public String toString() {
+            return "MORLiterised{" +
+                    "value=" + value +
+                    '}';
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (!(o instanceof MORLiterised)) return false;
+
+            MORLinked that = (MORLinked) o;
+
+            return value != null ? value.equals(that.value) : that.value == null;
+        }
+
+        @Override
+        public int hashCode() {
+            return value != null ? value.hashCode() : 0;
+        }
+    }
+
     class MORLiterised
-        implements Semantic.Axiom.Atom<OWLLiteral>, MORAxiom{
+            implements Semantic.Axiom.Atom<OWLLiteral>, MORAxiom{
 
         private OWLLiteral literal;
 
@@ -100,7 +144,7 @@ public interface MORAxiom extends Semantic.Axiom{
         @Override
         public String toString() {
             return "MORLiterised{" +
-                    "literal=" + literal +
+                    "value=" + literal +
                     '}';
         }
 
@@ -120,9 +164,107 @@ public interface MORAxiom extends Semantic.Axiom{
         }
     }
 
-    // todo make MORMultiLinked
+    class MORMultiLinked
+            implements Semantic.Axiom.AtomSet< MORLinked>, MORAxiom{
+
+        private Collection< MORLinked> links = new HashSet<>();
+
+        public MORMultiLinked(){
+        }
+        public MORMultiLinked( MORMultiLinked multiLinked){
+            this.links = multiLinked;
+        }
+        public MORMultiLinked( MORLinked linked){
+            this.links.add( linked);
+        }
+        public MORMultiLinked( Set<OWLNamedIndividual> values){
+            for( OWLNamedIndividual v : values)
+                this.links.add( new MORLinked( v));
+        }
+        public MORMultiLinked( OWLNamedIndividual values){
+            this.links.add( new MORLinked( values));
+        }
+
+        @Override
+        public int size() {
+            return links.size();
+        }
+        @Override
+        public boolean isEmpty() {
+            return links.isEmpty();
+        }
+        @Override
+        public boolean contains(Object o) {
+            return links.contains( o);
+        }
+        @Override
+        public Iterator<MORLinked> iterator() {
+            return links.iterator();
+        }
+        @Override
+        public Object[] toArray() {
+            return links.toArray();
+        }
+        @Override
+        public <T> T[] toArray(T[] a) {
+            return links.toArray( a);
+        }
+        @Override
+        public boolean add( MORLinked link) {
+            return links.add( link);
+        }
+        public void add(OWLNamedIndividual owlValue) { // todo others??
+            this.add( new MORLinked( owlValue));
+        }
+        @Override @Deprecated
+        public boolean remove(Object o) {
+            return links.remove( o);
+        }
+        public boolean remove(OWLNamedIndividual owlValue) {
+            return links.remove( new MORLinked( owlValue));
+        }
+        public boolean remove(MORLinked link) {
+            return links.remove( link);
+        }
+        @Override
+        public boolean containsAll(Collection<?> c) {
+            return links.containsAll( c);
+        }
+        @Override
+        public boolean addAll(Collection<? extends MORLinked> c) {
+            return links.addAll( c);
+        }
+        @Override
+        public boolean removeAll(Collection<?> c) {
+            return links.retainAll( c);
+        }
+        @Override
+        public boolean retainAll(Collection<?> c) {
+            return links.retainAll( c);
+        }
+        @Override
+        public void clear() {
+            links.clear();
+        }
+
+        @Override
+        public Collection< OWLNamedIndividual> getAtoms() {
+            Collection< OWLNamedIndividual> out = new HashSet<>();
+            for( MORLinked l : this)
+                out.add( l.getAtom());
+            return out;
+        }
+
+        @Override
+        public String toString() {
+            return "MORMultiLiterised{" +
+                    "links=" + links +
+                    '}';
+        }
+    }
+
     class MORMultiLiterised
-        implements Semantic.Axiom.AtomSet< MORLiterised>, MORAxiom{
+            implements Semantic.Axiom.AtomSet< MORLiterised>, MORAxiom{
 
         private Collection< MORLiterised> literals = new HashSet<>();
 
@@ -167,8 +309,8 @@ public interface MORAxiom extends Semantic.Axiom{
             return literals.toArray( a);
         }
         @Override
-        public boolean add( MORLiterised atom) {
-            return literals.add( atom);
+        public boolean add( MORLiterised literal) {
+            return literals.add( literal);
         }
         public void add(OWLLiteral owlLiteral) { // todo others??
             this.add( new MORLiterised( owlLiteral));
@@ -177,8 +319,8 @@ public interface MORAxiom extends Semantic.Axiom{
         public boolean remove(Object o) {
             return literals.remove( o);
         }
-        public boolean remove(OWLLiteral literal) {
-            return literals.remove( new MORLiterised( literal));
+        public boolean remove(OWLLiteral owlLiteral) {
+            return literals.remove( new MORLiterised( owlLiteral));
         }
         public boolean remove( MORLiterised literal) {
             return literals.remove( literal);
@@ -215,14 +357,14 @@ public interface MORAxiom extends Semantic.Axiom{
         @Override
         public String toString() {
             return "MORMultiLiterised{" +
-                    "literals=" + literals +
+                    "links=" + literals +
                     '}';
         }
     }
 
     // todo make MORLinked3D
     class MORLiterised3D
-        implements Semantic.Axiom.Atom3D< MORLiterised>, MORAxiom{
+            implements Semantic.Axiom.Atom3D< MORLiterised>, MORAxiom{
 
         private MORLiterised x, y, z;
 
@@ -290,6 +432,7 @@ public interface MORAxiom extends Semantic.Axiom{
                     '}';
         }
     }
+
 
     /*
     class MORTyped

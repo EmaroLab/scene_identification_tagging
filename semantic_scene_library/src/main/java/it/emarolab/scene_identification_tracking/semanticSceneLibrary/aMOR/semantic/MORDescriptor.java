@@ -10,6 +10,8 @@ import org.semanticweb.owlapi.reasoner.OWLReasonerRuntimeException;
  * Created by bubx on 17/03/17.
  */
 public interface MORDescriptor {
+// todo check for duplicated to be merged in MORSynch
+
 
     interface MORTrier<I extends OWLObject, A extends MORAxiom, M extends Mapping.State>
             extends Mapping.TrierInterface<I,A,M>{
@@ -271,7 +273,94 @@ public interface MORDescriptor {
         }
     }
 
-    // todo MORLinkDescriptor
+    class MORLinkDescriptor
+            implements Descriptor.Properting<OWLReferences,OWLNamedIndividual, MORSemantic.MORLink>{
+
+        @Override
+        public ReadOutcome<OWLNamedIndividual,MORAxiom.MORLinked>
+        read(OWLReferences ontology, OWLNamedIndividual instance, MORSemantic.MORLink semantic) {
+
+            final MORAxiom.MORLinked java = semantic.get();
+
+            Mapping.Transitions<Mapping.Intent<OWLNamedIndividual,MORAxiom.MORLinked,Mapping.ReadingState>>
+                    transitions = new MORTryRead<OWLNamedIndividual, MORAxiom.MORLinked>() {
+                @Override
+                public Mapping.Transitions giveAtry() {
+
+                    MORAxiom.MORLinked owl = semantic.query(ontology, instance);
+
+                    Mapping.Intent<OWLNamedIndividual, MORAxiom.MORLinked, Mapping.ReadingState>
+                            intent = getNewIntent(instance, LOGGING.INTENT_LITERAL, java, owl); // todo to describe
+
+                    new MORSynch.MORSynchroniser<OWLNamedIndividual, MORAxiom.MORLinked, Mapping.ReadingState>( intent) {
+                        @Override
+                        void trigger_JavaNOTExists_OWLExists() {
+                            java.setAtom( owl.getAtom());
+                            super.trigger_JavaNOTExists_OWLExists();
+                        }
+                        @Override
+                        void trigger_JavaExists_OWLNotExists() {
+                            java.setAtom( null);
+                            super.trigger_JavaExists_OWLNotExists();
+                        }
+                        @Override
+                        void trigger_JavaExists_OWLExists() {
+                            java.setAtom( owl.getAtom()); // tod avarage ?????
+                            super.trigger_JavaExists_OWLExists();
+                        }
+                    }.synchronise( java, owl);
+
+                    return getStateTransitions();
+                }
+            }.perform();
+
+            return new ReadOutcome<>( instance, java, transitions);
+        }
+
+        @Override
+        public WriteOutcome<OWLNamedIndividual,MORAxiom.MORLinked>
+        write(OWLReferences ontology, OWLNamedIndividual instance, MORSemantic.MORLink semantic) {
+
+            final MORAxiom.MORLinked java = semantic.get();
+
+            Mapping.Transitions<Mapping.Intent<OWLNamedIndividual,MORAxiom.MORLinked,Mapping.WritingState>>
+                    transitions = new MORTryWrite<OWLNamedIndividual, MORAxiom.MORLinked>() {
+                @Override
+                public Mapping.Transitions giveAtry() {
+
+                    MORAxiom.MORLinked owl = semantic.query(ontology, instance);
+
+                    Mapping.Intent<OWLNamedIndividual, MORAxiom.MORLinked, Mapping.WritingState>
+                            intent = getNewIntent(instance, LOGGING.INTENT_LITERAL, java, owl); // todo to describe
+
+                    new MORSynch.MORSynchroniser<OWLNamedIndividual, MORAxiom.MORLinked, Mapping.WritingState>( intent) {
+                        @Override
+                        void trigger_JavaNOTExists_OWLExists() {
+                            semantic.remove( ontology, instance, owl);
+                            // internally calls : semantic.remove( ontology, instance, semantic.getSemantic(), owl.getAtom());
+                            super.trigger_JavaNOTExists_OWLExists();
+                        }
+                        @Override
+                        void trigger_JavaExists_OWLNotExists() {
+                            semantic.add( ontology, instance, java);
+                            super.trigger_JavaExists_OWLNotExists();
+                        }
+                        @Override
+                        void trigger_JavaExists_OWLExists() {
+                            semantic.remove( ontology, instance, owl);
+                            semantic.add( ontology, instance, java);
+                            super.trigger_JavaExists_OWLExists();
+                        }
+                    }.synchronise( java, owl);
+
+                    return getStateTransitions();
+                }
+            }.perform();
+
+            return new WriteOutcome<>( instance, java, transitions);
+        }
+    }
+
     class MORLiteralDescriptor
             implements Descriptor.Properting<OWLReferences,OWLNamedIndividual,MORSemantic.MORLiteral>{
 

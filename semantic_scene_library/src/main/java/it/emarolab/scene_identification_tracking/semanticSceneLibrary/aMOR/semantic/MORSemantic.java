@@ -2,10 +2,7 @@ package it.emarolab.scene_identification_tracking.semanticSceneLibrary.aMOR.sema
 
 import it.emarolab.amor.owlInterface.OWLReferences;
 import it.emarolab.scene_identification_tracking.semanticSceneLibrary.core.Semantic;
-import org.semanticweb.owlapi.model.OWLClass;
-import org.semanticweb.owlapi.model.OWLDataProperty;
-import org.semanticweb.owlapi.model.OWLLiteral;
-import org.semanticweb.owlapi.model.OWLNamedIndividual;
+import org.semanticweb.owlapi.model.*;
 
 import java.util.Collection;
 import java.util.Set;
@@ -171,7 +168,69 @@ public interface MORSemantic extends Semantic{
         }
     }
 
-    // todo make MORLink
+    class MORLink
+            implements Connection<OWLReferences,OWLNamedIndividual,OWLObjectProperty,MORAxiom.MORLinked>{
+
+        private OWLObjectProperty property;
+        private MORAxiom.MORLinked link = new MORAxiom.MORLinked();
+
+        public MORLink(){
+        }
+        public MORLink(OWLObjectProperty property){
+            this.setSemantic( property);
+        }
+        public MORLink(OWLObjectProperty property, OWLNamedIndividual value){
+            this.setSemantic( property);
+            this.link.setAtom( value);
+        }
+
+        @Override
+        public void set(MORAxiom.MORLinked link) {
+            this.link = link;
+        }
+
+        @Override
+        public MORAxiom.MORLinked get() {
+            return link;
+        }
+
+
+        @Override
+        public MORAxiom.MORLinked query(OWLReferences ontology, OWLNamedIndividual instance) {
+            //ontology.setOWLEnquirerIncludesInferences( false);
+            OWLNamedIndividual value = ontology.getOnlyObjectPropertyB2Individual( instance, getSemantic());
+            //ontology.setOWLEnquirerIncludesInferences( true);
+            return new MORAxiom.MORLinked( value);
+        }
+
+        @Override
+        public OWLObjectProperty getSemantic() {
+            return property;
+        }
+
+        @Override
+        public void setSemantic(OWLObjectProperty property) {
+            this.property = property;
+        }
+
+        @Override
+        public <S,V> void add(OWLReferences ontology, OWLNamedIndividual instance, S property, V value) {
+            if( property instanceof OWLObjectProperty)
+                if( value instanceof OWLNamedIndividual)
+                    ontology.addObjectPropertyB2Individual( instance, (OWLObjectProperty) property, (OWLNamedIndividual) value);
+            // else // todo log
+        }
+
+        // todo remove parameter y to use global 'property3D' instead. (also for other semantics)
+        @Override
+        public <S,V> void remove(OWLReferences ontology, OWLNamedIndividual instance, S property, V value) {
+            if( property instanceof OWLObjectProperty)
+                if( value instanceof OWLNamedIndividual)
+                    ontology.removeObjectPropertyB2Individual( instance, (OWLObjectProperty) property, (OWLNamedIndividual) value);
+            // else // todo log
+        }
+    }
+
     class MORLiteral
             implements Connection<OWLReferences,OWLNamedIndividual,OWLDataProperty,MORAxiom.MORLiterised> {
 
@@ -189,8 +248,8 @@ public interface MORSemantic extends Semantic{
         }
 
         @Override
-        public void set(MORAxiom.MORLiterised link) {
-            this.literal = link;
+        public void set(MORAxiom.MORLiterised literal) {
+            this.literal = literal;
         }
 
         @Override
@@ -235,7 +294,99 @@ public interface MORSemantic extends Semantic{
         }
     }
 
-    // todo make MORLinked
+    class MORLinked
+            implements Connections<OWLReferences,OWLNamedIndividual,OWLObjectProperty,MORAxiom.MORMultiLinked>{
+
+        private OWLObjectProperty property;
+        private MORAxiom.MORMultiLinked links = new MORAxiom.MORMultiLinked();
+
+        public MORLinked(){
+        }
+        public MORLinked(OWLObjectProperty property){
+            this.setSemantic( property);
+        }
+        public MORLinked(OWLObjectProperty property, OWLNamedIndividual literal){
+            this.setSemantic( property);
+            this.links.add( new MORAxiom.MORLinked( literal));
+        }
+        public MORLinked(OWLObjectProperty property, Collection< OWLNamedIndividual> links){
+            this.setSemantic( property);
+            for (OWLNamedIndividual l : links)
+                this.links.add( new MORAxiom.MORLinked( l));
+        }
+        public MORLinked(OWLObjectProperty property, MORAxiom.MORLinked literal){
+            this.setSemantic( property);
+            this.links.add( literal);
+        }
+        public MORLinked(OWLObjectProperty property, MORAxiom.MORMultiLinked links){
+            this.setSemantic( property);
+            this.links.addAll(links);
+        }
+
+        @Override
+        public void set(MORAxiom.MORMultiLinked literals) {
+            this.links = literals;
+        }
+
+        @Override
+        public MORAxiom.MORMultiLinked get() {
+            return links;
+        }
+
+        @Override
+        public MORAxiom.MORMultiLinked query(OWLReferences ontology, OWLNamedIndividual instance) {
+            //ontology.setOWLEnquirerIncludesInferences( false);
+            Set< OWLNamedIndividual> value = ontology.getObjectPropertyB2Individual( instance, getSemantic());
+            //ontology.setOWLEnquirerIncludesInferences( true);
+            return new MORAxiom.MORMultiLinked( value);
+        }
+
+        @Override
+        public OWLObjectProperty getSemantic() {
+            return property;
+        }
+
+        @Override
+        public void setSemantic(OWLObjectProperty property) {
+            this.property = property;
+        }
+
+        @Override
+        public <P,Y> void add(OWLReferences ontology, OWLNamedIndividual instance, P property, Y literal) {
+            if( property instanceof OWLObjectProperty) {
+                if (literal instanceof Set) {
+                    for (Object l : (Set) literal) {
+                        if (l instanceof OWLNamedIndividual)
+                            add(ontology, instance, (OWLObjectProperty) property, (OWLNamedIndividual) l);
+                    }
+                } else if (literal instanceof OWLNamedIndividual)
+                    add(ontology, instance, (OWLObjectProperty) property, (OWLNamedIndividual) literal);
+                //todo log error
+            }
+        }
+        private void add( OWLReferences ontology, OWLNamedIndividual instance, OWLObjectProperty property, OWLNamedIndividual value){
+            ontology.addObjectPropertyB2Individual( instance, property, value);
+        }
+
+        @Override
+        public <P,Y> void remove(OWLReferences ontology, OWLNamedIndividual instance, P property, Y literal) {
+            if( property instanceof OWLObjectProperty) {
+                if (literal instanceof Set) {
+                    for (Object l : (Set) literal) {
+                        if (l instanceof OWLNamedIndividual)
+                            remove(ontology, instance, (OWLObjectProperty) property, (OWLNamedIndividual) l);
+                    }
+                } else if (literal instanceof OWLNamedIndividual)
+                    remove(ontology, instance, (OWLObjectProperty) property, (OWLNamedIndividual) literal);
+            }
+            //todo log error
+        }
+        private void remove(OWLReferences ontology, OWLNamedIndividual instance, OWLObjectProperty property, OWLNamedIndividual value) {
+            ontology.removeObjectPropertyB2Individual( instance, property, value);
+        }
+
+    }
+
     class MORLiterals
             implements Connections<OWLReferences,OWLNamedIndividual,OWLDataProperty,MORAxiom.MORMultiLiterised>{
 
@@ -312,17 +463,19 @@ public interface MORSemantic extends Semantic{
 
         @Override
         public <P,Y> void remove(OWLReferences ontology, OWLNamedIndividual instance, P property, Y literal) {
-            if ( literal instanceof Set){
-                for ( Object l : (Set) literal){
-                    if ( l instanceof OWLLiteral)
-                        remove( ontology, instance, (OWLLiteral) l);
-                }
-            } else if ( literal instanceof OWLLiteral)
-                remove( ontology, instance, (OWLLiteral) literal);
+            if( property instanceof OWLDataProperty) {
+                if (literal instanceof Set) {
+                    for (Object l : (Set) literal) {
+                        if (l instanceof OWLLiteral)
+                            remove(ontology, instance, (OWLDataProperty) property, (OWLLiteral) l);
+                    }
+                } else if (literal instanceof OWLLiteral)
+                    remove(ontology, instance, (OWLDataProperty) property, (OWLLiteral) literal);
+            }
             //todo log error
         }
-        private void remove(OWLReferences ontology, OWLNamedIndividual instance, OWLLiteral literal) {
-            ontology.removeDataPropertyB2Individual( instance, getSemantic(), literal);
+        private void remove(OWLReferences ontology, OWLNamedIndividual instance, OWLDataProperty property, OWLLiteral literal) {
+            ontology.removeDataPropertyB2Individual( instance, property, literal);
         }
 
     }
@@ -474,29 +627,29 @@ public interface MORSemantic extends Semantic{
     class MORLink
             implements Semantic.Property<OWLReferences,OWLNamedIndividual,MORAxiom.MORLinked>{
 
-        private MORAxiom.MORLinked literals = new MORAxiom.MORLinked();
+        private MORAxiom.MORLinked links = new MORAxiom.MORLinked();
 
         public MORLink(){
         }
         public MORLink( OWLObjectProperty property3D, OWLNamedIndividual value){
-            this.literals.setProperty( property3D);
-            this.literals.setValue( value);
+            this.links.setProperty( property3D);
+            this.links.setValue( value);
         }
 
         @Override
-        public void set(MORAxiom.MORLinked literals) {
-            this.literals = literals;
+        public void set(MORAxiom.MORLinked links) {
+            this.links = links;
         }
 
         @Override
         public MORAxiom.MORLinked get() {
-            return literals;
+            return links;
         }
 
         @Override
         public MORAxiom.MORLinked query(OWLReferences ontology, OWLNamedIndividual instance) {
-            OWLNamedIndividual value = ontology.getOnlyObjectPropertyB2Individual( instance, literals.getProperty());
-            return new MORAxiom.MORLinked( literals.getProperty(), value);
+            OWLNamedIndividual value = ontology.getOnlyObjectPropertyB2Individual( instance, links.getProperty());
+            return new MORAxiom.MORLinked( links.getProperty(), value);
         }
 
         @Override
@@ -555,32 +708,32 @@ public interface MORSemantic extends Semantic{
     class MORLiteral
             implements Semantic.Property<OWLReferences,OWLNamedIndividual,MORAxiom.MORLiteralValue>{
 
-        private MORAxiom.MORLiteralValue literals = new MORAxiom.MORLiteralValue();
+        private MORAxiom.MORLiteralValue links = new MORAxiom.MORLiteralValue();
 
         public MORLiteral(){
         }
         public MORLiteral(OWLDataProperty property3D, OWLLiteral value){
-            this.literals.setProperty( property3D);
-            this.literals.setValue( value);
+            this.links.setProperty( property3D);
+            this.links.setValue( value);
         }
 
         @Override
-        public void set(MORAxiom.MORLiteralValue literals) {
-            this.literals = literals;
+        public void set(MORAxiom.MORLiteralValue links) {
+            this.links = links;
         }
 
         @Override
         public MORAxiom.MORLiteralValue get() {
-            return literals;
+            return links;
         }
 
 
         @Override
         public MORAxiom.MORLiteralValue query(OWLReferences ontology, OWLNamedIndividual instance) {
             //ontology.setOWLEnquirerIncludesInferences( false);
-            OWLLiteral value = ontology.getOnlyDataPropertyB2Individual( instance, literals.getProperty());
+            OWLLiteral value = ontology.getOnlyDataPropertyB2Individual( instance, links.getProperty());
             //ontology.setOWLEnquirerIncludesInferences( true);
-            return new MORAxiom.MORLiteralValue( literals.getProperty(), value);
+            return new MORAxiom.MORLiteralValue( links.getProperty(), value);
         }
 
         @Override
