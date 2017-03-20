@@ -271,6 +271,7 @@ public interface MORDescriptor {
         }
     }
 
+    // todo MORLinkDescriptor
     class MORLiteralDescriptor
             implements Descriptor.Properting<OWLReferences,OWLNamedIndividual,MORSemantic.MORLiteral>{
 
@@ -335,6 +336,7 @@ public interface MORDescriptor {
                         @Override
                         void trigger_JavaNOTExists_OWLExists() {
                             semantic.remove( ontology, instance, owl);
+                            // internally calls : semantic.remove( ontology, instance, semantic.getSemantic(), owl.getAtom());
                             super.trigger_JavaNOTExists_OWLExists();
                         }
                         @Override
@@ -358,6 +360,7 @@ public interface MORDescriptor {
         }
     }
 
+    // todo MORLinksDescriptor
     class MORLiteralsDescriptor
             implements Descriptor.Propertings<OWLReferences,OWLNamedIndividual,MORSemantic.MORLiterals>{
 
@@ -453,6 +456,97 @@ public interface MORDescriptor {
                         @Override
                         void removeFromSemantic(OWLLiteral t) {
                             semantic.remove( ontology, instance, semantic.getSemantic(), t);
+                        }
+                    }.synchronise( java, owl);
+
+                    return getStateTransitions();
+                }
+            }.perform();
+
+            return new WriteOutcome<>( instance, java, transitions);
+        }
+    }
+
+    // todo MORLink3D
+    class MORLiteral3DDescriptor
+            implements Descriptor.Properting3D<OWLReferences,OWLNamedIndividual,MORSemantic.MORLiteral3D>{
+
+        @Override
+        public ReadOutcome<OWLNamedIndividual, MORAxiom.MORLiterised3D>
+        read(OWLReferences ontology, OWLNamedIndividual instance, MORSemantic.MORLiteral3D semantic) {
+            final MORAxiom.MORLiterised3D java = semantic.get();
+
+            Mapping.Transitions<Mapping.Intent<OWLNamedIndividual,MORAxiom.MORLiterised3D,Mapping.ReadingState>>
+                    transitions = new MORTryRead<OWLNamedIndividual, MORAxiom.MORLiterised3D>() {
+                @Override
+                public Mapping.Transitions giveAtry() {
+
+                    MORAxiom.MORLiterised3D owl = semantic.query(ontology, instance);
+
+                    Mapping.Intent<OWLNamedIndividual, MORAxiom.MORLiterised3D, Mapping.ReadingState>
+                            intent = getNewIntent(instance, LOGGING.INTENT_LITERAL, java, owl); // todo to describe
+
+                    new MORSynch.MORSynchroniser<OWLNamedIndividual, MORAxiom.MORLiterised3D, Mapping.ReadingState>( intent) {
+                        @Override
+                        void trigger_JavaNOTExists_OWLExists() {
+                            java.setX( owl.getX());
+                            java.setY( owl.getY());
+                            java.setZ( owl.getZ());
+                            super.trigger_JavaNOTExists_OWLExists();
+                        }
+                        @Override
+                        void trigger_JavaExists_OWLNotExists() {
+                            java.reset();
+                            super.trigger_JavaExists_OWLNotExists();
+                        }
+                        @Override
+                        void trigger_JavaExists_OWLExists() {
+                            java.setX( owl.getX());// tod avarage ?????
+                            java.setY( owl.getY());
+                            java.setZ( owl.getZ());
+                            super.trigger_JavaExists_OWLExists();
+                        }
+                    }.synchronise( java, owl);
+
+                    return getStateTransitions();
+                }
+            }.perform();
+
+            return new ReadOutcome<>( instance, java, transitions);
+        }
+
+        @Override
+        public WriteOutcome<OWLNamedIndividual, MORAxiom.MORLiterised3D>
+        write(OWLReferences ontology, OWLNamedIndividual instance, MORSemantic.MORLiteral3D semantic) {
+            final MORAxiom.MORLiterised3D java = semantic.get();
+
+            Mapping.Transitions<Mapping.Intent<OWLNamedIndividual,MORAxiom.MORLiterised3D,Mapping.WritingState>>
+                    transitions = new MORTryWrite<OWLNamedIndividual, MORAxiom.MORLiterised3D>() {
+                @Override
+                public Mapping.Transitions giveAtry() {
+
+                    MORAxiom.MORLiterised3D owl = semantic.query(ontology, instance);
+
+                    Mapping.Intent<OWLNamedIndividual, MORAxiom.MORLiterised3D, Mapping.WritingState>
+                            intent = getNewIntent(instance, LOGGING.INTENT_LITERAL, java, owl); // todo to describe
+
+                    new MORSynch.MORSynchroniser<OWLNamedIndividual, MORAxiom.MORLiterised3D, Mapping.WritingState>( intent) {
+                        @Override
+                        void trigger_JavaNOTExists_OWLExists() {
+                            semantic.remove( ontology, instance, owl);
+                            // internally calls : semantic.remove( ontology, instance, semantic.get().getX(), owl.getX());
+                            super.trigger_JavaNOTExists_OWLExists();
+                        }
+                        @Override
+                        void trigger_JavaExists_OWLNotExists() {
+                            semantic.add( ontology, instance, java);
+                            super.trigger_JavaExists_OWLNotExists();
+                        }
+                        @Override
+                        void trigger_JavaExists_OWLExists() {
+                            semantic.remove( ontology, instance, owl);
+                            semantic.add( ontology, instance, java);
+                            super.trigger_JavaExists_OWLExists();
                         }
                     }.synchronise( java, owl);
 

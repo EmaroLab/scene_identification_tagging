@@ -26,6 +26,10 @@ public interface Descriptor<O,I,S extends Semantic<O,I,?>> {
             extends Descriptor<O,I,S>{
     }
 
+    interface Properting3D<O,I,S extends Semantic.Connection3D<O,I,?,?>>
+            extends Descriptor<O,I,S>{
+    }
+
 /*    interface Properting3D<O,I,S extends Semantic.Property3D<O,I,?>>
             extends Descriptor<O,I,S>{
         @Override

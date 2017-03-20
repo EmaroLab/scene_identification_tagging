@@ -45,13 +45,6 @@
     
 
 
-    <!-- http://www.semanticweb.org/emaroLab/luca-buoncompagni/sit#data-prop -->
-
-
-    <owl:DatatypeProperty rdf:about="http://www.semanticweb.org/emaroLab/luca-buoncompagni/sit#data-prop"/>
-    
-
-
     <!-- http://www.semanticweb.org/emaroLab/luca-buoncompagni/sit#has-cone_apexX -->
 
 
@@ -355,6 +348,27 @@
     
 
 
+    <!-- http://www.semanticweb.org/emaroLab/luca-buoncompagni/sit#has3D-X -->
+
+
+    <owl:DatatypeProperty rdf:about="http://www.semanticweb.org/emaroLab/luca-buoncompagni/sit#has3D-X"/>
+    
+
+
+    <!-- http://www.semanticweb.org/emaroLab/luca-buoncompagni/sit#has3D-Y -->
+
+
+    <owl:DatatypeProperty rdf:about="http://www.semanticweb.org/emaroLab/luca-buoncompagni/sit#has3D-Y"/>
+    
+
+
+    <!-- http://www.semanticweb.org/emaroLab/luca-buoncompagni/sit#has3D-Z -->
+
+
+    <owl:DatatypeProperty rdf:about="http://www.semanticweb.org/emaroLab/luca-buoncompagni/sit#has3D-Z"/>
+    
+
+
     <!-- http://www.semanticweb.org/emaroLab/luca-buoncompagni/sit#has_id -->
 
 
@@ -621,7 +635,9 @@
 
     <owl:NamedIndividual rdf:about="http://www.semanticweb.org/emaroLab/luca-buoncompagni/sit#ind">
         <rdf:type rdf:resource="http://www.semanticweb.org/emaroLab/luca-buoncompagni/sit#Sphere"/>
-        <data-prop rdf:datatype="http://www.w3.org/2001/XMLSchema#string">new</data-prop>
+        <has3D-X rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">1</has3D-X>
+        <has3D-Y rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">2</has3D-Y>
+        <has3D-Z rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">1</has3D-Z>
     </owl:NamedIndividual>
     
 

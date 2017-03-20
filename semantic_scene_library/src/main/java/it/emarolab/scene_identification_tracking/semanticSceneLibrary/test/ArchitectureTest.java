@@ -3,10 +3,12 @@ package it.emarolab.scene_identification_tracking.semanticSceneLibrary.test;
 import it.emarolab.amor.owlDebugger.Logger;
 import it.emarolab.amor.owlInterface.OWLReferences;
 import it.emarolab.amor.owlInterface.OWLReferencesInterface;
+import it.emarolab.scene_identification_tracking.semanticSceneLibrary.aMOR.semantic.MORAxiom;
 import it.emarolab.scene_identification_tracking.semanticSceneLibrary.aMOR.semantic.MORDescriptor;
 import it.emarolab.scene_identification_tracking.semanticSceneLibrary.aMOR.semantic.MORSemantic;
 import org.semanticweb.owlapi.model.OWLClass;
 import org.semanticweb.owlapi.model.OWLDataProperty;
+import org.semanticweb.owlapi.model.OWLLiteral;
 import org.semanticweb.owlapi.model.OWLNamedIndividual;
 
 import static it.emarolab.scene_identification_tracking.semanticSceneLibrary.Base.Logger.LOG;
@@ -95,7 +97,7 @@ public class ArchitectureTest {
         LOG( " !!!!!! "  + descr.write( ontoRef, ind, literalSem));
 */
 
-        // TEST MULTI LITERAL DESCRIPTOR
+/*        // TEST MULTI LITERAL DESCRIPTOR
         ontoRef.addDataPropertyB2Individual( ind, prop, ontoRef.getOWLLiteral( 1.2));
         ontoRef.addDataPropertyB2Individual( ind, prop, ontoRef.getOWLLiteral( 1.3));
         ontoRef.addDataPropertyB2Individual( ind, prop, ontoRef.getOWLLiteral( 1.4));
@@ -108,7 +110,27 @@ public class ArchitectureTest {
         LOG( " !!!!!! "  + descr.write( ontoRef, ind, literalsSem));
         literalsSem.get().add( ontoRef.getOWLLiteral( "new"));
         LOG( " !!!!!! "  + descr.write( ontoRef, ind, literalsSem));
-        
+*/
+
+        // TEST LITERAL 3D
+        String prefix = "has3D-";
+        String xSuffix = "X"; String ySuffix = "Y"; String zSuffix = "Z";
+        OWLDataProperty propX = ontoRef.getOWLDataProperty( prefix + xSuffix);
+        OWLDataProperty propY = ontoRef.getOWLDataProperty( prefix + ySuffix);
+        OWLDataProperty propZ = ontoRef.getOWLDataProperty( prefix + zSuffix);
+        OWLLiteral x = ontoRef.getOWLLiteral( 1);
+        OWLLiteral y = ontoRef.getOWLLiteral( 2);
+        OWLLiteral z = ontoRef.getOWLLiteral( 3);
+
+        MORAxiom.MORLiterised3D lit3D = new MORAxiom.MORLiterised3D( x, y, z);
+        MORSemantic.MORLiteralSemantic3D prop3D = new MORSemantic.MORLiteralSemantic3D( propX, propY, propZ);
+        MORSemantic.MORLiteral3D sem3D = new MORSemantic.MORLiteral3D(prop3D, lit3D);
+        MORDescriptor.MORLiteral3DDescriptor desc = new MORDescriptor.MORLiteral3DDescriptor();
+        //LOG("!!!!!! " + desc.read( ontoRef, ind, sem3D)); // todo bug!!!
+        LOG("!!!!!! " + desc.write( ontoRef, ind, sem3D));
+        sem3D.get().setZ( x);
+        LOG("!!!!!! " + desc.write( ontoRef, ind, sem3D));
+
         return ontoRef;
     }
 }

@@ -61,56 +61,78 @@ public interface Semantic<O,I,A extends Semantic.Axiom> {
         <Y> void removeChildren(O ontology, I instance, Y type);
     }
 
-
-    interface Connection<O,I,S,A extends Axiom.Atom<?>>
-            extends Semantic<O,I,A>{
+    interface ConnectionSemantic<O,I,S>{
 
         S getSemantic();
         void setSemantic( S s);
+
+        // todo remove Y dependence to remove also S parameter
+        <P,Y> void add(O ontology, I instance, P semantic, Y value);
+        <P,Y> void remove(O ontology, I instance, P semantic, Y value);
+    }
+
+    interface Connection<O,I,S,A extends Axiom.Atom<?>>
+            extends Semantic<O,I,A>, ConnectionSemantic<O,I,S>{
 
         @Override
         default void add(O ontology, I instance, A axiom){
             if ( axiom.exists())
                 add( ontology, instance, getSemantic(), axiom.getAtom());
         }
-        <Y> void add(O ontology, I instance, S semantic, Y value);
 
         @Override
         default void remove(O ontology, I instance, A axiom){
             if ( axiom.exists())
                 remove( ontology, instance, getSemantic(), axiom.getAtom());
         }
-        <Y> void remove(O ontology, I instance, S semantic, Y value);
+
     }
 
-
     interface Connections<O,I,S,A extends Axiom.AtomSet<?>>
-            extends Semantic<O,I,A> {
-
-        S getSemantic();
-        void setSemantic( S s);
+            extends Semantic<O,I,A>, ConnectionSemantic<O,I,S> {
 
         @Override
         default void add(O ontology, I instance, A axiom){
             if ( axiom.exists())
                 add( ontology, instance, getSemantic(), axiom);
         }
-        <Y> void add(O ontology, I instance, S semantic, Y value);
 
         @Override
         default void remove(O ontology, I instance, A axiom){
             if ( axiom.exists())
                 remove( ontology, instance, getSemantic(), axiom);
         }
-        <Y> void remove(O ontology, I instance, S semantic, Y value);
     }
 
+    interface Connection3D<O,I,S extends Semantic3D,A extends Axiom.Atom3D<?>>
+            extends Semantic<O,I,A>, ConnectionSemantic<O,I,S>{
+
+        @Override
+        default void add(O ontology, I instance, A axiom){
+            if ( axiom.hasX())
+                add(ontology, instance, getSemantic().getX(), axiom.getX());
+            if ( axiom.hasY())
+                add( ontology, instance, getSemantic().getY(), axiom.getY());
+            if ( axiom.hasZ())
+                add( ontology, instance, getSemantic().getZ(), axiom.getZ());
+        }
+
+        @Override
+        default void remove(O ontology, I instance, A axiom){
+            if ( axiom.hasX())
+                remove( ontology, instance, getSemantic().getX(), axiom.getX());
+            if ( axiom.hasY())
+                remove( ontology, instance, getSemantic().getY(), axiom.getY());
+            if ( axiom.hasZ())
+                remove( ontology, instance, getSemantic().getZ(), axiom.getZ());
+        }
+    }
 
     interface Axiom{
 
         boolean exists();
 
-        interface Family<Y>
+        interface Family<Y> // todo make Y extending Atom<?>
                 extends Axiom {
 
             Set<Y> getParents();
@@ -171,10 +193,97 @@ public interface Semantic<O,I,A extends Semantic.Axiom> {
             default boolean exists(){
                 //if( this == null)
                 //    return false;
-                if( this.isEmpty())
-                    return false;
+                //if( this.isEmpty())
+                //    return false;
+                //return true;
+                for ( Atom<?> a : this)
+                    if( ! a.exists())
+                        return false;
                 return true;
             }
+        }
+
+        interface Atom3D<Y extends Atom<?>>
+                extends Axiom{
+
+            Y getX();
+            void setX( Y atom);
+
+            Y getY();
+            void setY( Y atom);
+
+            Y getZ();
+            void setZ( Y atom);
+
+            default void setXYZ( Y x, Y y, Y z){
+                setX( x);
+                setY( y);
+                setZ( z);
+            }
+            default void reset(){
+                setX( null); // todo also in all the other Axioms
+                setY( null);
+                setZ( null);
+            }
+
+            default boolean hasX(){
+                return getX().exists();
+            }
+            default boolean hasY(){
+                return getY().exists();
+            }
+            default boolean hasZ(){
+                return getZ().exists();
+            }
+            @Override
+            default boolean exists(){
+                return hasX() & hasY() & hasZ();
+            }
+        }
+    }
+
+    abstract class Semantic3D<O,S,T>{ // todo to move to Semantic interface
+        private S x, y, z;
+
+        public Semantic3D(){
+        }
+        public Semantic3D(O onto, T xSemantic, T ySemantic, T zSemantic) {
+            setX( onto, xSemantic);
+            setY( onto, ySemantic);
+            setZ( onto, zSemantic);
+        }
+
+        public Semantic3D(S propX, S propY, S propZ) {
+            this.x = propX;
+            this.y = propY;
+            this.z = propZ;
+        }
+
+        public void setX( O o, T x){ // aMOR: T=String
+            this.x = getSemantic( o, x);
+        }
+        public void setY( O o, T y){
+            this.y = getSemantic( o, y);
+        }
+        public void setZ( O o, T z){
+            this.z = getSemantic( o, z);
+        }
+        public void setXYZ( O o, T x, T y, T z){
+            setX( o, x);
+            setY( o, y);
+            setZ( o, z);
+        }
+
+        public abstract S getSemantic(O o, T s);
+
+        public S getX(){
+            return x;
+        }
+        public S getY(){
+            return y;
+        }
+        public S getZ(){
+            return z;
         }
     }
 }

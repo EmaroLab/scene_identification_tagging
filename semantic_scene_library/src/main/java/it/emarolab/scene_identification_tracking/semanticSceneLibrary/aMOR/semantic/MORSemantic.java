@@ -171,6 +171,7 @@ public interface MORSemantic extends Semantic{
         }
     }
 
+    // todo make MORLink
     class MORLiteral
             implements Connection<OWLReferences,OWLNamedIndividual,OWLDataProperty,MORAxiom.MORLiterised> {
 
@@ -217,20 +218,24 @@ public interface MORSemantic extends Semantic{
         }
 
         @Override
-        public <V> void add(OWLReferences ontology, OWLNamedIndividual instance, OWLDataProperty property, V value) {
-            if( value instanceof OWLLiteral)
-                ontology.addDataPropertyB2Individual( instance, property, (OWLLiteral) value);
+        public <S,V> void add(OWLReferences ontology, OWLNamedIndividual instance, S property, V value) {
+            if( property instanceof OWLDataProperty)
+                if( value instanceof OWLLiteral)
+                    ontology.addDataPropertyB2Individual( instance, (OWLDataProperty) property, (OWLLiteral) value);
             // else // todo log
         }
 
+        // todo remove parameter y to use global 'property3D' instead. (also for other semantics)
         @Override
-        public <V> void remove(OWLReferences ontology, OWLNamedIndividual instance, OWLDataProperty property, V value) {
-            if( value instanceof OWLLiteral)
-                ontology.removeDataPropertyB2Individual( instance, property, (OWLLiteral) value);
+        public <S,V> void remove(OWLReferences ontology, OWLNamedIndividual instance, S property, V value) {
+            if( property instanceof OWLDataProperty)
+                if( value instanceof OWLLiteral)
+                    ontology.removeDataPropertyB2Individual( instance, (OWLDataProperty) property, (OWLLiteral) value);
             // else // todo log
         }
     }
 
+    // todo make MORLinked
     class MORLiterals
             implements Connections<OWLReferences,OWLNamedIndividual,OWLDataProperty,MORAxiom.MORMultiLiterised>{
 
@@ -289,22 +294,24 @@ public interface MORSemantic extends Semantic{
         }
 
         @Override
-        public <Y> void add(OWLReferences ontology, OWLNamedIndividual instance, OWLDataProperty property, Y literal) {
-            if ( literal instanceof Set){
-                for ( Object l : (Set) literal){
-                    if ( l instanceof OWLLiteral)
-                        add( ontology, instance, (OWLLiteral) l);
-                }
-            } else if ( literal instanceof OWLLiteral)
-                add( ontology, instance, (OWLLiteral) literal);
-            //todo log error
+        public <P,Y> void add(OWLReferences ontology, OWLNamedIndividual instance, P property, Y literal) {
+            if( property instanceof OWLDataProperty) {
+                if (literal instanceof Set) {
+                    for (Object l : (Set) literal) {
+                        if (l instanceof OWLLiteral)
+                            add(ontology, instance, (OWLDataProperty) property, (OWLLiteral) l);
+                    }
+                } else if (literal instanceof OWLLiteral)
+                    add(ontology, instance, (OWLDataProperty) property, (OWLLiteral) literal);
+                //todo log error
+            }
         }
-        private void add( OWLReferences ontology, OWLNamedIndividual instance, OWLLiteral literal){
-            ontology.addDataPropertyB2Individual( instance, getSemantic(), literal);
+        private void add( OWLReferences ontology, OWLNamedIndividual instance, OWLDataProperty property, OWLLiteral literal){
+            ontology.addDataPropertyB2Individual( instance, property, literal);
         }
 
         @Override
-        public <Y> void remove(OWLReferences ontology, OWLNamedIndividual instance, OWLDataProperty property, Y literal) {
+        public <P,Y> void remove(OWLReferences ontology, OWLNamedIndividual instance, P property, Y literal) {
             if ( literal instanceof Set){
                 for ( Object l : (Set) literal){
                     if ( l instanceof OWLLiteral)
@@ -320,6 +327,111 @@ public interface MORSemantic extends Semantic{
 
     }
 
+    // todo make MORLink3D
+    class MORLiteralSemantic3D extends Semantic3D<OWLReferences,OWLDataProperty,String>{
+
+        public MORLiteralSemantic3D(){
+        }
+        public MORLiteralSemantic3D( OWLReferences onto, String prefix,
+                                     String xSuffix, String ySuffix, String zSuffix) {
+            super( onto, prefix + xSuffix, prefix + ySuffix, prefix + zSuffix);
+        }
+        public MORLiteralSemantic3D( OWLReferences onto,
+                                     String xProp, String yProp, String zProp) {
+            super( onto, xProp, yProp, zProp);
+        }
+
+        public MORLiteralSemantic3D(OWLDataProperty propX, OWLDataProperty propY, OWLDataProperty propZ) {
+            super( propX, propY, propZ);
+        }
+
+        @Override
+        public OWLDataProperty getSemantic(OWLReferences o, String s) {
+            return o.getOWLDataProperty( s);
+        }
+    }
+
+    class MORLiteral3D
+            implements Connection3D<OWLReferences,OWLNamedIndividual,MORLiteralSemantic3D,MORAxiom.MORLiterised3D>{
+
+        private MORLiteralSemantic3D property3D;
+        private MORAxiom.MORLiterised3D d3 = new MORAxiom.MORLiterised3D();
+
+        public MORLiteral3D(){
+        }
+        public MORLiteral3D( OWLReferences onto, String prefix, String xSuffix, String ySuffix, String zSuffix){
+            if (prefix != null)
+                this.property3D = new MORLiteralSemantic3D( onto, prefix, xSuffix, ySuffix, zSuffix);
+            else this.property3D = new MORLiteralSemantic3D( onto, xSuffix, ySuffix, zSuffix);
+        }
+        public MORLiteral3D( MORLiteralSemantic3D property3D){
+            this.property3D = property3D;
+        }
+        public MORLiteral3D( MORLiteralSemantic3D property3D, MORAxiom.MORLiterised3D d3){
+            this.property3D = property3D;
+            this.d3 = d3;
+        }
+        public MORLiteral3D( MORLiteralSemantic3D property3D,
+                             OWLLiteral x, OWLLiteral y, OWLLiteral z){
+            this.property3D = property3D;
+            this.d3.setX( x);
+            this.d3.setY( y);
+            this.d3.setZ( z);
+        }
+        public MORLiteral3D( OWLReferences onto, String prefix, String xSuffix, String ySuffix, String zSuffix,
+                             OWLLiteral x, OWLLiteral y, OWLLiteral z){
+            if (prefix != null)
+                this.property3D = new MORLiteralSemantic3D( onto, prefix, xSuffix, ySuffix, zSuffix);
+            else this.property3D = new MORLiteralSemantic3D( onto, xSuffix, ySuffix, zSuffix);
+            this.d3.setX( x);
+            this.d3.setY( y);
+            this.d3.setZ( z);
+        }
+
+        @Override
+        public void set(MORAxiom.MORLiterised3D atom3D) {
+            this.d3 = atom3D;
+        }
+
+        @Override
+        public MORAxiom.MORLiterised3D get() {
+            return d3;
+        }
+
+        @Override
+        public MORAxiom.MORLiterised3D query(OWLReferences ontology, OWLNamedIndividual instance) {
+            OWLLiteral x = ontology.getOnlyDataPropertyB2Individual(instance, property3D.getX());
+            OWLLiteral y = ontology.getOnlyDataPropertyB2Individual(instance, property3D.getY());
+            OWLLiteral z = ontology.getOnlyDataPropertyB2Individual(instance, property3D.getZ());
+            return new MORAxiom.MORLiterised3D( x, y, z);
+        }
+
+        @Override
+        public MORLiteralSemantic3D getSemantic() {
+            return property3D;
+        }
+
+        @Override
+        public void setSemantic(MORLiteralSemantic3D property3D) {
+            this.property3D = property3D;
+        }
+
+        @Override
+        public <P,Y> void add(OWLReferences ontology, OWLNamedIndividual instance, P property, Y value) {
+            if( property instanceof OWLDataProperty)
+                if( value instanceof MORAxiom.MORLiterised) // todo check for others, was OWLLiteral
+                    ontology.addDataPropertyB2Individual( instance, (OWLDataProperty) property, ((MORAxiom.MORLiterised) value).getAtom());
+            // else // todo log
+        }
+
+        @Override
+        public <P,Y> void remove(OWLReferences ontology, OWLNamedIndividual instance, P property, Y value) {
+            if( property instanceof OWLDataProperty)
+                if( value instanceof MORAxiom.MORLiterised) // todo check for others, was OWLLiteral
+                    ontology.removeDataPropertyB2Individual( instance, (OWLDataProperty) property, ((MORAxiom.MORLiterised) value).getAtom());
+            // else // todo log
+        }
+    }
 
 /*
     class MORMinCardinalityRestriction
@@ -349,13 +461,13 @@ public interface MORSemantic extends Semantic{
         }
 
         @Override
-        public <P, C> void add(OWLReferences ontology, OWLClass instance, P property, int cardinality, C range) {
-            ontology.addMinObjectClassExpression(instance, (OWLObjectProperty) property, cardinality, (OWLClass) range);
+        public <P, C> void add(OWLReferences ontology, OWLClass instance, P property3D, int cardinality, C range) {
+            ontology.addMinObjectClassExpression(instance, (OWLObjectProperty) property3D, cardinality, (OWLClass) range);
         }
 
         @Override
-        public <P, C> void remove(OWLReferences ontology, OWLClass instance, P property, int cardinality, C range) {
-            ontology.removeMinObjectClassExpression(instance, (OWLObjectProperty) property, cardinality, (OWLClass) range);
+        public <P, C> void remove(OWLReferences ontology, OWLClass instance, P property3D, int cardinality, C range) {
+            ontology.removeMinObjectClassExpression(instance, (OWLObjectProperty) property3D, cardinality, (OWLClass) range);
         }
     }
 
@@ -366,8 +478,8 @@ public interface MORSemantic extends Semantic{
 
         public MORLink(){
         }
-        public MORLink( OWLObjectProperty property, OWLNamedIndividual value){
-            this.literals.setProperty( property);
+        public MORLink( OWLObjectProperty property3D, OWLNamedIndividual value){
+            this.literals.setProperty( property3D);
             this.literals.setValue( value);
         }
 
@@ -388,13 +500,13 @@ public interface MORSemantic extends Semantic{
         }
 
         @Override
-        public <P, V> void add(OWLReferences ontology, OWLNamedIndividual instance, P property, V value) {
-            ontology.addObjectPropertyB2Individual( instance, (OWLObjectProperty) property, (OWLNamedIndividual) value);
+        public <P, V> void add(OWLReferences ontology, OWLNamedIndividual instance, P property3D, V value) {
+            ontology.addObjectPropertyB2Individual( instance, (OWLObjectProperty) property3D, (OWLNamedIndividual) value);
         }
 
         @Override
-        public <P, V> void remove(OWLReferences ontology, OWLNamedIndividual instance, P property, V value) {
-            ontology.removeObjectPropertyB2Individual( instance, (OWLObjectProperty) property, (OWLNamedIndividual) value);
+        public <P, V> void remove(OWLReferences ontology, OWLNamedIndividual instance, P property3D, V value) {
+            ontology.removeObjectPropertyB2Individual( instance, (OWLObjectProperty) property3D, (OWLNamedIndividual) value);
         }
     }
 
@@ -429,14 +541,14 @@ public interface MORSemantic extends Semantic{
         }
 
         @Override
-        public <P,V> void add(OWLReferences ontology, OWLNamedIndividual instance, P property, V value) {
+        public <P,V> void add(OWLReferences ontology, OWLNamedIndividual instance, P property3D, V value) {
             ontology.addObjectPropertyB2Individual(instance,
-                    (OWLObjectProperty) property,(OWLNamedIndividual) value);
+                    (OWLObjectProperty) property3D,(OWLNamedIndividual) value);
         }
         @Override
-        public <P,V> void remove(OWLReferences ontology, OWLNamedIndividual instance, P property, V value) {
+        public <P,V> void remove(OWLReferences ontology, OWLNamedIndividual instance, P property3D, V value) {
             ontology.removeObjectPropertyB2Individual(instance,
-                    (OWLObjectProperty) property,(OWLNamedIndividual) value);
+                    (OWLObjectProperty) property3D,(OWLNamedIndividual) value);
         }
     }
 
@@ -447,8 +559,8 @@ public interface MORSemantic extends Semantic{
 
         public MORLiteral(){
         }
-        public MORLiteral(OWLDataProperty property, OWLLiteral value){
-            this.literals.setProperty( property);
+        public MORLiteral(OWLDataProperty property3D, OWLLiteral value){
+            this.literals.setProperty( property3D);
             this.literals.setValue( value);
         }
 
@@ -472,13 +584,13 @@ public interface MORSemantic extends Semantic{
         }
 
         @Override
-        public <P, V> void add(OWLReferences ontology, OWLNamedIndividual instance, P property, V value) {
-            ontology.addDataPropertyB2Individual( instance, (OWLDataProperty) property, (OWLLiteral) value);
+        public <P, V> void add(OWLReferences ontology, OWLNamedIndividual instance, P property3D, V value) {
+            ontology.addDataPropertyB2Individual( instance, (OWLDataProperty) property3D, (OWLLiteral) value);
         }
 
         @Override
-        public <P, V> void remove(OWLReferences ontology, OWLNamedIndividual instance, P property, V value) {
-            ontology.removeDataPropertyB2Individual( instance, (OWLDataProperty) property, (OWLLiteral) value);
+        public <P, V> void remove(OWLReferences ontology, OWLNamedIndividual instance, P property3D, V value) {
+            ontology.removeDataPropertyB2Individual( instance, (OWLDataProperty) property3D, (OWLLiteral) value);
         }
     }
 
@@ -520,40 +632,40 @@ public interface MORSemantic extends Semantic{
             return queriedLink;
         }
 
-        private <P,V> void add(OWLReferences ontology, OWLNamedIndividual instance, P property, V value) {
-            ontology.addDataPropertyB2Individual( instance, (OWLDataProperty) property, (OWLLiteral) value);
+        private <P,V> void add(OWLReferences ontology, OWLNamedIndividual instance, P property3D, V value) {
+            ontology.addDataPropertyB2Individual( instance, (OWLDataProperty) property3D, (OWLLiteral) value);
         }
-        private <P,V> void remove(OWLReferences ontology, OWLNamedIndividual instance, P property, V value) {
-            ontology.removeDataPropertyB2Individual( instance, (OWLDataProperty) property, (OWLLiteral) value);
-        }
-
-        @Override
-        public <P, V> void addX(OWLReferences ontology, OWLNamedIndividual instance, P property, V value) {
-            add(ontology,instance,property,value);
+        private <P,V> void remove(OWLReferences ontology, OWLNamedIndividual instance, P property3D, V value) {
+            ontology.removeDataPropertyB2Individual( instance, (OWLDataProperty) property3D, (OWLLiteral) value);
         }
 
         @Override
-        public <P, V> void addY(OWLReferences ontology, OWLNamedIndividual instance, P property, V value) {
-
+        public <P, V> void addX(OWLReferences ontology, OWLNamedIndividual instance, P property3D, V value) {
+            add(ontology,instance,property3D,value);
         }
 
         @Override
-        public <P, V> void addZ(OWLReferences ontology, OWLNamedIndividual instance, P property, V value) {
+        public <P, V> void addY(OWLReferences ontology, OWLNamedIndividual instance, P property3D, V value) {
 
         }
 
         @Override
-        public <P, V> void removeX(OWLReferences ontology, OWLNamedIndividual instance, P property, V value) {
+        public <P, V> void addZ(OWLReferences ontology, OWLNamedIndividual instance, P property3D, V value) {
 
         }
 
         @Override
-        public <P, V> void removeY(OWLReferences ontology, OWLNamedIndividual instance, P property, V value) {
+        public <P, V> void removeX(OWLReferences ontology, OWLNamedIndividual instance, P property3D, V value) {
 
         }
 
         @Override
-        public <P, V> void removeZ(OWLReferences ontology, OWLNamedIndividual instance, P property, V value) {
+        public <P, V> void removeY(OWLReferences ontology, OWLNamedIndividual instance, P property3D, V value) {
+
+        }
+
+        @Override
+        public <P, V> void removeZ(OWLReferences ontology, OWLNamedIndividual instance, P property3D, V value) {
 
         }
     }

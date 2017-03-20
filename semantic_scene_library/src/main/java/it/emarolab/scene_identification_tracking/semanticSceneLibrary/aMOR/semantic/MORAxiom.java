@@ -75,6 +75,7 @@ public interface MORAxiom extends Semantic.Axiom{
         }
     }
 
+    // todo make MORLinked
     class MORLiterised
         implements Semantic.Axiom.Atom<OWLLiteral>, MORAxiom{
 
@@ -119,6 +120,7 @@ public interface MORAxiom extends Semantic.Axiom{
         }
     }
 
+    // todo make MORMultiLinked
     class MORMultiLiterised
         implements Semantic.Axiom.AtomSet< MORLiterised>, MORAxiom{
 
@@ -218,6 +220,76 @@ public interface MORAxiom extends Semantic.Axiom{
         }
     }
 
+    // todo make MORLinked3D
+    class MORLiterised3D
+        implements Semantic.Axiom.Atom3D< MORLiterised>, MORAxiom{
+
+        private MORLiterised x, y, z;
+
+        public MORLiterised3D(){
+        }
+        public MORLiterised3D( MORLiterised x, MORLiterised y, MORLiterised z){
+            setXYZ( x, y, z);
+        }
+        public MORLiterised3D( OWLLiteral x, OWLLiteral y, OWLLiteral z){
+            setXYZ( x, y, z);
+        }
+
+        @Override
+        public void setX(MORLiterised xAtom) {
+            this.x = xAtom;
+        }
+        @Override
+        public void setY(MORLiterised yAtom) {
+            this.y = yAtom;
+        }
+        @Override
+        public void setZ(MORLiterised zAtom) {
+            this.z = zAtom;
+        }
+
+        public void setXYZ(OWLLiteral x, OWLLiteral y, OWLLiteral z) {
+            setX( x);
+            setY( y);
+            setZ( z);
+        }
+
+        @Override
+        public MORLiterised getX() {
+            return x;
+        }
+
+        public void setX(OWLLiteral x) {
+            setX( new MORLiterised( x));
+        }
+
+        @Override
+        public MORLiterised getY() {
+            return y;
+        }
+
+        public void setY(OWLLiteral y) {
+            setY( new MORLiterised( y));
+        }
+
+        @Override
+        public MORLiterised getZ() {
+            return z;
+        }
+
+        public void setZ(OWLLiteral Z) {
+            setZ( new MORLiterised( Z));
+        }
+
+        @Override
+        public String toString() {
+            return "MORLiterised3D{" +
+                    "x=" + x +
+                    ", y=" + y +
+                    ", z=" + z +
+                    '}';
+        }
+    }
 
     /*
     class MORTyped
