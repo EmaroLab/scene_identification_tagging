@@ -7,7 +7,7 @@ import it.emarolab.scene_identification_tracking.semanticSceneLibrary.core.Seman
  */
 public interface Descriptor<O,I,S extends Semantic<O,I,?>> {
 
-    ReadOutcome<I,?> read(O ontology, I instance);
+    ReadOutcome<I,?> read(O ontology, I instance, S semantic);
     WriteOutcome<I,?> write(O ontology, I instance, S semantic);
 
     interface Typing<O,I,S extends Semantic.Type<O,I,?>>
@@ -18,11 +18,15 @@ public interface Descriptor<O,I,S extends Semantic<O,I,?>> {
             extends Descriptor<O,I,S>{
     }
 
-/*    interface Properting<O,I,S extends Semantic.Property<O,I,?>>
+    interface Properting<O,I,S extends Semantic.Connection<O,I,?,?>>
             extends Descriptor<O,I,S>{
     }
 
-    interface Properting3D<O,I,S extends Semantic.Property3D<O,I,?>>
+    interface Propertings<O,I,S extends Semantic.Connections<O,I,?,?>>
+            extends Descriptor<O,I,S>{
+    }
+
+/*    interface Properting3D<O,I,S extends Semantic.Property3D<O,I,?>>
             extends Descriptor<O,I,S>{
         @Override
         default ReadOutcome<I,?> read(O ontology, I instance, S semantic){

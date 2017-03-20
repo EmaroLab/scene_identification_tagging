@@ -45,6 +45,13 @@
     
 
 
+    <!-- http://www.semanticweb.org/emaroLab/luca-buoncompagni/sit#data-prop -->
+
+
+    <owl:DatatypeProperty rdf:about="http://www.semanticweb.org/emaroLab/luca-buoncompagni/sit#data-prop"/>
+    
+
+
     <!-- http://www.semanticweb.org/emaroLab/luca-buoncompagni/sit#has-cone_apexX -->
 
 
@@ -394,15 +401,6 @@
     
 
 
-    <!-- http://www.semanticweb.org/emaroLab/luca-buoncompagni/sit#C -->
-
-
-    <owl:Class rdf:about="http://www.semanticweb.org/emaroLab/luca-buoncompagni/sit#C">
-        <rdfs:subClassOf rdf:resource="http://www.semanticweb.org/emaroLab/luca-buoncompagni/sit#Orientable"/>
-    </owl:Class>
-    
-
-
     <!-- http://www.semanticweb.org/emaroLab/luca-buoncompagni/sit#Cone -->
 
 
@@ -439,6 +437,7 @@
                 </owl:intersectionOf>
             </owl:Class>
         </owl:equivalentClass>
+        <rdfs:subClassOf rdf:resource="http://www.semanticweb.org/emaroLab/luca-buoncompagni/sit#Orientable"/>
     </owl:Class>
     
 
@@ -479,6 +478,7 @@
                 </owl:intersectionOf>
             </owl:Class>
         </owl:equivalentClass>
+        <rdfs:subClassOf rdf:resource="http://www.semanticweb.org/emaroLab/luca-buoncompagni/sit#Orientable"/>
     </owl:Class>
     
 
@@ -540,16 +540,9 @@
                 </owl:intersectionOf>
             </owl:Class>
         </owl:equivalentClass>
-        <rdfs:subClassOf rdf:resource="http://www.semanticweb.org/emaroLab/luca-buoncompagni/sit#P"/>
+        <rdfs:subClassOf rdf:resource="http://www.semanticweb.org/emaroLab/luca-buoncompagni/sit#GeometricPrimitive"/>
         <owl:disjointWith rdf:resource="http://www.semanticweb.org/emaroLab/luca-buoncompagni/sit#Sphere"/>
     </owl:Class>
-    
-
-
-    <!-- http://www.semanticweb.org/emaroLab/luca-buoncompagni/sit#P -->
-
-
-    <owl:Class rdf:about="http://www.semanticweb.org/emaroLab/luca-buoncompagni/sit#P"/>
     
 
 
@@ -578,6 +571,7 @@
                 </owl:intersectionOf>
             </owl:Class>
         </owl:equivalentClass>
+        <rdfs:subClassOf rdf:resource="http://www.semanticweb.org/emaroLab/luca-buoncompagni/sit#Orientable"/>
     </owl:Class>
     
 
@@ -627,6 +621,7 @@
 
     <owl:NamedIndividual rdf:about="http://www.semanticweb.org/emaroLab/luca-buoncompagni/sit#ind">
         <rdf:type rdf:resource="http://www.semanticweb.org/emaroLab/luca-buoncompagni/sit#Sphere"/>
+        <data-prop rdf:datatype="http://www.w3.org/2001/XMLSchema#string">new</data-prop>
     </owl:NamedIndividual>
     
 

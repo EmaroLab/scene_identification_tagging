@@ -3,11 +3,10 @@ package it.emarolab.scene_identification_tracking.semanticSceneLibrary.test;
 import it.emarolab.amor.owlDebugger.Logger;
 import it.emarolab.amor.owlInterface.OWLReferences;
 import it.emarolab.amor.owlInterface.OWLReferencesInterface;
-import it.emarolab.scene_identification_tracking.semanticSceneLibrary.aMOR.semantic.MORAxiom;
 import it.emarolab.scene_identification_tracking.semanticSceneLibrary.aMOR.semantic.MORDescriptor;
 import it.emarolab.scene_identification_tracking.semanticSceneLibrary.aMOR.semantic.MORSemantic;
-import it.emarolab.scene_identification_tracking.semanticSceneLibrary.core.synchronisation.Descriptor;
 import org.semanticweb.owlapi.model.OWLClass;
+import org.semanticweb.owlapi.model.OWLDataProperty;
 import org.semanticweb.owlapi.model.OWLNamedIndividual;
 
 import static it.emarolab.scene_identification_tracking.semanticSceneLibrary.Base.Logger.LOG;
@@ -59,8 +58,10 @@ public class ArchitectureTest {
         OWLNamedIndividual ind = ontoRef.getOWLIndividual("ind");
         OWLClass sphere = ontoRef.getOWLClass("Sphere");
         ontoRef.addIndividualB2Class( ind, sphere);
+        OWLDataProperty prop = ontoRef.getOWLDataProperty("data-prop");
         //ontoRef.synchronizeReasoner();
-/*
+
+/*      // TEST TYPED DESCRIPTOR
         MORDescriptor.MORTypeDescriptor descr = new MORDescriptor.MORTypeDescriptor();
 
         Descriptor.ReadOutcome<OWLNamedIndividual, MORAxiom.MORTyped> d = descr.read(ontoRef, ind);
@@ -73,6 +74,7 @@ public class ArchitectureTest {
         LOG( "!!!!!" + descr.write( ontoRef, ind, t));
 */
 
+/*      // TEST HIERARCHY DESCRIPTOR
         MORDescriptor.MORHierarchyDescriptor descr = new MORDescriptor.MORHierarchyDescriptor();
         Descriptor.ReadOutcome<OWLClass, MORAxiom.MORHierarchised> read = descr.read(ontoRef, ontoRef.getOWLClass("Orientable"));
         LOG(" !!!!! " + read);
@@ -82,7 +84,31 @@ public class ArchitectureTest {
         read.getAxiom().getParents().add( ontoRef.getOWLClass( "P"));
         LOG(" !!!!! " + descr.write( ontoRef, ontoRef.getOWLClass( "Orientable"),
                 new MORSemantic.MORHierarchy( read.getAxiom())));
+*/
 
+/*        // TEST LITERAL DESCRIPTOR
+        ontoRef.addDataPropertyB2Individual( ind, prop, ontoRef.getOWLLiteral( 1.2));
+        MORDescriptor.MORLiteralDescriptor descr = new MORDescriptor.MORLiteralDescriptor();
+        MORSemantic.MORLiteral literalSem = new MORSemantic.MORLiteral(prop);
+        LOG( " !!!!!! "  + descr.read( ontoRef, ind, literalSem));
+        literalSem.get().setAtom( ontoRef.getOWLLiteral( "Str"));
+        LOG( " !!!!!! "  + descr.write( ontoRef, ind, literalSem));
+*/
+
+        // TEST MULTI LITERAL DESCRIPTOR
+        ontoRef.addDataPropertyB2Individual( ind, prop, ontoRef.getOWLLiteral( 1.2));
+        ontoRef.addDataPropertyB2Individual( ind, prop, ontoRef.getOWLLiteral( 1.3));
+        ontoRef.addDataPropertyB2Individual( ind, prop, ontoRef.getOWLLiteral( 1.4));
+        MORDescriptor.MORLiteralsDescriptor descr = new MORDescriptor.MORLiteralsDescriptor();
+        MORSemantic.MORLiterals literalsSem = new MORSemantic.MORLiterals( prop);
+        LOG( " !!!!!! "  + descr.read( ontoRef, ind, literalsSem));
+        literalsSem.get().remove( ontoRef.getOWLLiteral( 1.2));
+        LOG( " !!!!!! "  + descr.write( ontoRef, ind, literalsSem));
+        literalsSem.get().clear();
+        LOG( " !!!!!! "  + descr.write( ontoRef, ind, literalsSem));
+        literalsSem.get().add( ontoRef.getOWLLiteral( "new"));
+        LOG( " !!!!!! "  + descr.write( ontoRef, ind, literalsSem));
+        
         return ontoRef;
     }
 }

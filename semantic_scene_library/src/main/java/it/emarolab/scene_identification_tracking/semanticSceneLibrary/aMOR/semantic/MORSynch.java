@@ -3,19 +3,22 @@ package it.emarolab.scene_identification_tracking.semanticSceneLibrary.aMOR.sema
 import it.emarolab.scene_identification_tracking.semanticSceneLibrary.core.synchronisation.Mapping;
 import org.semanticweb.owlapi.model.OWLObject;
 
+import java.util.Collection;
 import java.util.HashSet;
-import java.util.Set;
 
 /**
  * Created by bubx on 19/03/17.
  */
-public interface MORSynchronise {
+public interface MORSynch<A extends MORAxiom> {
 
-    abstract class MORReader< I extends OWLObject, A extends MORAxiom, M extends Mapping.State>{
+    void synchronise(A java, A owl);
+
+    abstract class MORSynchroniser< I extends OWLObject, A extends MORAxiom, M extends Mapping.State>
+            implements MORSynch<A> {
 
         protected Mapping.Intent<I,A,M> startingIntent;
 
-        public MORReader(Mapping.Intent<I,A,M> intent) {
+        public MORSynchroniser(Mapping.Intent<I,A,M> intent) {
             startingIntent = intent;
         }
 
@@ -44,7 +47,8 @@ public interface MORSynchronise {
             //else // todo LOG
         }
 
-        void synchronise(A java, A owl){
+        @Override
+        public void synchronise(A java, A owl){
             if( ! java.exists()){
                 if ( ! owl.exists())
                     trigger_JavaNotExists_OWLNotExists();
@@ -57,16 +61,16 @@ public interface MORSynchronise {
         }
     }
 
-    abstract class SetReader< I extends OWLObject, A extends MORAxiom, T extends OWLObject>
-            extends MORReader<I,A,Mapping.ReadingState>{
+    abstract class MORSetSynchroniser< I extends OWLObject, A extends MORAxiom, T extends OWLObject>
+            extends MORSynchroniser<I,A,Mapping.ReadingState> {
 
-        public SetReader(Mapping.Intent<I,A,Mapping.ReadingState> intent) {
+        public MORSetSynchroniser(Mapping.Intent<I,A,Mapping.ReadingState> intent) {
             super(intent);
         }
 
         abstract Mapping.Intent<I,A,Mapping.ReadingState> getUpdateIntent(T j, T o, String description);
 
-        void update( Set<T> javaSet, Set<T> owlSet){
+        void update( Collection<T> javaSet, Collection<T> owlSet){
             for ( T o : owlSet){
                 T j = null;
                 if( javaSet.contains( o)) {
@@ -84,7 +88,7 @@ public interface MORSynchronise {
                     otherIntent.getState().asSuccess();
                 }
             }
-            Set< T> toRemove = new HashSet<>();
+            Collection< T> toRemove = new HashSet<>();
             for( T j : javaSet){
 
                 Mapping.Intent<I, A, Mapping.ReadingState> otherIntent =
@@ -97,10 +101,10 @@ public interface MORSynchronise {
         }
     }
 
-    abstract class SetWriter< I extends OWLObject, A extends MORAxiom, T extends OWLObject>
-            extends MORReader<I,A,Mapping.WritingState>{
+    abstract class MORSetWriter< I extends OWLObject, A extends MORAxiom, T extends OWLObject>
+            extends MORSynchroniser<I,A,Mapping.WritingState> {
 
-        public SetWriter(Mapping.Intent<I,A,Mapping.WritingState> intent) {
+        public MORSetWriter(Mapping.Intent<I,A,Mapping.WritingState> intent) {
             super(intent);
         }
 
@@ -109,7 +113,11 @@ public interface MORSynchronise {
         abstract void addToSemantic( T t);
         abstract void removeFromSemantic( T t);
 
-        void update( Set<T> javaSet, Set<T> owlSet){
+        void update(Collection<T> javaSet, Collection<T> owlSet){
+
+            System.err.println( " java " + javaSet);
+            System.err.println( " owl " + javaSet);
+
             for ( T j : javaSet){
                 T o = null;
                 if( owlSet.contains( j)) {
@@ -127,6 +135,8 @@ public interface MORSynchronise {
                     otherIntent.getState().asNotChanged();
                 }
             }
+
+            System.err.println( " remove " + owlSet);
 
             for( T o : owlSet){
 

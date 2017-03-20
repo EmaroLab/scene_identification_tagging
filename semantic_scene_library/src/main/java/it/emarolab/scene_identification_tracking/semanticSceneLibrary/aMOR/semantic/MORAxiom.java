@@ -2,8 +2,11 @@ package it.emarolab.scene_identification_tracking.semanticSceneLibrary.aMOR.sema
 
 import it.emarolab.scene_identification_tracking.semanticSceneLibrary.core.Semantic;
 import org.semanticweb.owlapi.model.OWLClass;
+import org.semanticweb.owlapi.model.OWLLiteral;
 
+import java.util.Collection;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.Set;
 
 /**
@@ -71,6 +74,150 @@ public interface MORAxiom extends Semantic.Axiom{
                     '}';
         }
     }
+
+    class MORLiterised
+        implements Semantic.Axiom.Atom<OWLLiteral>, MORAxiom{
+
+        private OWLLiteral literal;
+
+        public MORLiterised(){
+        }
+        public MORLiterised( OWLLiteral literal){
+            this.literal = literal;
+        }
+
+        @Override
+        public OWLLiteral getAtom() {
+            return literal;
+        }
+
+        @Override
+        public void setAtom(OWLLiteral literal) {
+            this.literal = literal;
+        }
+
+        @Override
+        public String toString() {
+            return "MORLiterised{" +
+                    "literal=" + literal +
+                    '}';
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (!(o instanceof MORLiterised)) return false;
+
+            MORLiterised that = (MORLiterised) o;
+
+            return literal != null ? literal.equals(that.literal) : that.literal == null;
+        }
+
+        @Override
+        public int hashCode() {
+            return literal != null ? literal.hashCode() : 0;
+        }
+    }
+
+    class MORMultiLiterised
+        implements Semantic.Axiom.AtomSet< MORLiterised>, MORAxiom{
+
+        private Collection< MORLiterised> literals = new HashSet<>();
+
+        public MORMultiLiterised(){
+        }
+        public MORMultiLiterised( MORMultiLiterised literals){
+            this.literals = literals;
+        }
+        public MORMultiLiterised( MORLiterised literal){
+            this.literals.add( literal);
+        }
+        public MORMultiLiterised( Set<OWLLiteral> literals){
+            for( OWLLiteral l : literals)
+                this.literals.add( new MORLiterised( l));
+        }
+        public MORMultiLiterised( OWLLiteral literal){
+            this.literals.add( new MORLiterised( literal));
+        }
+
+        @Override
+        public int size() {
+            return literals.size();
+        }
+        @Override
+        public boolean isEmpty() {
+            return literals.isEmpty();
+        }
+        @Override
+        public boolean contains(Object o) {
+            return literals.contains( o);
+        }
+        @Override
+        public Iterator<MORLiterised> iterator() {
+            return literals.iterator();
+        }
+        @Override
+        public Object[] toArray() {
+            return literals.toArray();
+        }
+        @Override
+        public <T> T[] toArray(T[] a) {
+            return literals.toArray( a);
+        }
+        @Override
+        public boolean add( MORLiterised atom) {
+            return literals.add( atom);
+        }
+        public void add(OWLLiteral owlLiteral) { // todo others??
+            this.add( new MORLiterised( owlLiteral));
+        }
+        @Override @Deprecated
+        public boolean remove(Object o) {
+            return literals.remove( o);
+        }
+        public boolean remove(OWLLiteral literal) {
+            return literals.remove( new MORLiterised( literal));
+        }
+        public boolean remove( MORLiterised literal) {
+            return literals.remove( literal);
+        }
+        @Override
+        public boolean containsAll(Collection<?> c) {
+            return literals.containsAll( c);
+        }
+        @Override
+        public boolean addAll(Collection<? extends MORLiterised> c) {
+            return literals.addAll( c);
+        }
+        @Override
+        public boolean removeAll(Collection<?> c) {
+            return literals.retainAll( c);
+        }
+        @Override
+        public boolean retainAll(Collection<?> c) {
+            return literals.retainAll( c);
+        }
+        @Override
+        public void clear() {
+            literals.clear();
+        }
+
+        @Override
+        public Collection< OWLLiteral> getAtoms() {
+            Collection< OWLLiteral> out = new HashSet<>();
+            for( MORLiterised l : this)
+                out.add( l.getAtom());
+            return out;
+        }
+
+        @Override
+        public String toString() {
+            return "MORMultiLiterised{" +
+                    "literals=" + literals +
+                    '}';
+        }
+    }
+
 
     /*
     class MORTyped

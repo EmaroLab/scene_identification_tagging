@@ -1,5 +1,6 @@
 package it.emarolab.scene_identification_tracking.semanticSceneLibrary.core;
 
+import java.util.Collection;
 import java.util.Set;
 
 // todo ground with SITBase
@@ -61,7 +62,48 @@ public interface Semantic<O,I,A extends Semantic.Axiom> {
     }
 
 
+    interface Connection<O,I,S,A extends Axiom.Atom<?>>
+            extends Semantic<O,I,A>{
 
+        S getSemantic();
+        void setSemantic( S s);
+
+        @Override
+        default void add(O ontology, I instance, A axiom){
+            if ( axiom.exists())
+                add( ontology, instance, getSemantic(), axiom.getAtom());
+        }
+        <Y> void add(O ontology, I instance, S semantic, Y value);
+
+        @Override
+        default void remove(O ontology, I instance, A axiom){
+            if ( axiom.exists())
+                remove( ontology, instance, getSemantic(), axiom.getAtom());
+        }
+        <Y> void remove(O ontology, I instance, S semantic, Y value);
+    }
+
+
+    interface Connections<O,I,S,A extends Axiom.AtomSet<?>>
+            extends Semantic<O,I,A> {
+
+        S getSemantic();
+        void setSemantic( S s);
+
+        @Override
+        default void add(O ontology, I instance, A axiom){
+            if ( axiom.exists())
+                add( ontology, instance, getSemantic(), axiom);
+        }
+        <Y> void add(O ontology, I instance, S semantic, Y value);
+
+        @Override
+        default void remove(O ontology, I instance, A axiom){
+            if ( axiom.exists())
+                remove( ontology, instance, getSemantic(), axiom);
+        }
+        <Y> void remove(O ontology, I instance, S semantic, Y value);
+    }
 
 
     interface Axiom{
@@ -103,6 +145,35 @@ public interface Semantic<O,I,A extends Semantic.Axiom> {
             @Override
             default boolean exists() {
                 return Family.super.exists() & hasChildren();
+            }
+        }
+
+        interface Atom<Y>
+                extends Axiom{
+
+            Y getAtom();
+            void setAtom( Y y);
+
+            @Override
+            default boolean exists(){
+                if( getAtom() != null)
+                    return true;
+                return false;
+            }
+        }
+
+        interface AtomSet<Y extends Atom<?>>
+                extends Axiom, Collection<Y> {
+
+            Collection< ?> getAtoms();
+
+            @Override
+            default boolean exists(){
+                //if( this == null)
+                //    return false;
+                if( this.isEmpty())
+                    return false;
+                return true;
             }
         }
     }
