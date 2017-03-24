@@ -117,5 +117,6 @@ build/
 bin/
 
 
-
+#### SIT
 catalog-v001.xml
+resources/semantic-scene-library/example
