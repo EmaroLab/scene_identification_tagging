@@ -8,7 +8,7 @@ public interface Base {
     // TODO add vocabolary
     // TODO add logger
 
-    class SITBase{
+    class SIBase {
 
     }
 }

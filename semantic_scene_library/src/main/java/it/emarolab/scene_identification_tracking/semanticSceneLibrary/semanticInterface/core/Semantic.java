@@ -9,32 +9,71 @@ import java.util.Collection;
  */
 public interface Semantic {
 
-    interface AtomBase<I extends Instance<?,?>, W, Y>
+    interface AtomBase<Y>
             extends Base {
         Y get();
 
-        void addAxiom( I instance, W symbol);
-        void removeAxiom( I instance, W symbol);
+        boolean exists();
+        void clear();
     }
-    interface Atom<I extends Instance<?,?>, W, Y>
-            extends AtomBase<I,W,Y>{
+    interface Atom<S, Y>
+            extends AtomBase<Y>{
+        void set(Y literal);
+
+        <I extends Ground<?,?>> void addAxiom( I instance, S semantic, Y atom);
+        default <I extends Ground<?,?>> void addAxiom( I instance, S semantic){
+            addAxiom( instance, semantic, get());
+        }
+
+        <I extends Ground<?,?>> void removeAxiom( I instance, S semantic, Y atom);
+        default <I extends Ground<?,?>> void removeAxiom( I instance, S semantic){
+            removeAxiom( instance, semantic, get());
+        }
+
+        <I extends Ground<?,?>> Y queryAxiom( I instance, S semantic);
+        default <I extends Ground<?,?>> void queryAxiom( I instance, S semantic, Atom<S,Y> inputAtom){
+            inputAtom.set( queryAxiom( instance, semantic));
+        }
     }
-    interface AtomSet<I extends Instance<?,?>, W, Y extends Collection<?>>
-            extends AtomBase<I,W,Y>{
+    interface AtomSet<S, YY extends Collection<? extends Atom<S,Y>>,Y>
+            extends AtomBase<YY>{
+
+        default <I extends Ground<?,?>> void addAxiom(I instance, S semantic){
+            for( Atom<S,Y> a : get())
+                a.addAxiom( instance, semantic, a.get());
+        }
+
+        default <I extends Ground<?,?>> void removeAxiom(I instance, S semantic){
+            for( Atom<S,Y> a : get())
+                a.removeAxiom( instance, semantic, a.get());
+        }
+
+        <I extends Ground<?,?>> Collection<Y> queryAxiom( I instance, S semantic);
+
+        default <I extends Ground<?,?>> void queryAxiom(I instance, S semantic, AtomSet<S,YY,Y> newAtom){
+            Collection<Y> ys = queryAxiom( instance, semantic);
+            for ( Y y : ys)
+                newAtom.get().add( getNewElement( y));
+        }
+        <A extends Atom<S,Y>> A getNewElement( Y value);
     }
 
-    interface Axiom<I extends Instance<?,?>, W, A extends AtomBase<I,W,?>>
+    interface Axiom<I extends Ground<?,?>, S, A extends AtomBase<?>>
             extends Base {
         A getAtom();
-        W getSymbol();
+        S getSemantic();
+        boolean exists();
+        void clear();
 
         void addAxiom( I instance);
         void removeAxiom( I instance);
+
+        A queryAxiom(I instance); // return new
     }
 
-    interface Descriptor<I extends Instance<?,?>, X extends Axiom<I,?,?>>
+    interface Descriptor<I extends Ground<?,?>, X extends Axiom<I,?,?>>
             extends Base {
-        X getSemantic();
+        X getAxiom();
 
         Intents read( I instance);
         Intents write( I instance);
@@ -42,10 +81,10 @@ public interface Semantic {
 
 
 
-    interface Instance< O, I>
+    interface Ground< O, J>
             extends Base {
         O getOntology();
-        I getInstance();
+        J getInstance();
     }
 
 
