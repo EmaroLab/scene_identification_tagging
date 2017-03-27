@@ -2,7 +2,9 @@ package it.emarolab.scene_identification_tracking.semanticSceneLibrary.semanticI
 
 import com.google.common.base.Objects;
 import it.emarolab.scene_identification_tracking.semanticSceneLibrary.semanticInterface.Base;
+import it.emarolab.scene_identification_tracking.semanticSceneLibrary.semanticInterface.core.Semantic;
 import it.emarolab.scene_identification_tracking.semanticSceneLibrary.semanticInterface.core.definition.Adef;
+import it.emarolab.scene_identification_tracking.semanticSceneLibrary.semanticInterface.core.definition.Xdef;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -16,25 +18,33 @@ import static java.lang.Math.toIntExact;
  */
 public interface Mapping extends Base {
 
-    interface TrierInterface<I, A extends Adef<?>, M extends Mapping.State>
+    interface TrierInterface< I extends Semantic.Ground<?,?>, X extends Xdef<I,?,A>, A  extends Adef<?>,
+                                N extends Intent< I, X, A, M>, M extends State>
             extends Mapping{
-        Mapping.Transitions< ? extends Intent<I,A,M>> getStateTransitions();
+        Mapping.Transitions< N> getStateTransitions();
 
-        M getNewState();
+        <M extends State> M getNewState();
 
         Mapping.Transitions perform();
-        Transitions giveAtry();
+        Transitions< N> giveAtry();
 
-        Intent<I,A,M> getNewIntent(I instance, String description);
-        Intent<I,A,M> getNewIntent(I instance, String description, A java, A owl);
+        N instanciateIntent(I instance, String description);
+
+        N getNewIntent(I instance, String description, X java, A owl);
+        N getNewIntent(I instance, String description);
+
+        N getLastIntent();
 
         Transitions onError(Exception e);
     }
 
     // [[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[   SEMANTIC CHANGES   ]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]
 // todo add string and equals method (general comment ;) )
-    class Transitions<T extends Intent<?,? extends Adef<?>,? extends State>>
-            extends ArrayList<T> {
+    class Transitions<T extends Intent< ? extends Semantic.Ground<?,?>,
+                                        ? extends Xdef<?,?,? extends Adef<?>>,
+                                        ? extends Adef<?>,
+                                        ? extends State>>
+            extends ArrayList<T> implements Semantic.Intents<T> {
 
         public Transitions(int initialCapacity) {
             super(initialCapacity);
@@ -86,7 +96,7 @@ public interface Mapping extends Base {
             if (! isEmpty()) {
                 info += LOGGING.NEW_LINE;
                 int cnt = 0;
-                for (Intent<?,?,?> i : out) {
+                for (Intent<?,?,?,?> i : out) {
                     if (++cnt < size())
                         info += "\t\t" + i.toString() + "," + LOGGING.NEW_LINE;
                     else info += "\t\t" + i + LOGGING.NEW_LINE;
@@ -99,17 +109,46 @@ public interface Mapping extends Base {
             info += "}";
             return info + " merged state: " + merged;
         }
+
+
+
+
+        @Override
+        public void log(Object msg) {
+            Logger.LOG( msg);
+        }
+
+        @Override
+        public void logWarning(Object msg) {
+            Logger.logWARNING( msg);
+        }
+
+        @Override
+        public void logError(Object msg) {
+            Logger.logERROR( msg);
+        }
+
+        @Override
+        public void logError(Exception e) {
+            Logger.logERROR( e);
+        }
+
+        @Override
+        public Transitions copy() {
+            return (Transitions) new ArrayList<>( this);
+        }
     }
 
-    class Intent<I,A extends Adef<?>, M extends State>
+    class Intent<I extends Semantic.Ground<?,?>,X extends Xdef<I,?,A>, A extends Adef<?>, M extends State>
             extends SIBase
-            implements Comparable<Intent<?,?,?>>, Mapping{
+            implements Semantic.Intent<I,X,A,M>, Mapping{ // Comparable<Intent<?,?,?>>,
 
         private long time = System.currentTimeMillis();
         private String description;
         private M state;
         private I instance;
-        private A javaValue, semanticValue;
+        private X axiom;
+        private A queriedAtom;
 
         public Intent(){}
         public Intent(I instance, String description){
@@ -121,92 +160,112 @@ public interface Mapping extends Base {
             this.description = description;
             this.state = state;
         }
+        public Intent(I instance, M state, X axiom, String description){
+            this.instance = instance;
+            this.description = description;
+            this.state = state;
+            this.axiom = axiom;
+        }
+        public Intent(I instance, M state, A queriedAtom, String description){
+            this.instance = instance;
+            this.description = description;
+            this.state = state;
+            this.queriedAtom = queriedAtom;
+        }
+        public Intent(I instance, M state, X axiom, A queriedAtom, String description){
+            this.instance = instance;
+            this.description = description;
+            this.state = state;
+            this.queriedAtom = queriedAtom;
+            this.axiom = axiom;
+        }
 
-        public Intent(Intent<I,A,M> copy){
+        public Intent(Intent<I,X,A,M> copy){
             this.time = copy.time;
             this.description = copy.description;
             this.state.state = copy.state.state;
             this.instance = copy.instance;
-            this.javaValue = copy.javaValue;
-            this.semanticValue = copy.semanticValue;
+            this.axiom = copy.axiom;
+            this.queriedAtom = copy.queriedAtom;
         }
         @Override
-        public Intent<I,A,M> copy() {
+        public Intent<I,X,A,M> copy() {
             return new Intent<>( this);
         }
 
+        @Override
         public long getTime() {
             return time;
         }
 
+        @Override
         public I getInstance() {
             return instance;
         }
+        protected void setInstance(I instance) {
+            this.instance = instance;
+        }
 
+        @Override
         public String getDescription() {
             return description;
         }
-        public void setDescription(String description) {
+        protected void setDescription(String description) {
             this.description = description;
         }
 
+        @Override
         public M getState() {
             return state;
         }
-        public void setState(M state) {
+        protected void setState(M state) {
             this.state = state;
         }
 
-        public A getJavaValue() {
-            return javaValue;
+        @Override
+        public X getAxiom() {
+            return axiom;
         }
-        public void setJavaValue(A javaValue) {
-            this.javaValue = javaValue;
-        }
-
-        public A getSemanticValue() {
-            return semanticValue;
-        }
-        public void setSemanticValue(A semanticValue) {
-            this.semanticValue = semanticValue;
+        protected void setAxiom(X axiom) {
+            this.axiom = axiom;
         }
 
+        @Override
+        public A getQueriedAtom() {
+            return queriedAtom;
+        }
+        protected void setQueriedAtom(A queriedAtom) {
+            this.queriedAtom = queriedAtom;
+        }
 
         @Override
         public String toString() {
-            return "?????? ";//toStringDescription() + toStringStates() + toStringAxioms();
+            return "Intent : " + state + " (" + instance + ")  ->  " + axiom + " [" + queriedAtom + "]";
         }
 
         @Override
-        public boolean equals(Object o) {
+        public boolean equals(Object o) { // if I,X,A are equals
             if (this == o) return true;
             if (!(o instanceof Intent)) return false;
 
-            Intent<?,?,?> that = (Intent<?,?,?>) o;
+            Intent<?, ?, ?, ?> intent = (Intent<?, ?, ?, ?>) o;
 
-            if (getDescription() != null ? !getDescription().equals(that.getDescription()) : that.getDescription() != null)
+            if (getInstance() != null ? !getInstance().equals(intent.getInstance()) : intent.getInstance() != null)
                 return false;
-            if (getState() != null ? !getState().equals(that.getState()) : that.getState() != null) return false;
-            if (getInstance() != null ? !getInstance().equals(that.getInstance()) : that.getInstance() != null)
-                return false;
-            if (getJavaValue() != null ? !getJavaValue().equals(that.getJavaValue()) : that.getJavaValue() != null)
-                return false;
-            return getSemanticValue() != null ? getSemanticValue().equals(that.getSemanticValue()) : that.getSemanticValue() == null;
+            if (getAxiom() != null ? !getAxiom().equals(intent.getAxiom()) : intent.getAxiom() != null) return false;
+            return getQueriedAtom() != null ? getQueriedAtom().equals(intent.getQueriedAtom()) : intent.getQueriedAtom() == null;
         }
-
         @Override
         public int hashCode() {
-            int result = getDescription() != null ? getDescription().hashCode() : 0;
-            result = 31 * result + (getState() != null ? getState().hashCode() : 0);
-            result = 31 * result + (getInstance() != null ? getInstance().hashCode() : 0);
-            result = 31 * result + (getJavaValue() != null ? getJavaValue().hashCode() : 0);
-            result = 31 * result + (getSemanticValue() != null ? getSemanticValue().hashCode() : 0);
+            int result = getInstance() != null ? getInstance().hashCode() : 0;
+            result = 31 * result + (getAxiom() != null ? getAxiom().hashCode() : 0);
+            result = 31 * result + (getQueriedAtom() != null ? getQueriedAtom().hashCode() : 0);
             return result;
         }
 
         @Override
-        public int compareTo(Intent<?,?,?> o) {
-            return toIntExact( time - o.time);
+        public int compareTo(Semantic.Intent<?,?,?,?> o) {
+            return toIntExact( getTime() - o.getTime());
         }
     }
 
@@ -237,7 +296,7 @@ public interface Mapping extends Base {
      */
     abstract class State
             extends SIBase
-            implements Mapping{
+            implements Semantic.State, Mapping{
 
         /**
          * The internal state of this instance.
@@ -365,6 +424,7 @@ public interface Mapping extends Base {
         }
 
         /** @return the {@link #state} assigned to this semantic mapping operation. */
+        @Override
         public int getState() {
             return state;
         }
@@ -441,20 +501,11 @@ public interface Mapping extends Base {
          * @return a new state that comes from the combination of <code>'this'</code>
          * and the input parameter.
          */
-        abstract public State merge(State otherResult);/* {
-            if (otherResult != null)
-                combineResults(this, otherResult);  // set always 'this' as first parameter
-            return this;
-        }*/
+        abstract public State merge(State otherResult);
 
         public String getTypeName(){
             return LOGGING.STATE_TYPE_MAPPING;
         }
-
-        /*@Override
-        public MappingState copy() {
-            return new MappingState( this);
-        }*/
 
         /**
          * Consider equal states by check for the equal {@link #state}.
@@ -1008,24 +1059,25 @@ public interface Mapping extends Base {
      * <b>date</b>:        04/02/2017 <br>
      * </small></div>
      */
-    abstract class Trier<I,A extends Adef<?>,M extends State>
+    abstract class Trier< I extends Semantic.Ground<?,?>, X extends Xdef<I,?,A>, A  extends Adef<?>,
+                            N extends Intent< I, X, A, M>, M extends State>
             extends SIBase
-            implements TrierInterface<I, A, M>, Mapping {
+            implements TrierInterface<I,X,A,N,M>, Mapping {
 
-        private Transitions< Intent<I,A,M>> transiton;
+        private Transitions< N> transition;
 
         public Trier(){
-            transiton = new Transitions<>();
+            transition = new Transitions<>();
         }
 
         /** Constructs and sets the message for an eventually {@link #onError(Exception)} state. */
-        public Trier(Intent<I,A,M> intent) {
-            transiton = new Transitions<>( intent);
+        public Trier( N intent) {
+            transition = new Transitions<>( intent);
         }
 
         @Override
-        public Transitions getStateTransitions(){
-            return transiton;
+        public Transitions<N> getStateTransitions(){
+            return transition;
         }
 
         /**
@@ -1034,19 +1086,27 @@ public interface Mapping extends Base {
          @Override
          abstract public Transitions giveAtry();
          */
-
         @Override
-        public Intent<I,A,M> getNewIntent(I instance, String description) {
-            Intent<I,A,M> intent = new Intent( instance, getNewState(), description);
-            transiton.add( intent);
+        public N getNewIntent(I instance, String description) {
+            N intent = instanciateIntent(instance, description);
+            transition.add( intent);
             return intent;
         }
+
         @Override
-        public Intent<I,A,M> getNewIntent(I instance, String description, A java, A owl) {
-            Intent<I,A,M> intent = getNewIntent( instance, description);
-            intent.setJavaValue( java);
-            intent.setSemanticValue( owl);
+        public N getNewIntent(I instance, String description, X java, A owl) {
+            N intent = instanciateIntent(instance, description);
+            intent.setAxiom( java);
+            intent.setQueriedAtom( owl);
+            transition.add( intent);
             return intent;
+        }
+
+        @Override
+        public N getLastIntent() {
+            if ( transition.size() >= 1)
+                return transition.get( transition.size() - 1);
+            return null;
         }
 
         /**
@@ -1056,8 +1116,8 @@ public interface Mapping extends Base {
         @Override
         public Transitions onError(Exception e){
             logError( e);
-            transiton.get( transiton.size() - 1).getState().asError();
-            return transiton;
+            transition.get( transition.size() - 1).getState().asError();
+            return transition;
         }
 
         // todo add OnInconsisent
@@ -1069,7 +1129,7 @@ public interface Mapping extends Base {
          * {@link #giveAtry()} returning value or {@link #onError(Exception)} value.
          */
         @Override
-        public Transitions<Intent<I,A,M>> perform() {
+        public Transitions< N> perform() {
             try {
                 return giveAtry();
             } catch (Exception e) {
@@ -1088,4 +1148,5 @@ public interface Mapping extends Base {
             return null;
         }
     }
+
 }

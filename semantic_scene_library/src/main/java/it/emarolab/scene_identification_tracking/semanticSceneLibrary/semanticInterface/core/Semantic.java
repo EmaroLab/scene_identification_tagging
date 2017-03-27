@@ -75,14 +75,14 @@ public interface Semantic {
             extends Base {
         X getAxiom();
 
-        Intents read( I instance, X axiom);
-        Intents write( I instance, X axiom);
+        <T extends Intent<I,X,?,?>> Intents<T> read(I instance, X axiom);
+        <T extends Intent<I,X,?,?>> Intents<T> write(I instance, X axiom);
 
 
-        default Intents read( I instance){
+        default <T extends Intent<I,X,?,?>> Intents<T> read( I instance){
             return read( instance, getAxiom());
         }
-        default Intents write( I instance){
+        default <T extends Intent<I,X,?,?>> Intents<T> write( I instance){
             return write( instance, getAxiom());
         }
     }
@@ -96,15 +96,17 @@ public interface Semantic {
     }
 
 
-    // todo move in syncronise mapping
-    // add Try
-    interface Intents
-            extends Collection<Intent>, Base{
+    interface Intents<T extends Intent<?,?,?,?>> // todo change name
+            extends Collection<T>, Base{
     }
-    interface Intent<X extends Axiom<?,?,?>>
-            extends Base{
-        State getState();
+    interface Intent<I extends Ground<?,?>, X extends Axiom<I,?,A>, A extends Atomic<?>, M extends State>
+            extends Comparable< Intent<?,?,?,?>>,  Base{
+        M getState();
         X getAxiom();
+        A getQueriedAtom();
+        I getInstance();
+        long getTime();
+        String getDescription();
     }
     interface State
             extends Base{

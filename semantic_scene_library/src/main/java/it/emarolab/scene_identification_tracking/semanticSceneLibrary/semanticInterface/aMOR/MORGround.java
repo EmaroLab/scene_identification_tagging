@@ -2,9 +2,11 @@ package it.emarolab.scene_identification_tracking.semanticSceneLibrary.semanticI
 
 import it.emarolab.amor.owlInterface.OWLReferences;
 import it.emarolab.scene_identification_tracking.semanticSceneLibrary.semanticInterface.core.Semantic;
+import it.emarolab.scene_identification_tracking.semanticSceneLibrary.semanticInterface.core.synchronise.Mapping;
 import org.semanticweb.owlapi.model.OWLClass;
 import org.semanticweb.owlapi.model.OWLNamedIndividual;
 import org.semanticweb.owlapi.model.OWLObject;
+import org.semanticweb.owlapi.reasoner.OWLReasonerRuntimeException;
 
 /**
  * Created by bubx on 25/03/17.
@@ -24,6 +26,43 @@ public interface MORGround<J extends OWLObject> extends Semantic.Ground<OWLRefer
             return  (MORGround.GroundClass) instance;
         return null; // todo log
     }
+
+
+
+
+    interface MORTrier< I extends GroundBase<?>, X extends MORAxiom<I,?,A>, A extends MORAtom<?>,
+                        N extends Mapping.Intent< I, X, A, M>, M extends Mapping.State>
+            extends Mapping.TrierInterface<I,X,A,N,M>{
+
+        default Mapping.Transitions onJavaError(Exception e){
+            logError( e);
+            getStateTransitions().get( getStateTransitions().size() - 1).getState().asError();
+            return getStateTransitions();
+        }
+        default Mapping.Transitions onOWLError(Exception e){
+            logError( e);
+            getStateTransitions().get( getStateTransitions().size() - 1).getState().asError();
+            return getStateTransitions();
+        }
+        default Mapping.Transitions onInconsistency(Exception e){
+            logError( e);
+            getStateTransitions().get( getStateTransitions().size() - 1).getState().asInconsistent();
+            return getStateTransitions();
+        }
+
+        @Override
+        default Mapping.Transitions onError(Exception e){
+            if ( e instanceof OWLReasonerRuntimeException)
+                return onInconsistency( e);
+            if ( e instanceof openllet.owlapi.OWLException)
+                return onOWLError( e);
+            if ( e instanceof org.semanticweb.owlapi.model.OWLException)
+                return onOWLError( e);
+            return onJavaError( e);
+        }
+    }
+
+    // todo ground: literal, link
 
     abstract class GroundBase<J extends OWLObject>
             extends SIBase
@@ -100,8 +139,6 @@ public interface MORGround<J extends OWLObject> extends Semantic.Ground<OWLRefer
         }
     }
 
-    // todo ground: literal, link
-
     class GroundIndividual
             extends GroundBase<OWLNamedIndividual>{
 
@@ -159,4 +196,86 @@ public interface MORGround<J extends OWLObject> extends Semantic.Ground<OWLRefer
             setInstance( getOntology().getOWLClass( instanceName));
         }
     }
+
+    abstract class MORTrierRead<I extends GroundBase<?>,X extends MORAxiom<I,?,A>, A extends MORAtom<?>,
+                                N extends Mapping.Intent< I, X, A, Mapping.ReadingState>>
+            extends Mapping.Trier<I,X,A,N,Mapping.ReadingState>
+            implements MORTrier<I,X,A,N,Mapping.ReadingState>{
+
+        public MORTrierRead() {
+        }
+        public MORTrierRead(N intent) {
+            super(intent);
+        }
+
+        @Override
+        public Mapping.ReadingState getNewState() {
+            return new Mapping.ReadingState();
+        }
+    }
+
+    abstract class MORClassTryRead< X extends MORAxiom<GroundClass,?,A>, A extends MORAtom<?>,
+                                    N extends Mapping.Intent<GroundClass, X, A, Mapping.ReadingState>>
+            extends MORTrierRead<GroundClass,X,A,N>{
+
+        public MORClassTryRead() {
+        }
+        public MORClassTryRead(N intent) {
+            super(intent);
+        }
+    }
+
+    abstract class MORIndividualTryRead<X extends MORAxiom<GroundIndividual,?,A>, A extends MORAtom<?>,
+                                        N extends Mapping.Intent< GroundIndividual, X, A, Mapping.ReadingState>>
+            extends MORTrierRead<GroundIndividual,X,A,N>{
+
+        public MORIndividualTryRead() {
+        }
+        public MORIndividualTryRead(N intent) {
+            super(intent);
+        }
+    }
+
+
+
+    abstract class MORTrierWrite<   I extends GroundBase<?>,X extends MORAxiom<I,?,A>, A extends MORAtom<?>,
+                                    N extends Mapping.Intent< I, X, A, Mapping.WritingState>>
+            extends Mapping.Trier<I,X,A,N,Mapping.WritingState>
+            implements MORTrier<I,X,A,N,Mapping.WritingState>{
+
+        public MORTrierWrite() {
+        }
+        public MORTrierWrite(N intent) {
+            super(intent);
+        }
+
+        @Override
+        public Mapping.WritingState getNewState() {
+            return new Mapping.WritingState();
+        }
+    }
+
+    abstract class MORClassTryWrite<X extends MORAxiom<GroundClass,?,A>, A extends MORAtom<?>,
+                                    N extends Mapping.Intent<GroundClass, X, A, Mapping.WritingState>>
+            extends MORTrierWrite<GroundClass,X,A,N>{
+
+
+        public MORClassTryWrite() {
+        }
+        public MORClassTryWrite(N intent) {
+            super(intent);
+        }
+    }
+
+    abstract class MORIndividualTryWrite<   X extends MORAxiom<GroundIndividual,?,A>, A extends MORAtom<?>,
+                                            N extends Mapping.Intent<GroundIndividual, X, A, Mapping.WritingState>>
+            extends MORTrierWrite<GroundIndividual,X,A,N>{
+
+        public MORIndividualTryWrite() {
+        }
+        public MORIndividualTryWrite(N intent) {
+            super(intent);
+        }
+    }
+
 }

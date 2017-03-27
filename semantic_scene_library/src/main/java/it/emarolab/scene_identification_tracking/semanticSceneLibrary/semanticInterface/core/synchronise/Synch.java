@@ -1,10 +1,8 @@
 package it.emarolab.scene_identification_tracking.semanticSceneLibrary.semanticInterface.core.synchronise;
 
+import it.emarolab.scene_identification_tracking.semanticSceneLibrary.semanticInterface.core.Semantic;
 import it.emarolab.scene_identification_tracking.semanticSceneLibrary.semanticInterface.core.definition.Adef;
-import org.semanticweb.owlapi.model.OWLObject;
-
-import java.util.Collection;
-import java.util.HashSet;
+import it.emarolab.scene_identification_tracking.semanticSceneLibrary.semanticInterface.core.definition.Xdef;
 
 /**
  * Created by bubx on 19/03/17.
@@ -13,12 +11,12 @@ public interface Synch<A extends Adef<?>> {
 
     void synchronise(A java, A owl);
 
-    abstract class Synchroniser< I extends OWLObject, A extends Adef<?>, M extends Mapping.State>
+    abstract class Synchroniser<I extends Semantic.Ground<?,?>,X extends Xdef<I,?,A>, A extends Adef<?>, M extends Mapping.State>
             implements Synch<A> {
 
-        protected Mapping.Intent<I,A,M> startingIntent;
+        protected Mapping.Intent<I,X,M> startingIntent;
 
-        public Synchroniser(Mapping.Intent<I,A,M> intent) {
+        public Synchroniser(Mapping.Intent<I,A,X,M> intent) {
             startingIntent = intent;
         }
 
@@ -60,7 +58,7 @@ public interface Synch<A extends Adef<?>> {
             }
         }
     }
-
+/*
     abstract class SetSynchroniser< I extends OWLObject, A extends Adef<?>, T extends OWLObject>
             extends Synchroniser<I,A,Mapping.ReadingState> {
 
@@ -148,4 +146,5 @@ public interface Synch<A extends Adef<?>> {
             }
         }
     }
+    */
 }
