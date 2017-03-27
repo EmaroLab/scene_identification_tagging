@@ -1,7 +1,7 @@
 package it.emarolab.scene_identification_tracking.semanticSceneLibrary.semanticInterface.aMOR;
 
-import it.emarolab.scene_identification_tracking.semanticSceneLibrary.semanticInterface.core.Adef;
 import it.emarolab.scene_identification_tracking.semanticSceneLibrary.semanticInterface.core.Semantic;
+import it.emarolab.scene_identification_tracking.semanticSceneLibrary.semanticInterface.core.definition.Adef;
 import org.semanticweb.owlapi.model.*;
 
 import java.util.Collection;
@@ -24,6 +24,9 @@ public interface MORAtom<Y>
         }
         public MORABase(Y atom){
             set(atom);
+        }
+        public MORABase(MORABase<Y> copy) {
+            set( copy.get());
         }
 
         public void set( Y atom){
@@ -75,6 +78,9 @@ public interface MORAtom<Y>
         public MORAtomBase(Y atom) {
             super(atom);
         }
+        public MORAtomBase(MORAtomBase<S,Y> copy) {
+            super( copy);
+        }
     }
 
 
@@ -88,6 +94,11 @@ public interface MORAtom<Y>
             this.atoms = atoms;
         }
 
+        public MORAtomsBase(MORAtomsBase<S,YY,Y> copy) {
+            this.atoms = copy.get();
+        }
+
+
         @Override
         public YY get() {
             return atoms;
@@ -99,7 +110,7 @@ public interface MORAtom<Y>
                 return false;
             if ( atoms.isEmpty())
                 return false;
-            for( Semantic.AtomBase<Y> a : atoms)
+            for( Semantic.Atomic<Y> a : atoms)
                 if ( ! a.exists())
                     return false;
             return true;
@@ -123,6 +134,14 @@ public interface MORAtom<Y>
         }
         public MORLink(OWLNamedIndividual atom) {
             super(atom);
+        }
+        public MORLink(MORAtomBase<OWLObjectProperty, OWLNamedIndividual> copy) {
+            super(copy);
+        }
+
+        @Override
+        public MORLink copy() {
+            return new MORLink( this);
         }
 
         @Override
@@ -173,7 +192,14 @@ public interface MORAtom<Y>
                 //else // todo log
 
         }
+        public MORLinks(MORAtomsBase<OWLObjectProperty, Set<MORLink>, OWLNamedIndividual> copy) {
+            super(copy);
+        }
 
+        @Override
+        public MORLinks copy() {
+            return new MORLinks( this);
+        }
 
         @Override
         public <I extends Semantic.Ground<?, ?>>
@@ -198,6 +224,14 @@ public interface MORAtom<Y>
         }
         public MORLiteral(OWLLiteral atom) {
             super(atom);
+        }
+        public MORLiteral(MORAtomBase<OWLDataProperty, OWLLiteral> copy) {
+            super(copy);
+        }
+
+        @Override
+        public MORLiteral copy() {
+            return new MORLiteral( this);
         }
 
         @Override
@@ -247,6 +281,14 @@ public interface MORAtom<Y>
                     get().add( ( MORLiteral) i);
             //else // todo log
         }
+        public MORLiterals(MORAtomsBase<OWLDataProperty, Set<MORLiteral>, OWLLiteral> copy) {
+            super(copy);
+        }
+
+        @Override
+        public MORLiterals copy() {
+            return null;
+        }
 
         @Override
         public <I extends Semantic.Ground<?, ?>>
@@ -267,12 +309,18 @@ public interface MORAtom<Y>
             extends MORAtomBase<Void,OWLClass>
             implements Adef.Class<OWLClass>{
 
-
-
         public MORType() {
         }
         public MORType(OWLClass atom) {
             super(atom);
+        }
+        public MORType(MORAtomBase<Void, OWLClass> copy) {
+            super(copy);
+        }
+
+        @Override
+        public MORType copy() {
+            return new MORType( this);
         }
 
         @Override
@@ -321,6 +369,14 @@ public interface MORAtom<Y>
                     get().add( ( MORType) i);
             //else // todo log
         }
+        public MORTypes(MORAtomsBase<Void, Set<MORType>, OWLClass> copy) {
+            super(copy);
+        }
+
+        @Override
+        public MORTypes copy() {
+            return new MORTypes( this);
+        }
 
         @Override
         public <I extends Semantic.Ground<?, ?>>
@@ -349,6 +405,14 @@ public interface MORAtom<Y>
         public MORChildren(Collection<?> literal) {
             super(literal);
         }
+        public MORChildren(MORAtomsBase<Void, Set<MORType>, OWLClass> copy) {
+            super(copy);
+        }
+
+        @Override
+        public MORChildren copy() {
+            return new MORChildren(this);
+        }
 
         @Override
         public <I extends Semantic.Ground<?, ?>>
@@ -371,6 +435,14 @@ public interface MORAtom<Y>
         }
         public MORParents(Collection<?> literal) {
             super(literal);
+        }
+        public MORParents(MORAtomsBase<Void, Set<MORType>, OWLClass> copy) {
+            super(copy);
+        }
+
+        @Override
+        public MORParents copy() {
+            return new MORParents( this);
         }
 
         @Override

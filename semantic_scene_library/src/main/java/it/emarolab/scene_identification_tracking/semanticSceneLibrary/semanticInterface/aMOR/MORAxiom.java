@@ -3,7 +3,7 @@ package it.emarolab.scene_identification_tracking.semanticSceneLibrary.semanticI
 import it.emarolab.scene_identification_tracking.semanticSceneLibrary.semanticInterface.aMOR.MORGround.GroundBase;
 import it.emarolab.scene_identification_tracking.semanticSceneLibrary.semanticInterface.aMOR.MORGround.GroundClass;
 import it.emarolab.scene_identification_tracking.semanticSceneLibrary.semanticInterface.aMOR.MORGround.GroundIndividual;
-import it.emarolab.scene_identification_tracking.semanticSceneLibrary.semanticInterface.core.Xdef;
+import it.emarolab.scene_identification_tracking.semanticSceneLibrary.semanticInterface.core.definition.Xdef;
 import org.semanticweb.owlapi.model.OWLDataProperty;
 import org.semanticweb.owlapi.model.OWLLiteral;
 import org.semanticweb.owlapi.model.OWLNamedIndividual;
@@ -48,7 +48,10 @@ public interface MORAxiom< I extends MORGround<?>, S, A extends MORAtom<?>>
             setAtom( instance, atomName);
         }
 
-
+        public MORX( MORX<I,S,A> copy){
+            this.semantic = copy.semantic;
+            this.atom = copy.atom;
+        }
 
         @Override
         public S getSemantic() {
@@ -64,7 +67,7 @@ public interface MORAxiom< I extends MORGround<?>, S, A extends MORAtom<?>>
             return atom;
         }
 
-        public void setAtom(A atom) {
+        protected void setAtom(A atom) {
             this.atom = atom;
         }
 
@@ -132,6 +135,9 @@ public interface MORAxiom< I extends MORGround<?>, S, A extends MORAtom<?>>
         public MORAxiomBase(I instance, String semanticName, String atomName) {
             super(instance, semanticName, atomName);
         }
+        public MORAxiomBase(MORX<I, S, A> copy) {
+            super(copy);
+        }
 
         @Override
         public void addAxiom(I instance) {
@@ -183,6 +189,10 @@ public interface MORAxiom< I extends MORGround<?>, S, A extends MORAtom<?>>
         public MORAxiomsBase(I instance, String semanticsName, Collection<String> atomsName) {
             setSemantic( instance, semanticsName);
             setAtom( instance, atomsName);
+        }
+
+        public MORAxiomsBase(MORX<I, S, A> copy) {
+            super(copy);
         }
 
         public void setAtom(I instance, Collection<String> atoms){
@@ -246,6 +256,14 @@ public interface MORAxiom< I extends MORGround<?>, S, A extends MORAtom<?>>
         public MORLinked(GroundIndividual instance, String semanticName, String atomName) {
             super(instance, semanticName, atomName);
         }
+        public MORLinked(MORX<GroundIndividual, OWLObjectProperty, MORAtom.MORLink> copy) {
+            super(copy);
+        }
+
+        @Override
+        public MORLinked copy() {
+            return new MORLinked( this);
+        }
 
         @Override
         protected void setSemantic(GroundIndividual i, String semanticName) {
@@ -299,6 +317,14 @@ public interface MORAxiom< I extends MORGround<?>, S, A extends MORAtom<?>>
         public MORMultiLinked(GroundIndividual instance, String semanticsName, Collection<String> atomsName) {
             super(instance, semanticsName, atomsName);
         }
+        public MORMultiLinked(MORX<GroundIndividual, OWLObjectProperty, MORAtom.MORLinks> copy) {
+            super(copy);
+        }
+
+        @Override
+        public MORMultiLinked copy() {
+            return new MORMultiLinked( this);
+        }
 
         @Override
         protected void setSemantic(GroundIndividual i, String semanticName) {
@@ -346,6 +372,14 @@ public interface MORAxiom< I extends MORGround<?>, S, A extends MORAtom<?>>
         }
         public MORLittered(GroundIndividual instance, String semanticName, String atomName) {
             super(instance, semanticName, atomName);
+        }
+        public MORLittered(MORX<GroundIndividual, OWLDataProperty, MORAtom.MORLiteral> copy) {
+            super(copy);
+        }
+
+        @Override
+        public MORLittered copy() {
+            return new MORLittered( this);
         }
 
         @Override
@@ -403,6 +437,14 @@ public interface MORAxiom< I extends MORGround<?>, S, A extends MORAtom<?>>
         public MORMultiLettered(GroundIndividual instance, String semanticsName, Collection<String> atomsName) {
             super(instance, semanticsName, atomsName);
         }
+        public MORMultiLettered(MORX<GroundIndividual, OWLDataProperty, MORAtom.MORLiterals> copy) {
+            super(copy);
+        }
+
+        @Override
+        public MORMultiLettered copy() {
+            return new MORMultiLettered( this);
+        }
 
         @Override
         protected void setSemantic(GroundIndividual i, String semanticName) {
@@ -441,6 +483,14 @@ public interface MORAxiom< I extends MORGround<?>, S, A extends MORAtom<?>>
         }
         public MORMultiTyped(Collection<String> atomsName, GroundIndividual instance) {
             super(atomsName, instance);
+        }
+        public MORMultiTyped(MORX<GroundIndividual, Void, MORAtom.MORTypes> copy) {
+            super(copy);
+        }
+
+        @Override
+        public MORMultiTyped copy() {
+            return new MORMultiTyped( this);
         }
 
         @Override @Deprecated
@@ -487,6 +537,14 @@ public interface MORAxiom< I extends MORGround<?>, S, A extends MORAtom<?>>
         public MORSubType(Collection<String> atomsName, GroundClass instance) {
             super(atomsName, instance);
         }
+        public MORSubType(MORX<GroundClass, Void, MORAtom.MORChildren> copy) {
+            super(copy);
+        }
+
+        @Override
+        public MORSubType copy() {
+            return new MORSubType( this);
+        }
 
         @Override @Deprecated
         protected void setSemantic(GroundClass instance, String semanticName) {
@@ -531,6 +589,14 @@ public interface MORAxiom< I extends MORGround<?>, S, A extends MORAtom<?>>
         }
         public MORSuperType(Collection<String> atomsName, GroundClass instance) {
             super(atomsName, instance);
+        }
+        public MORSuperType(MORX<GroundClass, Void, MORAtom.MORParents> copy) {
+            super(copy);
+        }
+
+        @Override
+        public MORSuperType copy() {
+            return new MORSuperType( this);
         }
 
         @Override @Deprecated

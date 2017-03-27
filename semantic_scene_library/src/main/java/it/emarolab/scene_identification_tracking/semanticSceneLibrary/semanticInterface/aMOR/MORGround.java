@@ -12,18 +12,18 @@ import org.semanticweb.owlapi.model.OWLObject;
 public interface MORGround<J extends OWLObject> extends Semantic.Ground<OWLReferences, J> {
 
     static  <I extends Semantic.Ground<?, ?>>
-                MORGround.GroundIndividual groundIndividual(I instance){
+    MORGround.GroundIndividual groundIndividual(I instance){
         if ( instance instanceof MORGround.GroundIndividual)
             return  (MORGround.GroundIndividual) instance;
         return null; // todo log
     }
+
     static <I extends Semantic.Ground<?, ?>>
-                MORGround.GroundClass groundClass( I instance){
+    MORGround.GroundClass groundClass( I instance){
         if ( instance instanceof MORGround.GroundClass)
             return  (MORGround.GroundClass) instance;
         return null; // todo log
     }
-
 
     abstract class GroundBase<J extends OWLObject>
             extends SIBase
@@ -43,6 +43,10 @@ public interface MORGround<J extends OWLObject> extends Semantic.Ground<OWLRefer
         }
         public GroundBase(OWLReferences ontology, String instanceName) {
             this.setOntology( ontology, instanceName);
+        }
+        public GroundBase( GroundBase<J> copy){
+            this.ontology = copy.ontology;
+            this.instance = copy.instance;
         }
 
         public void setOntology( OWLReferences ontology, String instanceName){
@@ -96,6 +100,8 @@ public interface MORGround<J extends OWLObject> extends Semantic.Ground<OWLRefer
         }
     }
 
+    // todo ground: literal, link
+
     class GroundIndividual
             extends GroundBase<OWLNamedIndividual>{
 
@@ -109,6 +115,14 @@ public interface MORGround<J extends OWLObject> extends Semantic.Ground<OWLRefer
         }
         public GroundIndividual(OWLReferences ontology, String instanceName) {
             super(ontology, instanceName);
+        }
+        public GroundIndividual(GroundBase<OWLNamedIndividual> copy) {
+            super(copy);
+        }
+
+        @Override
+        public GroundIndividual copy() {
+            return new GroundIndividual(this);
         }
 
         @Override
@@ -130,6 +144,14 @@ public interface MORGround<J extends OWLObject> extends Semantic.Ground<OWLRefer
         }
         public GroundClass(OWLReferences ontology, String instanceName) {
             super(ontology, instanceName);
+        }
+        public GroundClass(GroundBase<OWLClass> copy) {
+            super(copy);
+        }
+
+        @Override
+        public GroundClass copy() {
+            return new GroundClass( this);
         }
 
         @Override

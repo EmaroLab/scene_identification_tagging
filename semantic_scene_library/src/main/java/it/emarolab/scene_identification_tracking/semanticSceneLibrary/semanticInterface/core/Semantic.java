@@ -9,7 +9,7 @@ import java.util.Collection;
  */
 public interface Semantic {
 
-    interface AtomBase<Y>
+    interface Atomic<Y>
             extends Base {
         Y get();
 
@@ -17,7 +17,7 @@ public interface Semantic {
         void clear();
     }
     interface Atom<S, Y>
-            extends AtomBase<Y>{
+            extends Atomic<Y> {
         void set(Y literal);
 
         <I extends Ground<?,?>> void addAxiom( I instance, S semantic, Y atom);
@@ -36,7 +36,7 @@ public interface Semantic {
         }
     }
     interface AtomSet<S, YY extends Collection<? extends Atom<S,Y>>,Y>
-            extends AtomBase<YY>{
+            extends Atomic<YY> {
 
         default <I extends Ground<?,?>> void addAxiom(I instance, S semantic){
             for( Atom<S,Y> a : get())
@@ -58,7 +58,7 @@ public interface Semantic {
         <A extends Atom<S,Y>> A getNewElement( Y value);
     }
 
-    interface Axiom<I extends Ground<?,?>, S, A extends AtomBase<?>>
+    interface Axiom<I extends Ground<?,?>, S, A extends Atomic<?>>
             extends Base {
         A getAtom();
         S getSemantic();
@@ -75,8 +75,16 @@ public interface Semantic {
             extends Base {
         X getAxiom();
 
-        Intents read( I instance);
-        Intents write( I instance);
+        Intents read( I instance, X axiom);
+        Intents write( I instance, X axiom);
+
+
+        default Intents read( I instance){
+            return read( instance, getAxiom());
+        }
+        default Intents write( I instance){
+            return write( instance, getAxiom());
+        }
     }
 
 
