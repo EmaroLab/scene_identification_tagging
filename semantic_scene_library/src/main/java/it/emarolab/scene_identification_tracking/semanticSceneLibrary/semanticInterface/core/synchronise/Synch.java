@@ -1,14 +1,12 @@
 package it.emarolab.scene_identification_tracking.semanticSceneLibrary.semanticInterface.core.synchronise;
 
-import it.emarolab.scene_identification_tracking.semanticSceneLibrary.semanticInterface.core.Semantic;
 import it.emarolab.scene_identification_tracking.semanticSceneLibrary.semanticInterface.core.definition.Adef;
-import it.emarolab.scene_identification_tracking.semanticSceneLibrary.semanticInterface.core.definition.Xdef;
 
 /**
  * Created by bubx on 19/03/17.
  */
 public interface Synch<A extends Adef<?>> {
-
+/*
     void synchronise(A java, A owl);
 
     abstract class Synchroniser<I extends Semantic.Ground<?,?>,X extends Xdef<I,?,A>, A extends Adef<?>, M extends Mapping.State>
@@ -58,7 +56,7 @@ public interface Synch<A extends Adef<?>> {
             }
         }
     }
-/*
+
     abstract class SetSynchroniser< I extends OWLObject, A extends Adef<?>, T extends OWLObject>
             extends Synchroniser<I,A,Mapping.ReadingState> {
 
@@ -68,7 +66,7 @@ public interface Synch<A extends Adef<?>> {
 
         abstract Mapping.Intent<I,A,Mapping.ReadingState> getUpdateIntent(T j, T o, String description);
 
-        void update( Collection<T> javaSet, Collection<T> owlSet){
+        void update(Collection<T> javaSet, Collection<T> owlSet){
             for ( T o : owlSet){
                 T j = null;
                 if( javaSet.contains( o)) {

@@ -3,6 +3,7 @@ package it.emarolab.scene_identification_tracking.semanticSceneLibrary.semanticI
 import it.emarolab.scene_identification_tracking.semanticSceneLibrary.semanticInterface.Base;
 
 import java.util.Collection;
+import java.util.List;
 
 /**
  * Created by bubx on 23/03/17.
@@ -10,7 +11,7 @@ import java.util.Collection;
 public interface Semantic {
 
     interface Atomic<Y>
-            extends Base {
+            extends Semantic, Base {
         Y get();
 
         boolean exists();
@@ -59,7 +60,7 @@ public interface Semantic {
     }
 
     interface Axiom<I extends Ground<?,?>, S, A extends Atomic<?>>
-            extends Base {
+            extends Semantic, Base {
         A getAtom();
         S getSemantic();
         boolean exists();
@@ -71,18 +72,25 @@ public interface Semantic {
         A queryAxiom(I instance); // return new
     }
 
-    interface Descriptor<I extends Ground<?,?>, X extends Axiom<I,?,?>>
-            extends Base {
+    interface Descriptor<I extends Ground<?,?>, X extends Axiom<I,?,A>, A extends Atomic<?>>
+            extends Semantic, Base {
         X getAxiom();
 
-        <T extends Intent<I,X,?,?>> Intents<T> read(I instance, X axiom);
-        <T extends Intent<I,X,?,?>> Intents<T> write(I instance, X axiom);
 
+        <T extends Transitions> T read(I instance, X axiom, A o);
+        <T extends Transitions> T write(I instance, X axiom, A o);
 
-        default <T extends Intent<I,X,?,?>> Intents<T> read( I instance){
+        default <T extends Transitions> T read(I instance, X axiom){
+            return read( instance, axiom, axiom.queryAxiom( instance));
+        }
+        default <T extends Transitions> T write(I instance, X axiom){
+            return write( instance, axiom, axiom.queryAxiom( instance));
+        }
+
+        default <T extends Transitions> T read(I instance){
             return read( instance, getAxiom());
         }
-        default <T extends Intent<I,X,?,?>> Intents<T> write( I instance){
+        default <T extends Transitions> T write(I instance){
             return write( instance, getAxiom());
         }
     }
@@ -90,17 +98,17 @@ public interface Semantic {
 
 
     interface Ground< O, J>
-            extends Base {
+            extends Semantic, Base {
         O getOntology();
         J getInstance();
     }
 
 
-    interface Intents<T extends Intent<?,?,?,?>> // todo change name
-            extends Collection<T>, Base{
+    interface Transitions<T extends Intent> // todo change name
+            extends List<T>, Semantic, Base{
     }
     interface Intent<I extends Ground<?,?>, X extends Axiom<I,?,A>, A extends Atomic<?>, M extends State>
-            extends Comparable< Intent<?,?,?,?>>,  Base{
+            extends Comparable< Intent<?,?,?,?>>, Semantic, Base{
         M getState();
         X getAxiom();
         A getQueriedAtom();
@@ -109,7 +117,7 @@ public interface Semantic {
         String getDescription();
     }
     interface State
-            extends Base{
+            extends Semantic, Base{
         int getState();
     }
 }

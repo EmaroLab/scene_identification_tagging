@@ -11,7 +11,8 @@ import org.semanticweb.owlapi.reasoner.OWLReasonerRuntimeException;
 /**
  * Created by bubx on 25/03/17.
  */
-public interface MORGround<J extends OWLObject> extends Semantic.Ground<OWLReferences, J> {
+public interface MORGround<J extends OWLObject>
+        extends Semantic.Ground<OWLReferences, J> {
 
     static  <I extends Semantic.Ground<?, ?>>
     MORGround.GroundIndividual groundIndividual(I instance){
@@ -30,9 +31,8 @@ public interface MORGround<J extends OWLObject> extends Semantic.Ground<OWLRefer
 
 
 
-    interface MORTrier< I extends GroundBase<?>, X extends MORAxiom<I,?,A>, A extends MORAtom<?>,
-                        N extends Mapping.Intent< I, X, A, M>, M extends Mapping.State>
-            extends Mapping.TrierInterface<I,X,A,N,M>{
+    interface MORTrier< I extends GroundBase<?>, X extends MORAxiom<I,?,A>, A extends MORAtom<?>, M extends Mapping.State>
+            extends Mapping.TrierInterface<I,X,A,M>{
 
         default Mapping.Transitions onJavaError(Exception e){
             logError( e);
@@ -112,7 +112,7 @@ public interface MORGround<J extends OWLObject> extends Semantic.Ground<OWLRefer
             return instance;
         }
 
-        abstract void setInstance( String instanceName);
+        abstract public void setInstance( String instanceName);
 
         @Override
         public boolean equals(Object o) {
@@ -163,7 +163,7 @@ public interface MORGround<J extends OWLObject> extends Semantic.Ground<OWLRefer
         }
 
         @Override
-        void setInstance(String instanceName) {
+        public void setInstance(String instanceName) {
             setInstance( getOntology().getOWLIndividual( instanceName));
         }
     }
@@ -192,19 +192,18 @@ public interface MORGround<J extends OWLObject> extends Semantic.Ground<OWLRefer
         }
 
         @Override
-        void setInstance(String instanceName) {
+        public void setInstance(String instanceName) {
             setInstance( getOntology().getOWLClass( instanceName));
         }
     }
 
-    abstract class MORTrierRead<I extends GroundBase<?>,X extends MORAxiom<I,?,A>, A extends MORAtom<?>,
-                                N extends Mapping.Intent< I, X, A, Mapping.ReadingState>>
-            extends Mapping.Trier<I,X,A,N,Mapping.ReadingState>
-            implements MORTrier<I,X,A,N,Mapping.ReadingState>{
+    abstract class MORTrierRead<I extends GroundBase<?>,X extends MORAxiom<I,?,A>, A extends MORAtom<?>>
+            extends Mapping.Trier<I,X,A,Mapping.ReadingState>
+            implements MORTrier<I,X,A,Mapping.ReadingState>{
 
         public MORTrierRead() {
         }
-        public MORTrierRead(N intent) {
+        public MORTrierRead(Intent intent) {
             super(intent);
         }
 
@@ -214,38 +213,35 @@ public interface MORGround<J extends OWLObject> extends Semantic.Ground<OWLRefer
         }
     }
 
-    abstract class MORClassTryRead< X extends MORAxiom<GroundClass,?,A>, A extends MORAtom<?>,
-                                    N extends Mapping.Intent<GroundClass, X, A, Mapping.ReadingState>>
-            extends MORTrierRead<GroundClass,X,A,N>{
+    abstract class MORClassTryRead< X extends MORAxiom<GroundClass,?,A>, A extends MORAtom<?>>
+            extends MORTrierRead<GroundClass,X,A>{
 
         public MORClassTryRead() {
         }
-        public MORClassTryRead(N intent) {
+        public MORClassTryRead(Intent intent) {
             super(intent);
         }
     }
 
-    abstract class MORIndividualTryRead<X extends MORAxiom<GroundIndividual,?,A>, A extends MORAtom<?>,
-                                        N extends Mapping.Intent< GroundIndividual, X, A, Mapping.ReadingState>>
-            extends MORTrierRead<GroundIndividual,X,A,N>{
+    abstract class MORIndividualTryRead<X extends MORAxiom<GroundIndividual,?,A>, A extends MORAtom<?>>
+            extends MORTrierRead<GroundIndividual,X,A>{
 
         public MORIndividualTryRead() {
         }
-        public MORIndividualTryRead(N intent) {
+        public MORIndividualTryRead(Intent intent) {
             super(intent);
         }
     }
 
 
 
-    abstract class MORTrierWrite<   I extends GroundBase<?>,X extends MORAxiom<I,?,A>, A extends MORAtom<?>,
-                                    N extends Mapping.Intent< I, X, A, Mapping.WritingState>>
-            extends Mapping.Trier<I,X,A,N,Mapping.WritingState>
-            implements MORTrier<I,X,A,N,Mapping.WritingState>{
+    abstract class MORTrierWrite<   I extends GroundBase<?>,X extends MORAxiom<I,?,A>, A extends MORAtom<?>>
+            extends Mapping.Trier<I,X,A,Mapping.WritingState>
+            implements MORTrier<I,X,A,Mapping.WritingState>{
 
         public MORTrierWrite() {
         }
-        public MORTrierWrite(N intent) {
+        public MORTrierWrite(Intent intent) {
             super(intent);
         }
 
@@ -255,25 +251,23 @@ public interface MORGround<J extends OWLObject> extends Semantic.Ground<OWLRefer
         }
     }
 
-    abstract class MORClassTryWrite<X extends MORAxiom<GroundClass,?,A>, A extends MORAtom<?>,
-                                    N extends Mapping.Intent<GroundClass, X, A, Mapping.WritingState>>
-            extends MORTrierWrite<GroundClass,X,A,N>{
+    abstract class MORClassTryWrite<X extends MORAxiom<GroundClass,?,A>, A extends MORAtom<?>>
+            extends MORTrierWrite<GroundClass,X,A>{
 
 
         public MORClassTryWrite() {
         }
-        public MORClassTryWrite(N intent) {
+        public MORClassTryWrite(Intent intent) {
             super(intent);
         }
     }
 
-    abstract class MORIndividualTryWrite<   X extends MORAxiom<GroundIndividual,?,A>, A extends MORAtom<?>,
-                                            N extends Mapping.Intent<GroundIndividual, X, A, Mapping.WritingState>>
-            extends MORTrierWrite<GroundIndividual,X,A,N>{
+    abstract class MORIndividualTryWrite< X extends MORAxiom<GroundIndividual,?,A>, A extends MORAtom<?>>
+            extends MORTrierWrite<GroundIndividual,X,A>{
 
         public MORIndividualTryWrite() {
         }
-        public MORIndividualTryWrite(N intent) {
+        public MORIndividualTryWrite(Intent intent) {
             super(intent);
         }
     }

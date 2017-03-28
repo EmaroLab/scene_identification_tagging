@@ -1,6 +1,5 @@
 package it.emarolab.scene_identification_tracking.semanticSceneLibrary.semanticInterface.aMOR;
 
-import it.emarolab.scene_identification_tracking.semanticSceneLibrary.semanticInterface.Base;
 import it.emarolab.scene_identification_tracking.semanticSceneLibrary.semanticInterface.aMOR.MORGround.GroundIndividual;
 import it.emarolab.scene_identification_tracking.semanticSceneLibrary.semanticInterface.core.definition.Ddef;
 import it.emarolab.scene_identification_tracking.semanticSceneLibrary.semanticInterface.core.synchronise.Mapping;
@@ -9,8 +8,8 @@ import it.emarolab.scene_identification_tracking.semanticSceneLibrary.semanticIn
  * Created by bubx on 27/03/17.
  */
 // those are axiom mapper that can eventually contains an axiom.
-public interface MORDescriptor<I extends MORGround<?>, X extends MORAxiom<I,?,?>>
-        extends Ddef<I,X>{
+public interface MORDescriptor<I extends MORGround<?>, X extends MORAxiom<I,?,A>, A extends MORAtom<?>>
+        extends Ddef<I,X,A>{
 
     // todo implement read and write in interfaces
 
@@ -39,7 +38,7 @@ public interface MORDescriptor<I extends MORGround<?>, X extends MORAxiom<I,?,?>
             super(instance, state, axiom, queriedAtom, description);
         }
 
-        public MORLiteralIntent(Intent<GroundIndividual, MORAxiom.MORLittered, MORAtom.MORLiteral, M> copy) {
+        public MORLiteralIntent(Mapping.Intent<GroundIndividual, MORAxiom.MORLittered, MORAtom.MORLiteral, M> copy) {
             super(copy);
         }
     }
@@ -69,7 +68,7 @@ public interface MORDescriptor<I extends MORGround<?>, X extends MORAxiom<I,?,?>
             super(instance, state, axiom, queriedAtom, description);
         }
 
-        public MORLiteralsIntent(Intent<GroundIndividual, MORAxiom.MORMultiLettered, MORAtom.MORLiterals, M> copy) {
+        public MORLiteralsIntent(Mapping.Intent<GroundIndividual, MORAxiom.MORMultiLettered, MORAtom.MORLiterals, M> copy) {
             super(copy);
         }
     }
@@ -78,7 +77,8 @@ public interface MORDescriptor<I extends MORGround<?>, X extends MORAxiom<I,?,?>
 
     class MORLiteral
         extends SIBase
-        implements Ddef.Data<GroundIndividual,MORAxiom.MORLittered>, MORDescriptor<GroundIndividual,MORAxiom.MORLittered>{
+        implements  Ddef.Data<GroundIndividual,MORAxiom.MORLittered,MORAtom.MORLiteral>,
+                    MORDescriptor<GroundIndividual,MORAxiom.MORLittered,MORAtom.MORLiteral>{
 
         MORAxiom.MORLittered littered = new MORAxiom.MORLittered();
 
@@ -94,6 +94,11 @@ public interface MORDescriptor<I extends MORGround<?>, X extends MORAxiom<I,?,?>
         }
 
         @Override
+        public MORLiteral copy() {
+            return new MORLiteral( this);
+        }
+
+        @Override
         public MORAxiom.MORLittered getAxiom() {
             return littered;
         }
@@ -103,26 +108,24 @@ public interface MORDescriptor<I extends MORGround<?>, X extends MORAxiom<I,?,?>
         }
 
         @Override
-        public Mapping.Transitions<MORLiteralIntent<Mapping.ReadingState>>
-        read(GroundIndividual instance, MORAxiom.MORLittered axiom) {
-            MORAtom.MORLiteral queried = axiom.queryAxiom(instance);
-
-            return new MORGround.MORIndividualTryRead<MORAxiom.MORLittered, MORAtom.MORLiteral,MORLiteralIntent<Mapping.ReadingState>>
+        public Mapping.Transitions
+        read(GroundIndividual instance, MORAxiom.MORLittered axiom, MORAtom.MORLiteral queried) {
+             return new MORGround.MORIndividualTryRead<MORAxiom.MORLittered, MORAtom.MORLiteral>
                     (new MORLiteralIntent<>( instance, new Mapping.ReadingState(), axiom, queried, "")){ // todo to describe
                 @Override
-                public Transitions<MORLiteralIntent<ReadingState>> giveAtry() {
+                public Transitions giveAtry() {
 
                     if( ! axiom.exists()){
                         if ( ! queried.exists()){
-                            getLastIntent().getState().asAbsent();
+                            (( ReadingState)getLastIntent().getState()).asAbsent();
                         } else {
                             axiom.getAtom().set( queried.get());
-                            getLastIntent().getState().asSuccess();
+                            (( ReadingState) getLastIntent().getState()).asSuccess();
                         }
                     } else {
                         if ( ! queried.exists()){
                             axiom.getAtom().clear();
-                            getLastIntent().getState().asAbsent();
+                            (( ReadingState) getLastIntent().getState()).asAbsent();
                         } else {
                             if( axiom.getAtom().equals( queried)){
                                 getLastIntent().getState().asNotChanged();
@@ -131,7 +134,7 @@ public interface MORDescriptor<I extends MORGround<?>, X extends MORAxiom<I,?,?>
                                     getLastIntent().getState().asNotChanged();
                                 } else {
                                     axiom.getAtom().set(queried.get()); // todo avarage !?
-                                    getLastIntent().getState().asSuccess();
+                                    (( ReadingState) getLastIntent().getState()).asSuccess();
                                 }
                             }
                         }
@@ -140,40 +143,37 @@ public interface MORDescriptor<I extends MORGround<?>, X extends MORAxiom<I,?,?>
                     return getStateTransitions();
                 }
                 @Override
-                public MORLiteralIntent<ReadingState> instanciateIntent(GroundIndividual instance, String description) {
-                    return new MORLiteralIntent<>( instance, description);
+                public MORLiteralIntent<ReadingState> instantiateIntent(GroundIndividual instance, String description) {
+                    return new MORLiteralIntent<>( instance, new ReadingState(), description);
                 }
             }.perform();
         }
 
         @Override
-        public Mapping.Transitions<MORLiteralIntent<Mapping.WritingState>>
-        write(GroundIndividual instance, MORAxiom.MORLittered axiom) {
-            MORAtom.MORLiteral queried = axiom.queryAxiom(instance);
-
-            return new MORGround.MORIndividualTryWrite<MORAxiom.MORLittered, MORAtom.MORLiteral,MORLiteralIntent<Mapping.WritingState>>
+        public Mapping.Transitions write(GroundIndividual instance, MORAxiom.MORLittered axiom, MORAtom.MORLiteral queried) {
+            return new MORGround.MORIndividualTryWrite<MORAxiom.MORLittered, MORAtom.MORLiteral>
                     (new MORLiteralIntent<>( instance, new Mapping.WritingState(), axiom, queried, "")){ // todo to describe
                 @Override
-                public Transitions<MORLiteralIntent<WritingState>> giveAtry() {
+                public Transitions giveAtry() {
 
                     if( ! axiom.exists()){
                         if ( ! queried.exists()){
                             getLastIntent().getState().asNotChanged();
                         } else {
                             axiom.removeAxiom( instance);
-                            getLastIntent().getState().asRemoved();
+                            (( WritingState) getLastIntent().getState()).asRemoved();
                         }
                     } else {
                         if ( ! queried.exists()){
                             axiom.addAxiom( instance);
-                            getLastIntent().getState().asAdded();
+                            (( WritingState) getLastIntent().getState()).asAdded();
                         } else {
                             if( axiom.getAtom().equals( queried)){
                                 getLastIntent().getState().asNotChanged();
                             } else {
                                 axiom.removeAxiom(instance);
-                                axiom.addAxiom(instance); // todo avarage !?
-                                getLastIntent().getState().asUpdated();
+                                queried.addAxiom(instance, axiom.getSemantic()); // todo avarage !?
+                                (( WritingState) getLastIntent().getState()).asUpdated();
                             }
                         }
                     }
@@ -181,22 +181,19 @@ public interface MORDescriptor<I extends MORGround<?>, X extends MORAxiom<I,?,?>
                     return getStateTransitions();
                 }
                 @Override
-                public MORLiteralIntent<WritingState> instanciateIntent(GroundIndividual instance, String description) {
-                    return new MORLiteralIntent<>( instance, description);
+                public MORLiteralIntent<WritingState> instantiateIntent(GroundIndividual instance, String description) {
+                    return new MORLiteralIntent<>( instance, new WritingState(), description);
                 }
             }.perform();
         }
 
-        @Override
-        public MORLiteral copy() {
-            return new MORLiteral( this);
-        }
     }
 
 
     class MORLiterals
         extends SIBase
-        implements Ddef.DataSet<GroundIndividual,MORAxiom.MORMultiLettered>, MORDescriptor<GroundIndividual, MORAxiom.MORMultiLettered>{
+        implements  Ddef.DataSet<GroundIndividual,MORAxiom.MORMultiLettered,MORAtom.MORLiterals>,
+                    MORDescriptor<GroundIndividual, MORAxiom.MORMultiLettered,MORAtom.MORLiterals>{
 
         MORAxiom.MORMultiLettered multiLittered = new MORAxiom.MORMultiLettered();
 
@@ -212,6 +209,11 @@ public interface MORDescriptor<I extends MORGround<?>, X extends MORAxiom<I,?,?>
         }
 
         @Override
+        public MORLiterals copy() {
+            return new MORLiterals( this);
+        }
+
+        @Override
         public MORAxiom.MORMultiLettered getAxiom() {
             return multiLittered;
         }
@@ -221,33 +223,47 @@ public interface MORDescriptor<I extends MORGround<?>, X extends MORAxiom<I,?,?>
         }
 
         @Override
-        public Mapping.Transitions<MORLiteralIntent<Mapping.ReadingState>>
-        read(GroundIndividual instance, MORAxiom.MORMultiLettered axiom) {
-            MORAtom.MORLiterals queried = axiom.queryAxiom(instance);
-
-            return null;/*new MORGround.MORIndividualTryRead<MORAxiom.MORMultiLettered, MORAtom.MORLiterals,MORLiteralsIntent<Mapping.ReadingState>>
+        public Mapping.Transitions read(GroundIndividual instance, MORAxiom.MORMultiLettered axiom, MORAtom.MORLiterals queried) {
+             return new MORGround.MORIndividualTryRead<MORAxiom.MORMultiLettered, MORAtom.MORLiterals>
                     (new MORLiteralsIntent<>( instance, new Mapping.ReadingState(), axiom, queried, "")){ // todo to describe
                 @Override
-                public Transitions<MORLiteralsIntent<ReadingState>> giveAtry() {
-
+                public Transitions giveAtry() {
                     if( ! axiom.exists()){
                         if ( ! queried.exists()){
-                            getLastIntent().getState().asAbsent();
+                            (( ReadingState) getLastIntent().getState()).asAbsent();
                         } else {
-                            ...
-                            getLastIntent().getState().asSuccess();
+                            MORLiteral descriptor = new MORLiteral();
+                            for ( MORAtom.MORLiteral q : queried.get()){
+                                Transitions ins = descriptor.read(instance, new MORAxiom.MORLittered(axiom.getSemantic()), q); // todo no multiple query !!!!
+                                getStateTransitions().addAll( ins); // todo to check if bug
+                            }
+                            (( ReadingState) getLastIntent().getState()).asSuccess();
                         }
                     } else {
                         if ( ! queried.exists()){
                             axiom.getAtom().clear();
-                            getLastIntent().getState().asAbsent();
+                            (( ReadingState) getLastIntent().getState()).asAbsent();
                         } else {
-                            if( axiom.getAtom().equals( queried)){
-                                ....
+                            if( axiom.getAtom().equals( queried)){ // todo to check if bug
                                 getLastIntent().getState().asNotChanged();
                             } else {
-                                axiom.getAtom().set(queried.get()); // todo avarage !?
-                                getLastIntent().getState().asSuccess();
+                                for ( MORAtom.MORLiteral q : queried.get()){
+                                    Intent subIntent = getNewIntent(instance, "", axiom, q); // todo describe
+                                    if ( axiom.getAtom().get().contains( q)){
+                                        subIntent.getState().asNotChanged();
+                                    } else {
+                                        axiom.getAtom().get().add( q);
+                                        (( ReadingState) subIntent.getState()).asSuccess();
+                                    }
+                                }
+                                for ( MORAtom.MORLiteral a : axiom.getAtom().get()){
+                                    Intent subIntent = getNewIntent(instance, "", axiom, a); // todo describe
+                                    if ( ! queried.get().contains( a)) {
+                                        axiom.getAtom().get().remove(a.get());
+                                        (( ReadingState) subIntent.getState()).asAbsent();
+                                    }
+                                }
+                                (( ReadingState) getLastIntent().getState()).asSuccess();
                             }
                         }
                     }
@@ -255,21 +271,67 @@ public interface MORDescriptor<I extends MORGround<?>, X extends MORAxiom<I,?,?>
                     return getStateTransitions();
                 }
                 @Override
-                public MORLiteralsIntent<ReadingState> instanciateIntent(GroundIndividual instance, String description) {
-                    return new MORLiteralsIntent<>( instance, description);
+                public MORLiteralIntent<ReadingState> instantiateIntent(GroundIndividual instance, String description) {
+                    return new MORLiteralIntent<>(instance, new ReadingState(), description);
                 }
-            }.perform();*/
+            }.perform();
         }
 
         @Override
-        public Mapping.Transitions<MORLiteralIntent<Mapping.WritingState>>
-        write(GroundIndividual instance, MORAxiom.MORMultiLettered axiom) {
-            return null;
+        public Mapping.Transitions
+        write(GroundIndividual instance, MORAxiom.MORMultiLettered axiom, MORAtom.MORLiterals queried) {
+            return new MORGround.MORIndividualTryWrite<MORAxiom.MORMultiLettered, MORAtom.MORLiterals>
+                    (new MORLiteralsIntent<>( instance, new Mapping.WritingState(), axiom, queried, "")){ // todo to describe
+                @Override
+                public Transitions giveAtry() {
+                    if( ! axiom.exists()){
+                        if ( ! queried.exists()){
+                            (( WritingState) getLastIntent().getState()).asNotChanged();
+                        } else {
+                            MORLiteral descriptor = new MORLiteral();
+                            for ( MORAtom.MORLiteral q : queried.get()){
+                                Transitions ins = descriptor.write(instance, new MORAxiom.MORLittered(axiom.getSemantic()), q); // todo no multiple query !!!!
+                                getStateTransitions().addAll( ins); // todo to check if bug
+                            }
+                            (( WritingState) getLastIntent().getState()).asRemoved();
+                        }
+                    } else {
+                        if ( ! queried.exists()){
+                            axiom.getAtom().clear();
+                            (( WritingState) getLastIntent().getState()).asRemoved();
+                        } else {
+                            if( axiom.getAtom().equals( queried)){ // todo to check if bug
+                                getLastIntent().getState().asNotChanged();
+                            } else {
+                                for ( MORAtom.MORLiteral q : queried.get()){
+                                    Intent subIntent = getNewIntent(instance, "", axiom, q); // todo describe
+                                    if ( axiom.getAtom().get().contains( q)){
+                                        subIntent.getState().asNotChanged();
+                                    } else {
+                                        q.addAxiom( instance, axiom.getSemantic());
+                                        (( WritingState) subIntent.getState()).asAdded();
+                                    }
+                                }
+                                for ( MORAtom.MORLiteral a : axiom.getAtom().get()){
+                                    Intent subIntent = getNewIntent(instance, "", axiom, a); // todo describe
+                                    if ( ! queried.get().contains( a)) {
+                                        a.removeAxiom( instance, axiom.getSemantic());
+                                        (( WritingState) subIntent.getState()).asRemoved();
+                                    }
+                                }
+                                (( WritingState) getLastIntent().getState()).asUpdated();
+                            }
+                        }
+                    }
+
+                    return getStateTransitions();
+                }
+                @Override
+                public MORLiteralIntent<WritingState> instantiateIntent(GroundIndividual instance, String description) {
+                    return new MORLiteralIntent<>(instance, new WritingState(), description);
+                }
+            }.perform();
         }
 
-        @Override
-        public Base copy() {
-            return null;
-        }
     }
 }

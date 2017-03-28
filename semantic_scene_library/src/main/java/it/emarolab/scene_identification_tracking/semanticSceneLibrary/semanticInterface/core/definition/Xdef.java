@@ -8,7 +8,7 @@ import java.util.Collection;
 /**
  * Created by bubx on 25/03/17.
  */
-public interface Xdef<I extends Ground<?,?>, S, A extends Semantic.Atomic<?>>
+public interface Xdef<I extends Ground<?,?>, S, A extends Adef<?>>
             extends Semantic.Axiom <I,S,A>{ // aXiom Representation
 
     interface Data<I extends Ground<?,?>, S, A extends Adef.Literal<S,?>>

@@ -18,49 +18,51 @@ import static java.lang.Math.toIntExact;
  */
 public interface Mapping extends Base {
 
-    interface TrierInterface< I extends Semantic.Ground<?,?>, X extends Xdef<I,?,A>, A  extends Adef<?>,
-                                N extends Intent< I, X, A, M>, M extends State>
+    interface TrierInterface< I extends Semantic.Ground<?,?>, X extends Xdef<I,?,A>, A  extends Adef<?>, M extends State>
             extends Mapping{
-        Mapping.Transitions< N> getStateTransitions();
+        Transitions getStateTransitions();
 
-        <M extends State> M getNewState();
+        M getNewState();
 
-        Mapping.Transitions perform();
-        Transitions< N> giveAtry();
+        Transitions perform();
+        Transitions giveAtry();
 
-        N instanciateIntent(I instance, String description);
+        <N extends Semantic.Intent<? extends Semantic.Ground<?,?>, ? extends Xdef<?,?,?>, ? extends Adef<?>, ? extends Semantic.State>>
+        N instantiateIntent(I instance, String description);
 
-        N getNewIntent(I instance, String description, X java, A owl);
-        N getNewIntent(I instance, String description);
+        Semantic.Intent<? extends Semantic.Ground<?,?>, ? extends Xdef<?,?,?>, ? extends Adef<?>, ? extends Semantic.State>
+        getNewIntent(I instance, String description, Xdef<?,?,?> java, Adef<?> owl);
+        Semantic.Intent<? extends Semantic.Ground<?,?>, ? extends Xdef<?,?,?>, ? extends Adef<?>, ? extends Semantic.State>
+        getNewIntent(I instance, String description);
 
-        N getLastIntent();
+
+        Semantic.Intent<? extends Semantic.Ground<?,?>, ? extends Xdef<?,?,?>, ? extends Adef<?>, ? extends Semantic.State>
+        getLastIntent();
 
         Transitions onError(Exception e);
     }
 
     // [[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[   SEMANTIC CHANGES   ]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]
 // todo add string and equals method (general comment ;) )
-    class Transitions<T extends Intent< ? extends Semantic.Ground<?,?>,
-                                        ? extends Xdef<?,?,? extends Adef<?>>,
-                                        ? extends Adef<?>,
-                                        ? extends State>>
-            extends ArrayList<T> implements Semantic.Intents<T> {
+    class Transitions
+            extends ArrayList<Mapping.Intent>
+            implements Semantic.Transitions<Mapping.Intent> {
 
         public Transitions(int initialCapacity) {
             super(initialCapacity);
         }
         public Transitions() {
         }
-        public Transitions(Collection<T> c) {
+        public Transitions( Collection< Mapping.Intent> c) {
             super(c);
         }
-        public Transitions(T intent) {
+        public Transitions( Mapping.Intent intent) {
             super();
             add( intent);
         }
 
         // todo add merge policy for different state types
-        public <M extends State> M merge(){ // tested only on same MappingStates
+        public <M extends Mapping.State> M merge(){ // tested only on same MappingStates
             sort();
             String info = "Merging mapping states: [";
             if( ! isEmpty()){
@@ -88,7 +90,8 @@ public interface Mapping extends Base {
         @Override
         public String toString() {
 
-            List<Intent> out = new ArrayList<>(this);
+            List<Intent<? extends Semantic.Ground<?,?>, ? extends Xdef<?,?,?>, ? extends Adef<?>, ? extends Semantic.State>> out =
+                    new ArrayList(this);
             Collections.sort( out);
 
             String info = "Mapping transition intents: {";
@@ -96,7 +99,7 @@ public interface Mapping extends Base {
             if (! isEmpty()) {
                 info += LOGGING.NEW_LINE;
                 int cnt = 0;
-                for (Intent<?,?,?,?> i : out) {
+                for (Intent<? extends Semantic.Ground<?,?>, ? extends Xdef<?,?,?>, ? extends Adef<?>, ? extends Semantic.State> i : out) {
                     if (++cnt < size())
                         info += "\t\t" + i.toString() + "," + LOGGING.NEW_LINE;
                     else info += "\t\t" + i + LOGGING.NEW_LINE;
@@ -180,7 +183,7 @@ public interface Mapping extends Base {
             this.axiom = axiom;
         }
 
-        public Intent(Intent<I,X,A,M> copy){
+        public Intent( Mapping.Intent<I,X,A,M> copy){
             this.time = copy.time;
             this.description = copy.description;
             this.state.state = copy.state.state;
@@ -189,8 +192,8 @@ public interface Mapping extends Base {
             this.queriedAtom = copy.queriedAtom;
         }
         @Override
-        public Intent<I,X,A,M> copy() {
-            return new Intent<>( this);
+        public Mapping.Intent<I,X,A,M> copy() {
+            return new Mapping.Intent<>( this);
         }
 
         @Override
@@ -246,9 +249,9 @@ public interface Mapping extends Base {
         @Override
         public boolean equals(Object o) { // if I,X,A are equals
             if (this == o) return true;
-            if (!(o instanceof Intent)) return false;
+            if (!(o instanceof Mapping.Intent)) return false;
 
-            Intent<?, ?, ?, ?> intent = (Intent<?, ?, ?, ?>) o;
+            Mapping.Intent<?, ?, ?, ?> intent = (Mapping.Intent<?, ?, ?, ?>) o;
 
             if (getInstance() != null ? !getInstance().equals(intent.getInstance()) : intent.getInstance() != null)
                 return false;
@@ -309,7 +312,7 @@ public interface Mapping extends Base {
          * and it is called by {@link #copy()}.
          * @param copy the state to copy.
          */
-        public State(State copy){
+        public State( Mapping.State copy){
             super();
             this.state = copy.state;
         }
@@ -344,7 +347,7 @@ public interface Mapping extends Base {
          * @param r2 the second writing state to merge (it should be the incoming object).
          * @return a new writing state obtained from the combination of the input parameters.
          */
-        public static State combineResults(State r1, State r2) {
+        public static Mapping.State combineResults( Mapping.State r1, Mapping.State r2) {
 
             if (r1.isInitialised())
                 return r2;
@@ -352,16 +355,16 @@ public interface Mapping extends Base {
                 return r1;
 
             // high priority for inconsistent
-            State inc = checkInconsistency( r1, r2);
+            Mapping.State inc = checkInconsistency( r1, r2);
             if( inc != null)
                 return inc;
 
             // quite high priority for errors
-            State err = checkError( r1, r2);
+            Mapping.State err = checkError( r1, r2);
             if ( err != null)
                 return err;
 
-            State notC = checkNotChanged(r1, r2);
+            Mapping.State notC = checkNotChanged(r1, r2);
             if ( notC != null)
                 return r2.asNotChanged();
             return notC;
@@ -374,7 +377,7 @@ public interface Mapping extends Base {
          * @param r2 the second state to check for inconsistency (it should be the incoming object).
          * @return an inconsistent state if both inputs are inconsistent, an {@code OK} state otherwise.
          */
-        protected static State checkInconsistency(State r1, State r2){
+        protected static Mapping.State checkInconsistency( Mapping.State r1, Mapping.State r2){
             if (r1.isInconsistent() & r2.isInconsistent()) // !!!!!!!!
                 return r2;
             else { // otherwise return the other
@@ -394,7 +397,7 @@ public interface Mapping extends Base {
          * @param r2 the second state to check for errors (it should be the incoming object).
          * @return an error state if both inputs are inconsistent, an {@code OK} state otherwise.
          */
-        protected static State checkError(State r1, State r2){
+        protected static Mapping.State checkError( Mapping.State r1, Mapping.State r2){
             if ( r1.isError() | r2.isError())
                 return r2;
             return null;  // cannot take a decision now
@@ -409,7 +412,7 @@ public interface Mapping extends Base {
          * @return an up to date state if both inputs are not changed, the other
          * state if only one is up to date or an inconsistency state otherwise.
          */
-        protected static State checkNotChanged(State r1, State r2){
+        protected static Mapping.State checkNotChanged( Mapping.State r1, Mapping.State r2){
             // set as not changed if both did not change
             if (r1.isNotChanged() & r2.isNotChanged())
                 return r2; // NOT CHANGED
@@ -433,7 +436,7 @@ public interface Mapping extends Base {
          * set this state as {@link #ERROR}
          * @return <code>'this'</code>, for chaining calls.
          */
-        public State asError() {
+        public Mapping.State asError() {
             this.state = STATEMAPPING.ERROR;
             return this;
         }
@@ -442,7 +445,7 @@ public interface Mapping extends Base {
          * set this state as {@link #NOT_CHANGED}
          * @return <code>'this'</code>, for chaining calls.
          */
-        public State asNotChanged() {
+        public Mapping.State asNotChanged() {
             this.state = STATEMAPPING.NOT_CHANGED;
             return this;
         }
@@ -451,7 +454,7 @@ public interface Mapping extends Base {
          * set this state as {@link #INCONSISTENT}
          * @return <code>'this'</code>, for chaining calls.
          */
-        public State asInconsistent() {
+        public Mapping.State asInconsistent() {
             this.state = STATEMAPPING.INCONSISTENT;
             return this;
         }
@@ -501,7 +504,7 @@ public interface Mapping extends Base {
          * @return a new state that comes from the combination of <code>'this'</code>
          * and the input parameter.
          */
-        abstract public State merge(State otherResult);
+        abstract public Mapping.State merge( Mapping.State otherResult);
 
         public String getTypeName(){
             return LOGGING.STATE_TYPE_MAPPING;
@@ -516,8 +519,8 @@ public interface Mapping extends Base {
         @Override
         public boolean equals(Object o) {
             if (this == o) return true;
-            if (!(o instanceof State)) return false;
-            State that = (State) o;
+            if (!(o instanceof Mapping.State)) return false;
+            Mapping.State that = (Mapping.State) o;
             return getState() == that.getState();
         }
         @Override
@@ -541,11 +544,11 @@ public interface Mapping extends Base {
     /**
      * This class implements the possible states for a semantic writing process.
      * <p>
-     *     In particular, this class extend {@link State} by adding more states,
+     *     In particular, this class extend {@link Mapping.State} by adding more states,
      *     in details:<ul>
-     *         <li> {@link #ERROR}: implemented in {@link State},
-     *         <li> {@link #INCONSISTENT}: implemented in {@link State},
-     *         <li> {@link #NOT_CHANGED}: implemented in {@link State},
+     *         <li> {@link #ERROR}: implemented in {@link Mapping.State},
+     *         <li> {@link #INCONSISTENT}: implemented in {@link Mapping.State},
+     *         <li> {@link #NOT_CHANGED}: implemented in {@link Mapping.State},
      *         <li> <b>ADDED</b>: the writing operation produced something new in the semantic description,
      *         <li> <b>UPDATED</b>: the writing operation changes some semantic.
      *         <li> <b>REMOVED</b>: the writing operation removes some semantic.
@@ -564,10 +567,10 @@ public interface Mapping extends Base {
      * </small></div>
      *
      * @see STATEMAPPING
-     * @see State
+     * @see Mapping.State
      */
     class WritingState
-            extends State {
+            extends Mapping.State {
 
         /**
          * Copy constrcutors, it creates a new object by coping all its fields.
@@ -575,7 +578,7 @@ public interface Mapping extends Base {
          * and it is called by {@link #copy()}.
          * @param copy the state to copy.
          */
-        public WritingState( State copy){
+        public WritingState( Mapping.State copy){
             super( copy);
         }
         /**
@@ -780,7 +783,7 @@ public interface Mapping extends Base {
          * and the input parameter.
          */
         @Override
-        public WritingState merge( State otherResult) {
+        public WritingState merge( Mapping.State otherResult) {
             if (otherResult != null) {
                 try {
                     return new WritingState( combineResults(this, (WritingState) otherResult));  // set always 'this' as first parameter
@@ -824,11 +827,11 @@ public interface Mapping extends Base {
     /**
      * This class implements the possible states for a semantic reading process.
      * <p>
-     *     In particular, this class extend {@link State} by adding more states,
+     *     In particular, this class extend {@link Mapping.State} by adding more states,
      *     in details:<ul>
-     *         <li> {@link #ERROR}: implemented in {@link State},
-     *         <li> {@link #INCONSISTENT}: implemented in {@link State},
-     *         <li> {@link #NOT_CHANGED}: implemented in {@link State},
+     *         <li> {@link #ERROR}: implemented in {@link Mapping.State},
+     *         <li> {@link #INCONSISTENT}: implemented in {@link Mapping.State},
+     *         <li> {@link #NOT_CHANGED}: implemented in {@link Mapping.State},
      *         <li> <b>ABSENT</b>: reading failure, since not data were available in the semantic description,
      *         <li> <b>SUCCESS</b>: reading success, java descriptor has been up to dated.
      *     </ul>
@@ -846,10 +849,10 @@ public interface Mapping extends Base {
      * </small></div>
      *
      * @see STATEMAPPING
-     * @see State
+     * @see Mapping.State
      */
     class ReadingState
-            extends State {
+            extends Mapping.State {
 
         /**
          * Copy constrcutors, it creates a new object by coping all its fields.
@@ -857,7 +860,7 @@ public interface Mapping extends Base {
          * and it is called by {@link #copy()}.
          * @param copy the state to copy.
          */
-        public ReadingState( State copy){
+        public ReadingState( Mapping.State copy){
             super( copy);
         }
         /**
@@ -1005,7 +1008,7 @@ public interface Mapping extends Base {
          * and the input parameter.
          */
         @Override
-        public ReadingState merge( State otherResult) {
+        public ReadingState merge( Mapping.State otherResult) {
             if (otherResult != null)
                 try {
                     return new ReadingState( combineResults(this, (ReadingState) otherResult));  // set always 'this' as first parameter
@@ -1059,24 +1062,23 @@ public interface Mapping extends Base {
      * <b>date</b>:        04/02/2017 <br>
      * </small></div>
      */
-    abstract class Trier< I extends Semantic.Ground<?,?>, X extends Xdef<I,?,A>, A  extends Adef<?>,
-                            N extends Intent< I, X, A, M>, M extends State>
+    abstract class Trier< I extends Semantic.Ground<?,?>, X extends Xdef<I,?,A>, A  extends Adef<?>, M extends State>
             extends SIBase
-            implements TrierInterface<I,X,A,N,M>, Mapping {
+            implements TrierInterface<I,X,A,M>, Mapping {
 
-        private Transitions< N> transition;
+        private Transitions transition;
 
         public Trier(){
-            transition = new Transitions<>();
+            transition = new Transitions();
         }
 
         /** Constructs and sets the message for an eventually {@link #onError(Exception)} state. */
-        public Trier( N intent) {
-            transition = new Transitions<>( intent);
+        public Trier( Intent intent) {
+            transition = new Transitions( intent);
         }
 
         @Override
-        public Transitions<N> getStateTransitions(){
+        public Transitions getStateTransitions(){
             return transition;
         }
 
@@ -1087,15 +1089,17 @@ public interface Mapping extends Base {
          abstract public Transitions giveAtry();
          */
         @Override
-        public N getNewIntent(I instance, String description) {
-            N intent = instanciateIntent(instance, description);
+        public Intent<? extends Semantic.Ground<?,?>, ? extends Xdef<?,?,?>, ? extends Adef<?>, ? extends Semantic.State>
+        getNewIntent(I instance, String description) {
+            Intent<? extends Semantic.Ground<?,?>, ? extends Xdef<?,?,?>, ? extends Adef<?>, ? extends Semantic.State> intent = instantiateIntent(instance, description);
             transition.add( intent);
             return intent;
         }
 
         @Override
-        public N getNewIntent(I instance, String description, X java, A owl) {
-            N intent = instanciateIntent(instance, description);
+        public Intent<? extends Semantic.Ground<?,?>, ? extends Xdef<?,?,?>, ? extends Adef<?>, ? extends Semantic.State>
+        getNewIntent(I instance, String description, Xdef<?,?,?> java, Adef<?> owl) {
+            Intent intent = instantiateIntent(instance, description);
             intent.setAxiom( java);
             intent.setQueriedAtom( owl);
             transition.add( intent);
@@ -1103,7 +1107,8 @@ public interface Mapping extends Base {
         }
 
         @Override
-        public N getLastIntent() {
+        public Intent<? extends Semantic.Ground<?,?>, ? extends Xdef<?,?,?>, ? extends Adef<?>, ? extends Semantic.State>
+        getLastIntent() {
             if ( transition.size() >= 1)
                 return transition.get( transition.size() - 1);
             return null;
@@ -1129,7 +1134,7 @@ public interface Mapping extends Base {
          * {@link #giveAtry()} returning value or {@link #onError(Exception)} value.
          */
         @Override
-        public Transitions< N> perform() {
+        public Transitions perform() {
             try {
                 return giveAtry();
             } catch (Exception e) {
