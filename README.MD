@@ -4,22 +4,27 @@ A semantic algorithm to learn and recognise composition ob objects based on thei
 
 ## Dependences
  
-This implementation depends on <a href="https://github.com/EmaroLab/owloop">OWLOOP</a>. 
+This implementation depends on [OWLOOP](https://github.com/EmaroLab/owloop). 
 It is implemented within the Robotic Operative System (ROS) Java bridge.
-The compilation is based on Gradle and you can find a complete list of dependencies versions in the buld.gradle file.
+The compilation is based on Gradle and you can find a complete list of dependencies versions 
+in the [buld.gradle](https://github.com/EmaroLab/scene_identification_tagging/blob/sit_owloop/sit/build.gradle) file.
+Check out also the [lib](https://github.com/EmaroLab/scene_identification_tagging/tree/sit_owloop/sit/lib)
+folder for some of the depending jars.
 
 ## Documentation
 
-The resource folders contains the Javadoc documentation in the as well as the ontology that represents the tbox
+The [resource](https://github.com/EmaroLab/scene_identification_tagging/tree/sit_owloop/resources/) 
+folders contains the Javadoc documentation in the as well as the ontology that represents the tbox
 of this implementation.
-Check also the Test runnable class to see how the algorithm can be implemented by using this API.
+Check also the [Test](https://github.com/EmaroLab/scene_identification_tagging/blob/sit_owloop/sit/src/main/java/it/emarolab/scene_identification_tagging/Test.java)
+runnable class to see how the algorithm can be implemented by using this API.
 
 ## Algorithm
 
 The algorithm is based on an OWL ontology, the Pellet reasoner and couple of mapping functions.
 Its main purposes is to describe primitive objects though geometric coefficients that
-define their shape. Than, qualitative spatial relations, such as: right/left, front/behind, above/below,
-parallel, perpendicular and coaxial are computed symbolically. Those are mapped in an concrete scene
+define their shape. Than, qualitative spatial relations, such as: *right/left*, *front/behind*, *above/below*,
+*parallel*, *perpendicular* and *coaxial* are computed symbolically. Those are mapped in an concrete scene
 representation (i.e.: an individual). The recognition phase is based on instance checking by looking
 for the abstract scene representation (i.e.: classes) that classify the scene individual.
 If those does not exist the algorithm is able to use the concrete scene as a template to 
