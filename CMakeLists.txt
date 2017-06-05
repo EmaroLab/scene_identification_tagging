@@ -3,13 +3,13 @@
 ##############################################################################
 
 cmake_minimum_required(VERSION 2.8.3)
-project(scene_identification_tracking)
+project(scene_identification_tagging)
 
 ##############################################################################
 # Catkin
 ##############################################################################
 
-find_package(catkin REQUIRED rosjava_build_tools multi_ontology_reference)
+find_package(catkin REQUIRED rosjava_build_tools)
 
 # Set the gradle targets you want catkin's make to run by default, e.g.
 #   catkin_rosjava_setup(installApp)

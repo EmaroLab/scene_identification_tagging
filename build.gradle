@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014 Alessio Capitanelli
+ * Copyright (C) 2017 Luca Buoncompagni
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
@@ -30,7 +30,7 @@ allprojects {
       A github url provides a good standard unique name for your project
       Example below, but you may wish to switch to your own unique url.
     */
-    group 'it.emarolab.scene_identification_tracking'
+    group 'it.emarolab.scene_identification_tagging'
     version = project.catkin.pkg.version
 }
 
