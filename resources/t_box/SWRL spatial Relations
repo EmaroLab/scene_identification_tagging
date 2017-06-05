@@ -1,0 +1,135 @@
+
+/**** PERPENDICULARITY (not for sphere) */
+
+defines-th_perpendicularity(Define-Recognition, ?e) 
+Orientable(?a) Orientable(?b) DifferentFrom (?a, ?b) 
+has-geometric_axisX(?a, ?ax) has-geometric_axisY(?a, ?ay) has-geometric_axisZ(?a, ?az)
+has-geometric_axisX(?b, ?bx)  has-geometric_axisY(?b, ?by)  has-geometric_axisZ(?b, ?bz)
+swrlb:multiply(?p1, ?ax, ?bx) swrlb:multiply(?p2, ?ay, ?by) swrlb:multiply(?p3, ?az, ?bz)
+swrlb:add(?q, ?p3, ?p2) swrlb:add(?q2, ?p1, ?q)  swrlb:abs(?qs, ?q2)
+swrlb:lessThanOrEqual(?qs, ?e)
+-> isPerpendicularTo(?a, ?b)
+
+
+/**** PARALLELISM (not for sphere) */
+
+defines-th_parallelism(Define-Recognition, ?e) 
+Orientable(?a) Orientable(?b) DifferentFrom (?a, ?b) 
+has-geometric_axisX(?a, ?ax) has-geometric_axisY(?a, ?ay)  has-geometric_axisZ(?a, ?az) 
+has-geometric_axisX(?b, ?bx) has-geometric_axisY(?b, ?by) has-geometric_axisZ(?b, ?bz) 
+swrlb:multiply(?p11, ?ay, ?bz) swrlb:multiply(?p12, ?az, ?by) 
+swrlb:multiply(?p21, ?az, ?bx) swrlb:multiply(?p22, ?ax, ?bz) 
+swrlb:multiply(?p31, ?ax, ?by) swrlb:multiply(?p32, ?ay, ?bx)
+swrlb:subtract(?q1, ?p11, ?p12) swrlb:subtract(?q2, ?p21, ?p22) swrlb:subtract(?q3, ?p31, ?p32)
+swrlb:abs(?q1s, ?q1) swrlb:abs(?q2s, ?q2) swrlb:abs(?q3s, ?q3)
+swrlb:lessThanOrEqual(?q1s, ?e) swrlb:lessThanOrEqual(?q2s, ?e) swrlb:lessThanOrEqual(?q3s, ?e)  
+-> isParallelTo(?a, ?b)
+
+
+/**** COAXIALITY (not for sphere) [IT IS REALLY SLOW !!!!!] */
+
+defines-th_coaxiality(Define-Recognition, ?e) swrlb:multiply(?e2, ?e, ?e) 
+Orientable(?a) Orientable(?b) isParallelTo(?a, ?b) DifferentFrom (?a, ?b)  
+has-geometric_axisX(?a, ?ax) has-geometric_axisY(?a, ?ay) has-geometric_axisZ(?a, ?az)
+has-geometric_centerX(?a, ?gax) has-geometric_centerY(?a, ?gay) has-geometric_centerZ(?a, ?gaz)
+has-geometric_centerX(?b, ?gbx) has-geometric_centerY(?b, ?gby) has-geometric_centerZ(?b, ?gbz) 
+swrlb:subtract(?gabx, ?gbx, ?gax) swrlb:subtract(?gaby, ?gby, ?gay) swrlb:subtract(?gabz, ?gbz, ?gaz) 
+swrlb:multiply(?ggx, ?ax, ?gabx) swrlb:multiply(?ggy, ?ay, ?gaby) swrlb:multiply(?ggz, ?az, ?gabz)
+swrlb:add(?gg1, ?ggy, ?ggz) swrlb:add(?gg2, ?ggx, ?gg1)
+swrlb:multiply(?a2x, ?ax, ?ax) swrlb:multiply(?a2y, ?ay, ?ay) swrlb:multiply(?a2z, ?az, ?az)
+swrlb:add(?a2yz, ?a2y, ?a2z) swrlb:add(?a2, ?a2yz, ?a2x)
+swrlb:divide(?toTest, ?gg2, ?a2)
+swrlb:multiply(?tax, ?toTest, ?ax) swrlb:multiply(?tay, ?toTest, ?ay) swrlb:multiply(?taz, ?toTest, ?az)
+swrlb:subtract(?tgx, ?tax, ?gbx) swrlb:subtract(?tgy, ?tay, ?gby) swrlb:subtract(?tgz, ?taz, ?gbz)
+swrlb:add(?tabx, ?gax, ?tgx) swrlb:add(?taby, ?gay, ?tgy) swrlb:add(?tabz, ?gaz, ?tgz)
+swrlb:multiply(?tabx2, ?tabx, ?tabx) swrlb:multiply(?taby2, ?taby, ?taby) swrlb:multiply(?tabz2, ?tabz, ?tabz) 
+swrlb:add(?d, ?taby2, ?tabz2) swrlb:add(?d2, ?tabx2, ?d) 
+swrlb:lessThanOrEqual(?d2, ?e2) 
+-> isCoaxialWith(?a, ?b)
+
+
+/**** PSUEDO COAXIALITY (for sphere) [IT IS REALLY SLOW !!!!!] */
+
+defines-th_coaxiality(Define-Recognition, ?e) swrlb:multiply(?e2, ?e, ?e)
+Sphere(?b) Orientable(?a) DifferentFrom (?a, ?b)
+has-geometric_axisX(?a, ?ax) has-geometric_axisY(?a, ?ay) has-geometric_axisZ(?a, ?az)
+has-geometric_centerX(?a, ?gax) has-geometric_centerY(?a, ?gay) has-geometric_centerZ(?a, ?gaz)
+has-geometric_centerX(?b, ?gbx) has-geometric_centerY(?b, ?gby) has-geometric_centerZ(?b, ?gbz) 
+swrlb:subtract(?gabx, ?gbx, ?gax) swrlb:subtract(?gaby, ?gby, ?gay) swrlb:subtract(?gabz, ?gbz, ?gaz) 
+swrlb:multiply(?ggx, ?ax, ?gabx) swrlb:multiply(?ggy, ?ay, ?gaby) swrlb:multiply(?ggz, ?az, ?gabz)
+swrlb:add(?gg1, ?ggy, ?ggz) swrlb:add(?gg2, ?ggx, ?gg1)
+swrlb:multiply(?a2x, ?ax, ?ax) swrlb:multiply(?a2y, ?ay, ?ay) swrlb:multiply(?a2z, ?az, ?az)
+swrlb:add(?a2yz, ?a2y, ?a2z) swrlb:add(?a2, ?a2yz, ?a2x)
+swrlb:divide(?toTest, ?gg2, ?a2)
+swrlb:multiply(?tax, ?toTest, ?ax) swrlb:multiply(?tay, ?toTest, ?ay) swrlb:multiply(?taz, ?toTest, ?az)
+swrlb:subtract(?tgx, ?tax, ?gbx) swrlb:subtract(?tgy, ?tay, ?gby) swrlb:subtract(?tgz, ?taz, ?gbz)
+swrlb:add(?tabx, ?gax, ?tgx) swrlb:add(?taby, ?gay, ?tgy) swrlb:add(?tabz, ?gaz, ?tgz)
+swrlb:multiply(?tabx2, ?tabx, ?tabx) swrlb:multiply(?taby2, ?taby, ?taby) swrlb:multiply(?tabz2, ?tabz, ?tabz) 
+swrlb:add(?d, ?taby2, ?tabz2) swrlb:add(?d2, ?tabx2, ?d) 
+swrlb:lessThanOrEqual(?d2, ?e2) 
+-> isCoaxialWith(?a, ?b)
+
+
+/**** ALONG AXIS X (means also on the same plane) */
+
+defines-th_alignedZ( Define-Recognition, ?ez)
+defines-th_alignedY( Define-Recognition, ?ey)
+GeometricPrimitive(?a) GeometricPrimitive(?b) DifferentFrom(?a,?b) 
+has-geometric_centerY(?a, ?ay) has-geometric_centerZ(?a, ?az)
+has-geometric_centerY(?b, ?by) has-geometric_centerZ(?b, ?bz)
+swrlb:subtract(?aby, ?ay, ?by) swrlb:abs(?absy, ?aby) swrlb:lessThanOrEqual(?absy, ?ey)
+swrlb:subtract(?abz, ?az, ?bz) swrlb:abs(?absz, ?abz) swrlb:lessThanOrEqual(?absz, ?ez)
+-> isAlongX(?a, ?b)
+
+
+/**** ALONG AXIS Y (means also on the same plane) */
+
+defines-th_alignedX( Define-Recognition, ?ex)
+defines-th_alignedZ( Define-Recognition, ?ez)
+GeometricPrimitive(?a) GeometricPrimitive(?b) DifferentFrom(?a,?b)
+has-geometric_centerX(?a, ?ax) has-geometric_centerZ(?a, ?az)
+has-geometric_centerX(?b, ?bx) has-geometric_centerZ(?b, ?bz)
+swrlb:subtract(?abx, ?ax, ?bx) swrlb:abs(?absx, ?abx) swrlb:lessThanOrEqual(?absx, ?ex)
+swrlb:subtract(?abz, ?az, ?bz) swrlb:abs(?absz, ?abz) swrlb:lessThanOrEqual(?absz, ?ez)
+-> isAlongY(?a, ?b)
+
+
+/**** ALONG AXIS Z (means also on the same plane) */
+
+defines-th_alignedX( Define-Recognition, ?ex)
+defines-th_alignedY( Define-Recognition, ?ey)
+GeometricPrimitive(?a) GeometricPrimitive(?b) DifferentFrom(?a,?b)
+has-geometric_centerX(?a, ?ax) has-geometric_centerY(?a, ?ay)
+has-geometric_centerX(?b, ?bx) has-geometric_centerY(?b, ?by)
+swrlb:subtract(?abx, ?ax, ?bx) swrlb:abs(?absx, ?abx) swrlb:lessThanOrEqual(?absx, ?ex)
+swrlb:subtract(?aby, ?ay, ?by) swrlb:abs(?absy, ?aby) swrlb:lessThanOrEqual(?absy, ?ey)
+-> isAlongZ(?a, ?b)
+
+
+/**** IS ON THE RIGHT OF (left is the inverse) */
+
+defines-th_alignedX( Define-Recognition, ?e)
+GeometricPrimitive(?a) GeometricPrimitive(?b) DifferentFrom (?a, ?b)
+has-geometric_centerX(?a, ?ax) has-geometric_centerX(?b, ?bx) 
+swrlb:subtract(?ab, ?bx, ?ax) swrlb:greaterThan(?ab, ?e)
+-> isRightOf(?b, ?a)
+
+
+/**** IS ON FRONT OF  (behind is the inverse) */
+
+defines-th_alignedY( Define-Recognition, ?e) 
+GeometricPrimitive(?a) GeometricPrimitive(?b) DifferentFrom (?a, ?b)
+has-geometric_centerY(?a, ?ay) has-geometric_centerY(?b, ?by) 
+swrlb:subtract(?ab, ?by, ?ay) swrlb:greaterThan(?ab, ?e)
+-> isBehindOf(?b, ?a)
+
+
+/**** IS ABOVE OF (below is the inverse) */
+
+defines-th_alignedZ( Define-Recognition, ?e) 
+GeometricPrimitive(?a) GeometricPrimitive(?b) DifferentFrom (?a, ?b)
+has-geometric_centerZ(?a, ?az) has-geometric_centerZ(?b, ?bz) 
+swrlb:subtract(?ab, ?bz, ?az) swrlb:greaterThan(?ab, ?e)
+-> isAboveOf(?b, ?a)
+
+
