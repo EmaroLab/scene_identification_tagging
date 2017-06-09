@@ -32,20 +32,20 @@ public class Orientable
 
     /**
      * Initialise and ontological object by have a name based on {@link #currentCOUNT}
-     * and {@link INDIVIDUAL#PREFIX_ORIENTATABLE}.
+     * and {@link INDIVIDUAL#PREFIX_ORIENTABLE}.
      * @param onto the {@link OWLReferences} ontology that will contain the object individual.
      */
     public Orientable(OWLReferences onto) {
-        super( INDIVIDUAL.PREFIX_ORIENTATABLE + currentCOUNT, onto);
+        super( INDIVIDUAL.PREFIX_ORIENTABLE + currentCOUNT, onto);
         initialiseProperty();
     }
     /**
      * Initialise and ontological object by have a name based on {@link #currentCOUNT}
-     * and {@link INDIVIDUAL#PREFIX_ORIENTATABLE}.
+     * and {@link INDIVIDUAL#PREFIX_ORIENTABLE}.
      * @param ontoName the name of the {@link OWLReferences} ontology that will contain the object individual.
      */
     public Orientable(String ontoName) {
-        super(INDIVIDUAL.PREFIX_ORIENTATABLE + currentCOUNT, ontoName);
+        super(INDIVIDUAL.PREFIX_ORIENTABLE + currentCOUNT, ontoName);
         initialiseProperty();
     }
     /**

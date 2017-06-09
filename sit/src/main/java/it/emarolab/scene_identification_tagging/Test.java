@@ -38,7 +38,7 @@ import java.util.Set;
 public class Test
         implements SITBase{
 
-    private static final String ONTO_NAME = "ONTO_NAME"; // an arbritary name to refer the ontology
+    private static final String ONTO_NAME = "ONTO_NAME"; // an arbitrary name to refer the ontology
 
     public static void main(String[] args){
 
@@ -66,26 +66,23 @@ public class Test
         p.setHessian( .5f);
         objects.add( p);
 
-        // add objects
-        for ( GeometricPrimitive i : objects){
-            for ( GeometricPrimitive j : objects)
-                if (!i.equals(j))
-                    j.addDisjointIndividual( i.getInstance());
-            i.getObjectSemantics().clear(); // clean previus spatial relation
-            i.writeSemantic();
-        }
-        // run SWRL
-        ontoRef.synchronizeReasoner();
-        // get SWRL results
-        for ( GeometricPrimitive i : objects)
-            // it could be implemented faster
-            i.readSemantic();
-
         System.out.println( "Object " + objects);
         System.out.println("1 ----------------------------------------------");
 
+        // the SceneRecognition needs a SpatialSimplifier object
+        // to semplify the characteristics of the relations during learning
+        SpatialSimplifier simplifier = new SpatialSimplifier( objects);
         // create scene and reason for recognition
-        SceneRepresentation recognition1 = new SceneRepresentation( objects, ontoRef);
+        SceneRepresentation recognition1 = new SceneRepresentation( simplifier, ontoRef);
+
+        /*
+        // if you want the relation to be human friendly again
+        simplifier.populateHumanFriendlyRelationSet();
+        // and eventually
+        simplifier.readObjectSemantics( true);
+        objects = simplifier.getObjects();
+        */
+
         System.out.println( "Recognised with best confidence: " + recognition1.getRecognitionConfidence() + " should learn? " + recognition1.shouldLearn());
         System.out.println( "Best recognised class: " + recognition1.getBestRecognitionDescriptor());
         System.out.println( "Other recognised classes: " + recognition1.getSceneDescriptor().getTypeIndividual());
@@ -126,26 +123,9 @@ public class Test
         System.out.println( "Object " + objects);
         System.out.println("4 ----------------------------------------------");
 
-        // add objects
-        for ( GeometricPrimitive i : objects){
-            for ( GeometricPrimitive j : objects)
-                if (!i.equals(j))
-                    j.addDisjointIndividual( i.getInstance());
-            i.getObjectSemantics().clear(); // clean previous spatial relations
-            i.writeSemantic();
-        }
-        // run SWRL
-        ontoRef.synchronizeReasoner();
-        // get SWRL results
-        for ( GeometricPrimitive i : objects)
-            // it could be implemented faster
-            i.readSemantic();
-
-        System.out.println( "Object " + objects);
-        System.out.println("5 ----------------------------------------------");
-
         // check recognition and learn if is the case
-        SceneRepresentation recognition2 = new SceneRepresentation( objects, ontoRef);
+        SpatialSimplifier simplifier2 = new SpatialSimplifier( objects);
+        SceneRepresentation recognition2 = new SceneRepresentation( simplifier2, ontoRef);
         System.out.println( "Recognised with best confidence: " + recognition2.getRecognitionConfidence() + " should learn? " + recognition2.shouldLearn());
         if ( recognition2.shouldLearn()) {
             System.out.println("Learning.... ");
@@ -156,17 +136,16 @@ public class Test
         System.out.println( "Best recognised class: " + recognition2.getBestRecognitionDescriptor());
         System.out.println( "Other recognised classes: " + recognition2.getSceneDescriptor().getTypeIndividual());
 
-        System.out.println("6 ----------------------------------------------");
+        System.out.println("5 ----------------------------------------------");
 
         Set<SceneClassDescriptor> recognitionClasses = recognition2.getSceneDescriptor().buildTypeIndividual();
         for ( SceneClassDescriptor cl1 : recognitionClasses)
             for ( SceneClassDescriptor cl2 : recognitionClasses)
-                if ( ! c.equals( s))
+                if ( ! cl1.equals( cl2))
                     System.out.println( " is " + cl1.getInstance().getIRI().getRemainder().get() +
                             " subclass of " + cl2.getInstance().getIRI().getRemainder().get() +"? " + cl1.getSubConcept().contains( cl2.getInstance()));
 
 
-        System.out.println("7 ----------------------------------------------");
-
+        System.out.println("6 ----------------------------------------------");
     }
 }

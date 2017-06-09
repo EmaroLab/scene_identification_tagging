@@ -3,8 +3,10 @@ package it.emarolab.scene_identification_tagging.sceneRepresentation;
 import com.google.common.base.Objects;
 import it.emarolab.scene_identification_tagging.SITBase;
 import it.emarolab.scene_identification_tagging.owloopDescriptor.SpatialIndividualDescriptor;
+import it.emarolab.scene_identification_tagging.owloopDescriptor.SpatialObjectPropertyDescriptor;
 import org.semanticweb.owlapi.model.OWLNamedIndividual;
 import org.semanticweb.owlapi.model.OWLObjectProperty;
+
 
 /**
  * The container for a spatial relation between two objects.
@@ -30,9 +32,10 @@ public class SpatialRelation
 
     private SpatialAtom subject, object;
     private OWLObjectProperty relation;
+    private OWLObjectProperty inverseRelation;
 
     /**
-     * Fully construct all the fields (i.e.: {#code getters}) for this object.
+     * Fully construct all the fields (i.e.: {@code getters}) for this object.
      * @param subject the OWLOOP descriptor for the {@link #getSubject()}, all the other manipulation are based on the ontology it describes.
      * @param relation the semantic spatial property between the {@code subject} and {@code object}.
      * @param object the name of the individual which is the {@code object} of the relation. This is wrapped in a {@code new} {@link SpatialIndividualDescriptor}.
@@ -45,6 +48,9 @@ public class SpatialRelation
         SpatialIndividualDescriptor objectDescriptor = new SpatialIndividualDescriptor(object, subject.getOntology());
         objectDescriptor.readSemantic();
         this.object = new SpatialAtom(objectDescriptor);
+
+        SpatialObjectPropertyDescriptor propertyDescriptor = new SpatialObjectPropertyDescriptor( relation, subject.getOntology());
+        inverseRelation = propertyDescriptor.getSpatialInverseProperty();
     }
 
 
@@ -76,8 +82,26 @@ public class SpatialRelation
     }
 
     /**
+     * Return the semantic inverse spatial relations that is applied
+     * from the {@code object} to the {@code subject}.
+     * @return the name of the inverse to the given spatial relation (set on constructor).
+     */
+    public OWLObjectProperty getInverseRelation() {
+        return inverseRelation;
+    }
+
+    /**
+     * Check if the relation is symmetric
+     * @return {@code true} if the relation and its inverse are equals.
+     */
+    public boolean isSymmetric(){
+        return relation.equals( inverseRelation);
+    }
+
+    /**
      * Set two {@link SpatialRelation}s to be equal if those have the same
-     * {@code object}s and {@code subjects} as well as {@code relation}.
+     * {@code object} and {@code subject} as well as {@code relation}.
+     * Inverse relation equality is not checked.
      * @param o the {@link SpatialRelation} to test for equality.
      * @return {@code true} if this relation is equal to the given object.
      */
@@ -87,10 +111,16 @@ public class SpatialRelation
         if (!(o instanceof SpatialRelation)) return false;
         SpatialRelation that = (SpatialRelation) o;
 
-        return getSubject().equals(that.getSubject())
+        boolean direct = getSubject().equals(that.getSubject())
                 & getObject().equals(that.getObject())
                 & getRelation().equals(that.getRelation());
 
+        /*boolean inverse = getSubject().equals(that.getObject())
+                & getObject().equals(that.getSubject())
+                & getRelation().equals(that.getInverseRelation());
+
+        return direct | inverse;*/
+        return direct;
     }
 
     /**
@@ -105,6 +135,9 @@ public class SpatialRelation
 
     @Override
     public String toString() {
-        return subject + relation.getIRI().getRemainder().get() + object;
+        return subject + " " + relation.getIRI().getRemainder().get() + "(=" +
+                inverseRelation.getIRI().getRemainder().get() + ")^-1" + object;
     }
+
+
 }
