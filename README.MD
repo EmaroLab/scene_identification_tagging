@@ -8,8 +8,7 @@ This implementation depends on [OWLOOP](https://github.com/EmaroLab/owloop).
 It is implemented within the Robotic Operative System (ROS) Java bridge.
 The compilation is based on Gradle and you can find a complete list of dependencies versions 
 in the [buld.gradle](https://github.com/EmaroLab/scene_identification_tagging/blob/sit_owloop/sit/build.gradle) file.
-Check out also the [lib](https://github.com/EmaroLab/scene_identification_tagging/tree/sit_owloop/sit/lib)
-folder for some of the depending jars.
+Check out also the 
 
 ## Documentation
 
@@ -33,9 +32,6 @@ system is automatically able to reason about similarity between learned scene.
 Also, it can be the case that a very complex scene is recognised by a relative small number of relation
 that hold (i.e.: a sub scene). To discriminate when those differences are too height, and
 trigger a new learning procedure, the concept of *confidence* is introduce as a number within [0,1].
-
-Note that the actual implementation does not hard code the above types of spatial relations that can
-be augmented directly on the ontology, and computed through SWRL rules. 
  
 ### Contacts
 

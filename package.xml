@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <package>
     <name>scene_identification_tagging</name>
-    <version>0.1.0</version>
+    <version>1.0</version>
     <description>Semantic Scene Identification and Tagging</description>
 
     <maintainer email="luca.buoncompagni@edu.unige.it">Luca Buoncompagni</maintainer>
@@ -12,15 +12,6 @@
 
     <buildtool_depend>catkin</buildtool_depend>
     <build_depend>rosjava_build_tools</build_depend>
-    
-
-<!--
-<build_depend>multi_ontology_reference</build_depend>    
-<build_depend>armor_msgs</build_depend>
-<build_depend>multi_ontology_reference</build_depend>
-<run_depend>armor_msgs</run_depend>
--->
-
 
     <!-- The export tag contains other, unspecified, tags -->
     <export>

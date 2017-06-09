@@ -1,5 +1,7 @@
 package it.emarolab.scene_identification_tagging;
 
+import org.semanticweb.owlapi.model.OWLObjectProperty;
+
 /**
  * The base interface for the SIT architecture.
  * <p>
@@ -35,6 +37,7 @@ public interface SITBase {
      * used by the SIT algorithm.
      */
     String ONTO_IRI = "http://www.semanticweb.org/emaroLab/luca-buoncompagni/sit";
+
 
     /**
      * The base interface for the SIT constants.
@@ -88,6 +91,25 @@ public interface SITBase {
          * are related to the {@code Z} axis.
          */
         String SUFFIX_Z = "Z";
+
+        /**
+         * The prefix used in object properties, representing
+         * a spatial relation between two objects.
+         */
+        String PREFIX_SPATIAL = "is";
+        /**
+         * The suffix used in not symmetric
+         * object properties, representing
+         * a spatial relation between two objects.
+         */
+        String SUFFIX_SPATIAL_ASYMMETRIC = "Of";
+        /**
+         * The suffix used in symmetric
+         * object properties, representing
+         * a spatial relation between two objects.
+         */
+        String SUFFIX_SPATIAL_SYMMETRIC = "With";
+
     }
 
     /**
@@ -127,7 +149,7 @@ public interface SITBase {
          * shape that has an orientation (i.e.: belonging to
          * the {@link CLASS#ORIENTABLE}).
          */
-        String PREFIX_ORIENTATABLE = "O-";
+        String PREFIX_ORIENTABLE = "O-";
 
         /**
          * The prefix used for all the individuals with
@@ -436,12 +458,88 @@ public interface SITBase {
             extends VOCABOLARY{
 
         /**
+         * The inverse property of {@link #SPATIAL_RIGHT}.
+         */
+        String SPATIAL_LEFT = PREFIX_SPATIAL + "Left" + SUFFIX_SPATIAL_ASYMMETRIC;
+        /**
+         * The inverse property of {@link #SPATIAL_ABOVE}.
+         */
+        String SPATIAL_BELOW = PREFIX_SPATIAL + "Below" + SUFFIX_SPATIAL_ASYMMETRIC;
+        /**
+         * TThe inverse property of {@link #SPATIAL_BEHIND}
+         */
+        String SPATIAL_FRONT = PREFIX_SPATIAL + "Front" + SUFFIX_SPATIAL_ASYMMETRIC;
+
+
+        /**
+         * The name of the object property representing a spatial relation
+         * in which an object is on the right hand side of another.
+         * Also, the ontology should consider it as {@code transitive} and
+         * define its {@code inverse} as well.
+         */
+        String SPATIAL_RIGHT = PREFIX_SPATIAL + "Right" + SUFFIX_SPATIAL_ASYMMETRIC;
+        /**
+         * The name of the object property representing a spatial relation
+         * in which an object is above of another.
+         * Also, the ontology should consider it as {@code transitive} and
+         * define its {@code inverse} as well.
+         */
+        String SPATIAL_ABOVE = PREFIX_SPATIAL + "Above" + SUFFIX_SPATIAL_ASYMMETRIC;
+        /**
+         * The name of the object property representing a spatial relation
+         * in which an object is behind of another.
+         * Also, the ontology should consider it as {@code transitive} and
+         * define its {@code inverse} as well.
+         */
+        String SPATIAL_BEHIND = PREFIX_SPATIAL + "Behind" + SUFFIX_SPATIAL_ASYMMETRIC;
+        /**
+         * The name of the object property representing a spatial relation
+         * in which an object is parallel with an another.
+         * The ontology should consider it as {@code transitive} and {@code symmetric}.
+         */
+        String SPATIAL_PARALLEL = PREFIX_SPATIAL + "Parallel" + SUFFIX_SPATIAL_SYMMETRIC;
+        /**
+         * The name of the object property representing a spatial relation
+         * in which an object is perpendicular with an another.
+         * The ontology should consider it as {@code transitive} and {@code symmetric}.
+         */
+        String SPATIAL_PERPENDICULAR = PREFIX_SPATIAL + "Perpendicular" +SUFFIX_SPATIAL_SYMMETRIC;
+        /**
+         * The name of the object property representing a spatial relation
+         * in which an object is coaxial with an another.
+         * The ontology should consider it as {@code transitive} and {@code symmetric}.
+         */
+        String SPATIAL_COAXIAL = PREFIX_SPATIAL + "Coaxial" + SUFFIX_SPATIAL_SYMMETRIC;
+        /**
+         * The base name of an object property representing a spatial relation
+         * in which an object is aligned with another along a specific axis.
+         */
+        String SPATIAL_ALONG = PREFIX_SPATIAL + "Along";
+        /**
+         * The name of the object property representing a spatial relation
+         * in which an object is aligned with another along the {@code X} axis.
+         * The ontology should consider it as {@code transitive} and {@code symmetric}.
+         */
+        String SPATIAL_ALONGX = SPATIAL_ALONG + SUFFIX_X + SUFFIX_SPATIAL_SYMMETRIC;
+        /**
+         * The name of the object property representing a spatial relation
+         * in which an object is aligned with another along the {@code Y} axis.
+         * The ontology should consider it as {@code transitive} and {@code symmetric}.
+         */
+        String SPATIAL_ALONGY = SPATIAL_ALONG + SUFFIX_Y + SUFFIX_SPATIAL_SYMMETRIC;
+        /**
+         * The name of the object property representing a spatial relation
+         * in which an object is aligned with another along the {@code Z} axis.
+         * The ontology should consider it as {@code transitive} and {@code symmetric}.
+         */
+        String SPATIAL_ALONGZ = SPATIAL_ALONG + SUFFIX_Z + SUFFIX_SPATIAL_SYMMETRIC;
+
+        /**
          * The prefix used to define the spatial relations
          * between an abstract scene representation (i.e. {@link INDIVIDUAL#SCENE}).
          * The suffix is composed by the relative object property used between
          * individual identifying real objects, obtained a run time.
          */
         String SCENE_SPATIAL_PRFIX = "has-scene_";
-
     }
 }

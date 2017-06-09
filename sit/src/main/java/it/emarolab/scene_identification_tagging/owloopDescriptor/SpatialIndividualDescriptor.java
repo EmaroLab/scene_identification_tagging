@@ -31,8 +31,8 @@ public class SpatialIndividualDescriptor
         extends MORIndividualBase
         implements MORIndividual.Disjoint<SpatialIndividualDescriptor>,
         MORIndividual.Type<SpatialClassDescriptor>,
-        MORIndividual.ObjectLink<MORHierarchicalObjectProperty>,
-        MORIndividual.DataLink<MORHierarchicalDataProperty> {
+        MORIndividual.DataLink<MORHierarchicalDataProperty>, // this buildings are never read or write
+        MORIndividual.ObjectLink<SpatialObjectPropertyDescriptor>{
 
     private MORAxioms.Individuals disjointIndividual = new MORAxioms.Individuals();
     private MORAxioms.Concepts individualTypes = new MORAxioms.Concepts();
@@ -142,8 +142,8 @@ public class SpatialIndividualDescriptor
      * @return an object property of {@code this} individual.
      */
     @Override
-    public MORHierarchicalObjectProperty getNewObjectIndividual(MORAxioms.ObjectSemantic instance, OWLReferences ontology) {
-        return new MORHierarchicalObjectProperty( instance.getSemantic(), ontology);
+    public SpatialObjectPropertyDescriptor getNewObjectIndividual(MORAxioms.ObjectSemantic instance, OWLReferences ontology) {
+        return new SpatialObjectPropertyDescriptor( instance.getSemantic(), ontology);
     }
 
     /**
