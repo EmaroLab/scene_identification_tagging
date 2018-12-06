@@ -123,6 +123,22 @@ public class SpatialRelation
         return direct;
     }
 
+    public boolean equalsOrInverse(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof SpatialRelation)) return false;
+        SpatialRelation that = (SpatialRelation) o;
+
+        boolean direct = getSubject().equals(that.getSubject())
+                & getObject().equals(that.getObject())
+                & getRelation().equals(that.getRelation());
+
+        boolean inverse = getSubject().equals(that.getObject())
+                & getObject().equals(that.getSubject())
+                & getRelation().equals(that.getInverseRelation());
+
+        return direct | inverse;
+    }
+
     /**
      * It is used to implement {@link #equals(Object)} method.
      * @return a hash code value for this object.

@@ -174,7 +174,7 @@ public class GeometricPrimitive
      * @param time the time stamp of the object.
      */
     public void setTime(Long time) { // does not change object name
-        this.time = this.time;
+        this.time = time;
         if ( addTime)
             addData( getPropertyTime(), this.time, true);
     }
@@ -306,8 +306,12 @@ public class GeometricPrimitive
     /**
      * An adding time enable/disable flag for synchronising the
      * time stamp w.r.t. the ontology.
+     *
+     * @deprecated not disabled, time get always written (to be fixed)
      * @param flag {@code true} to enable synchronisation, {@code false} to disable.
+     *
      */
+    @Deprecated
     public void shouldAddTime(boolean flag) {
         addTime = flag;
     }
