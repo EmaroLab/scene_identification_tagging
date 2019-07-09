@@ -1,12 +1,12 @@
-package it.emarolab.scene_identification_tagging.sceneRepresentation;
+package it.emarolab.sit.sceneRepresentation;
 
 import it.emarolab.amor.owlInterface.OWLReferences;
-import it.emarolab.owloop.aMORDescriptor.MORAxioms;
-import it.emarolab.scene_identification_tagging.SITBase;
-import it.emarolab.scene_identification_tagging.SpatialSimplifier;
-import it.emarolab.scene_identification_tagging.owloopDescriptor.SceneClassDescriptor;
-import it.emarolab.scene_identification_tagging.owloopDescriptor.SceneIndividualDescriptor;
-import it.emarolab.scene_identification_tagging.owloopDescriptor.SpatialIndividualDescriptor;
+import it.emarolab.owloop.descriptor.construction.descriptorEntitySet.DescriptorEntitySet;
+import it.emarolab.sit.SITBase;
+import it.emarolab.sit.SpatialSimplifier;
+import it.emarolab.sit.owloopDescriptor.SceneClassDescriptor;
+import it.emarolab.sit.owloopDescriptor.SceneIndividualDescriptor;
+import it.emarolab.sit.owloopDescriptor.SpatialIndividualDescriptor;
 import org.semanticweb.owlapi.model.OWLClass;
 import org.semanticweb.owlapi.model.OWLNamedIndividual;
 import org.semanticweb.owlapi.model.OWLObjectProperty;
@@ -49,7 +49,7 @@ import java.util.*;
  *     <br>
  *
  * <div style="text-align:center;"><small>
- * <b>File</b>:        it.emarolab.scene_identification_tagging.sceneRepresentation.SceneRepresentation <br>
+ * <b>File</b>:        it.emarolab.sit.sceneRepresentation.SceneRepresentation <br>
  * <b>Licence</b>:     GNU GENERAL PUBLIC LICENSE. Version 3, 29 June 2007 <br>
  * <b>Author</b>:      Buoncompagni Luca (luca.buoncompagni@edu.unige.it) <br>
  * <b>affiliation</b>: EMAROLab, DIBRIS, University of Genoa. <br>
@@ -80,6 +80,11 @@ public class SceneRepresentation
         applyScene( sceneDescriptor, relations);
         computeRecognitionConfidence( sceneDescriptor);
     }
+
+    public SceneRepresentation() {
+
+    }
+
     public void initialize(SpatialSimplifier objects, OWLReferences ontoRef){
         objects.populateMinimalRelationSet();
         objects.readObjectSemantics( true); // call reasoner to compute SWRL rules and readSemantic()
@@ -97,9 +102,9 @@ public class SceneRepresentation
         Set< SpatialRelation> relations = new HashSet<>();
         if ( ! objects.isEmpty())
             for ( SpatialIndividualDescriptor o : objects) {
-                for (MORAxioms.ObjectSemantic s : o.getObjectSemantics()) {
+                for (DescriptorEntitySet.ObjectLinks s : o.getIndividualObjectProperties()) {
                     for (OWLNamedIndividual i : s.getValues()) {
-                        relations.add(new SpatialRelation(o, s.getSemantic(), i));
+                        relations.add(new SpatialRelation(o, s.getExpression(), i));
                     }
                 }
             }
@@ -118,7 +123,7 @@ public class SceneRepresentation
         sceneDescriptor.addTypeIndividual( CLASS.SCENE);
         if (addTime)
             sceneDescriptor.addData( DATA_PROPERTY.TIME, time, true);
-        sceneDescriptor.writeSemanticInconsistencySafe( true);
+        sceneDescriptor.writeExpressionAxiomsInconsistencySafe( true);
     }
 
     // get spatial relation between a Scene and an Object from the spatial relation between two Objects
@@ -168,10 +173,10 @@ public class SceneRepresentation
         for ( LearningData learning : shapeCardinality)
             learned.addMinObjectRestriction( learning.getRelation(), learning.getCardinality(), learning.getShape());
         learned.addSuperConcept( CLASS.SCENE);
-        learned.writeSemanticInconsistencySafe( true); // cal reasoning
+        learned.writeExpressionAxiomsInconsistencySafe( true); // cal reasoning
 
         // update this internal class
-        sceneDescriptor.readSemantic();
+        sceneDescriptor.readExpressionAxioms();
         bestRecognitionDescriptor = learned;
         recognitionConfidence = 1;
     }
@@ -267,7 +272,7 @@ public class SceneRepresentation
      * @return It indicate if the recognition went well.
      */
     public boolean shouldLearn(){
-        if ( sceneDescriptor.getTypeIndividual().size() <= 1) // [Scene]
+        if ( sceneDescriptor.getIndividualTypes().size() <= 1) // [Scene]
             return true;
         else {
             if ( recognitionConfidence < CONFIDENCE_THRESHOLD)
@@ -330,6 +335,10 @@ public class SceneRepresentation
      */
     public void setAddingTime(boolean addTime) {
         this.addTime = addTime;
+    }
+
+    public long getID() {
+        return ID;
     }
 
 }

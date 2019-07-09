@@ -1,9 +1,9 @@
-package it.emarolab.scene_identification_tagging.owloopDescriptor;
+package it.emarolab.sit.owloopDescriptor;
 
 import it.emarolab.amor.owlInterface.OWLReferences;
-import it.emarolab.owloop.aMORDescriptor.MORAxioms;
-import it.emarolab.owloop.aMORDescriptor.MORConcept;
-import it.emarolab.owloop.aMORDescriptor.utility.MORConceptBase;
+import it.emarolab.owloop.descriptor.construction.descriptorEntitySet.DescriptorEntitySet;
+import it.emarolab.owloop.descriptor.construction.descriptorExpression.ConceptExpression;
+import it.emarolab.owloop.descriptor.construction.descriptorGround.ConceptGround;
 import org.semanticweb.owlapi.model.OWLClass;
 import org.semanticweb.owlapi.model.OWLNamedIndividual;
 
@@ -18,7 +18,7 @@ import java.util.List;
  *     class, as well as sub classes.
  *
  * <div style="text-align:center;"><small>
- * <b>File</b>:        it.emarolab.scene_identification_tagging.owloopDescriptor.SpatialClassDescriptor <br>
+ * <b>File</b>:        it.emarolab.sit.owloopDescriptor.SpatialClassDescriptor <br>
  * <b>Licence</b>:     GNU GENERAL PUBLIC LICENSE. Version 3, 29 June 2007 <br>
  * <b>Author</b>:      Buoncompagni Luca (luca.buoncompagni@edu.unige.it) <br>
  * <b>affiliation</b>: EMAROLab, DIBRIS, University of Genoa. <br>
@@ -26,12 +26,12 @@ import java.util.List;
  * </small></div>
  */
 public class SpatialClassDescriptor
-        extends MORConceptBase
-        implements MORConcept.Sub<SpatialClassDescriptor>,
-        MORConcept.Classify<SpatialIndividualDescriptor> {
+        extends ConceptGround
+        implements ConceptExpression.Sub<SpatialClassDescriptor>,
+        ConceptExpression.Instance<SpatialIndividualDescriptor> {
 
-    private MORAxioms.Concepts subConcept = new MORAxioms.Concepts();
-    private MORAxioms.Individuals classifiedIndividual = new MORAxioms.Individuals();
+    private DescriptorEntitySet.Concepts subConcept = new DescriptorEntitySet.Concepts();
+    private DescriptorEntitySet.Individuals classifiedIndividual = new DescriptorEntitySet.Individuals();
 
     /**
      * Initialise this OWLOOP {@code Descriptor} by fully specifying the {@code Ground}.
@@ -72,9 +72,9 @@ public class SpatialClassDescriptor
      * @return the changes done during reading.
      */
     @Override
-    public List<MappingIntent> readSemantic() {
-        List<MappingIntent> r = MORConcept.Sub.super.readSemantic();
-        r.addAll( MORConcept.Classify.super.readSemantic());
+    public List<MappingIntent> readExpressionAxioms() {
+        List<MappingIntent> r = ConceptExpression.Sub.super.readExpressionAxioms();
+        r.addAll( ConceptExpression.Instance.super.readExpressionAxioms());
         return r;
     }
 
@@ -84,28 +84,10 @@ public class SpatialClassDescriptor
      * @return the changes done during writing.
      */
     @Override
-    public List<MappingIntent> writeSemantic() {
-        List<MappingIntent> r = MORConcept.Sub.super.writeSemantic();
-        r.addAll( MORConcept.Classify.super.writeSemantic());
+    public List<MappingIntent> writeExpressionAxioms() {
+        List<MappingIntent> r = ConceptExpression.Sub.super.writeExpressionAxioms();
+        r.addAll( ConceptExpression.Instance.super.writeExpressionAxioms());
         return r;
-    }
-
-    /**
-     * This is a standard OWLOOP implementation.
-     * @return a new {@code Descriptor} for a scene class.
-     */
-    @Override
-    public SpatialClassDescriptor getNewSubConcept(OWLClass instance, OWLReferences ontology) {
-        return new SpatialClassDescriptor( instance, ontology);
-    }
-
-    /**
-     * This is a standard OWLOOP implementation.
-     * @return the name of all the sub class of {@code this}.
-     */
-    @Override
-    public MORAxioms.Concepts getSubConcept() {
-        return subConcept;
     }
 
     /**
@@ -113,7 +95,7 @@ public class SpatialClassDescriptor
      * @return a new {@code Descriptor} for an object individual.
      */
     @Override
-    public SpatialIndividualDescriptor getNewIndividualClassified(OWLNamedIndividual instance, OWLReferences ontology) {
+    public SpatialIndividualDescriptor getIndividualDescriptor(OWLNamedIndividual instance, OWLReferences ontology) {
         return new SpatialIndividualDescriptor( instance, ontology);
     }
 
@@ -122,8 +104,26 @@ public class SpatialClassDescriptor
      * @return the name of all the object individuals classified in {@code this}.
      */
     @Override
-    public MORAxioms.Individuals getIndividualClassified() {
+    public DescriptorEntitySet.Individuals getIndividualInstances() {
         return classifiedIndividual;
+    }
+
+    /**
+     * This is a standard OWLOOP implementation.
+     * @return a new {@code Descriptor} for a scene class.
+     */
+    @Override
+    public SpatialClassDescriptor getSubConceptDescriptor(OWLClass instance, OWLReferences ontology) {
+        return new SpatialClassDescriptor( instance, ontology);
+    }
+
+    /**
+     * This is a standard OWLOOP implementation.
+     * @return the name of all the sub class of {@code this}.
+     */
+    @Override
+    public DescriptorEntitySet.Concepts getSubConcepts() {
+        return subConcept;
     }
 
     @Override

@@ -1,10 +1,10 @@
-package it.emarolab.scene_identification_tagging.owloopDescriptor;
+package it.emarolab.sit.owloopDescriptor;
 
 import it.emarolab.amor.owlInterface.OWLReferences;
 import it.emarolab.amor.owlInterface.SemanticRestriction;
-import it.emarolab.owloop.aMORDescriptor.MORAxioms;
-import it.emarolab.owloop.aMORDescriptor.MORConcept;
-import it.emarolab.owloop.aMORDescriptor.utility.MORConceptBase;
+import it.emarolab.owloop.descriptor.construction.descriptorEntitySet.DescriptorEntitySet;
+import it.emarolab.owloop.descriptor.construction.descriptorExpression.ConceptExpression;
+import it.emarolab.owloop.descriptor.construction.descriptorGround.ConceptGround;
 import org.semanticweb.owlapi.model.OWLClass;
 import org.semanticweb.owlapi.model.OWLNamedIndividual;
 
@@ -21,7 +21,7 @@ import java.util.List;
  *     computes the scene class cardinality.
  *
  * <div style="text-align:center;"><small>
- * <b>File</b>:        it.emarolab.scene_identification_tagging.owloopDescriptor.SceneClassDescriptor <br>
+ * <b>File</b>:        it.emarolab.sit.owloopDescriptor.SceneClassDescriptor <br>
  * <b>Licence</b>:     GNU GENERAL PUBLIC LICENSE. Version 3, 29 June 2007 <br>
  * <b>Author</b>:      Buoncompagni Luca (luca.buoncompagni@edu.unige.it) <br>
  * <b>affiliation</b>: EMAROLab, DIBRIS, University of Genoa. <br>
@@ -29,16 +29,16 @@ import java.util.List;
  * </small></div>
  */
 public class SceneClassDescriptor
-        extends MORConceptBase
-        implements MORConcept.Define,
-        MORConcept.Sub<SceneClassDescriptor>,
-        MORConcept.Super<SceneClassDescriptor>,
-        MORConcept.Classify<SceneIndividualDescriptor> {
+        extends ConceptGround
+        implements ConceptExpression.Definition,
+        ConceptExpression.Sub<SceneClassDescriptor>,
+        ConceptExpression.Super<SceneClassDescriptor>,
+        ConceptExpression.Instance<SceneIndividualDescriptor> {
 
-    private MORAxioms.Restrictions restrictions = new MORAxioms.Restrictions();
-    private MORAxioms.Concepts subConcept = new MORAxioms.Concepts();
-    private MORAxioms.Concepts superConcept = new MORAxioms.Concepts();
-    private MORAxioms.Individuals classifiedIndividual = new MORAxioms.Individuals();
+    private DescriptorEntitySet.Restrictions restrictions = new DescriptorEntitySet.Restrictions();
+    private DescriptorEntitySet.Concepts subConcept = new DescriptorEntitySet.Concepts();
+    private DescriptorEntitySet.Concepts superConcept = new DescriptorEntitySet.Concepts();
+    private DescriptorEntitySet.Individuals classifiedIndividual = new DescriptorEntitySet.Individuals();
 
     private int cardinality = 0;
 
@@ -84,14 +84,15 @@ public class SceneClassDescriptor
      * @return the changes done during reading.
      */
     @Override
-    public List<MappingIntent> readSemantic() {
-        List<MappingIntent> r = Sub.super.readSemantic();
-        r.addAll( Define.super.readSemantic());
-        r.addAll( Super.super.readSemantic());
-        r.addAll( Classify.super.readSemantic());
+    public List<MappingIntent> readExpressionAxioms() {
+        List<MappingIntent> r = Sub.super.readExpressionAxioms();
+        r.addAll( Definition.super.readExpressionAxioms());
+        r.addAll( Super.super.readExpressionAxioms());
+        r.addAll( Instance.super.readExpressionAxioms());
         updateCardinality();
         return r;
     }
+
 
     /**
      * This method uses standard OWLOOP synchronisation mechanics
@@ -100,18 +101,18 @@ public class SceneClassDescriptor
      * @return the changes done during writing.
      */
     @Override
-    public List<MappingIntent> writeSemantic() {
-        List<MappingIntent> r = Define.super.writeSemantic();
-        r.addAll( Super.super.writeSemantic());
-        r.addAll( Classify.super.writeSemantic());
-        r.addAll( Sub.super.writeSemantic());
+    public List<MappingIntent> writeExpressionAxioms() {
+        List<MappingIntent> r = Definition.super.writeExpressionAxioms();
+        r.addAll( Super.super.writeExpressionAxioms());
+        r.addAll( Instance.super.writeExpressionAxioms());
+        r.addAll( Sub.super.writeExpressionAxioms());
         updateCardinality();
         return r;
     }
 
     private void updateCardinality(){
         cardinality = 0;
-        for( SemanticRestriction r : getDefinitionConcept()){
+        for( SemanticRestriction r : getDefinitionConcepts()){
             if( r instanceof SemanticRestriction.ClassRestrictedOnMinObject){
                 cardinality += ((SemanticRestriction.ClassRestrictedOnMinObject) r).getCardinality();
             }
@@ -124,7 +125,7 @@ public class SceneClassDescriptor
      * @return the definition of the described OWLClass.
      */
     @Override
-    public MORAxioms.Restrictions getDefinitionConcept() {
+    public DescriptorEntitySet.Restrictions getDefinitionConcepts() {
         return restrictions;
     }
 
@@ -133,16 +134,17 @@ public class SceneClassDescriptor
      * @return a new {@code Descriptor} for a scene class.
      */
     @Override
-    public SceneClassDescriptor getNewSubConcept(OWLClass instance, OWLReferences ontology) {
+    public SceneClassDescriptor getSubConceptDescriptor(OWLClass instance, OWLReferences ontology) {
         return new SceneClassDescriptor( instance, ontology);
     }
+
 
     /**
      * This is a standard OWLOOP implementation.
      * @return the name of all the sub class of {@code this}.
      */
     @Override
-    public MORAxioms.Concepts getSubConcept() {
+    public DescriptorEntitySet.Concepts getSubConcepts() {
         return subConcept;
     }
 
@@ -151,7 +153,7 @@ public class SceneClassDescriptor
      * @return a new {@code Descriptor} for a scene class.
      */
     @Override
-    public SceneClassDescriptor getNewSuperConcept(OWLClass instance, OWLReferences ontology) {
+    public SceneClassDescriptor getSuperConceptDescriptor(OWLClass instance, OWLReferences ontology) {
         return new SceneClassDescriptor( instance, ontology);
     }
 
@@ -160,7 +162,7 @@ public class SceneClassDescriptor
      * @return the name of all the super class of {@code this}.
      */
     @Override
-    public MORAxioms.Concepts getSuperConcept() {
+    public DescriptorEntitySet.Concepts getSuperConcepts() {
         return superConcept;
     }
 
@@ -169,7 +171,7 @@ public class SceneClassDescriptor
      * @return a new {@code Descriptor} for an scene individual.
      */
     @Override
-    public SceneIndividualDescriptor getNewIndividualClassified(OWLNamedIndividual instance, OWLReferences ontology) {
+    public SceneIndividualDescriptor getIndividualDescriptor(OWLNamedIndividual instance, OWLReferences ontology) {
         return new SceneIndividualDescriptor( instance, ontology);
     }
 
@@ -178,14 +180,14 @@ public class SceneClassDescriptor
      * @return the name of all the scene individuals classified in {@code this}.
      */
     @Override
-    public MORAxioms.Individuals getIndividualClassified() {
+    public DescriptorEntitySet.Individuals getIndividualInstances() {
         return classifiedIndividual;
     }
 
     /**
      * The sum of all the cardinality restriction available in the
      * definition of {@code this} abstract scene class.
-     * @return the scene cardinality based on {@link #readSemantic()} and {@link #writeSemantic()}.
+     * @return the scene cardinality based on {@link #readExpressionAxioms()} ()} and {@link #writeExpressionAxioms()} ()}.
      */
     public int getCardinality() {
         return cardinality;

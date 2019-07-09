@@ -87,7 +87,7 @@ public class Test
 
         System.out.println( "Recognised with best confidence: " + recognition1.getRecognitionConfidence() + " should learn? " + recognition1.shouldLearn());
         System.out.println( "Best recognised class: " + recognition1.getBestRecognitionDescriptor());
-        System.out.println( "Other recognised classes: " + recognition1.getSceneDescriptor().getTypeIndividual());
+        System.out.println( "Other recognised classes: " + recognition1.getSceneDescriptor().getIndividualTypes());
 
         // learn the new scene if is the case
         if ( recognition1.shouldLearn()) {
@@ -100,7 +100,7 @@ public class Test
         // check recognition after learning
         System.out.println( "Recognised with best confidence: " + recognition1.getRecognitionConfidence() + " should learn? " + recognition1.shouldLearn());
         System.out.println( "Best recognised class: " + recognition1.getBestRecognitionDescriptor());
-        System.out.println( "Other recognised classes: " + recognition1.getSceneDescriptor().getTypeIndividual());
+        System.out.println( "Other recognised classes: " + recognition1.getSceneDescriptor().getIndividualTypes());
 
         System.out.println("3 ----------------------------------------------");
         System.out.println("3 ----------------------------------------------");
@@ -137,7 +137,7 @@ public class Test
 
         System.out.println( "Recognised with best confidence: " + recognition2.getRecognitionConfidence() + " should learn? " + recognition2.shouldLearn());
         System.out.println( "Best recognised class: " + recognition2.getBestRecognitionDescriptor());
-        System.out.println( "Other recognised classes: " + recognition2.getSceneDescriptor().getTypeIndividual());
+        System.out.println( "Other recognised classes: " + recognition2.getSceneDescriptor().getIndividualTypes());
 
         System.out.println("5 ----------------------------------------------");
 
@@ -146,7 +146,7 @@ public class Test
             for (SceneClassDescriptor cl2 : recognitionClasses) {
                 if (!cl1.equals(cl2)) {
                     System.out.println(" is " + cl1.getInstance().getIRI().getRemainder().get() +
-                            " subclass of " + cl2.getInstance().getIRI().getRemainder().get() + "? " + cl1.getSubConcept().contains(cl2.getInstance()));
+                            " subclass of " + cl2.getInstance().getIRI().getRemainder().get() + "? " + cl1.getSubConcepts().contains(cl2.getInstance()));
                     System.err.println(cl1);
                 }
             }

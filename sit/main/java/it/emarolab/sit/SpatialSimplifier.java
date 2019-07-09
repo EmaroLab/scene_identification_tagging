@@ -1,10 +1,9 @@
-package it.emarolab.scene_identification_tagging;
+package it.emarolab.sit;
 
-import it.emarolab.owloop.core.Semantic;
-import it.emarolab.scene_identification_tagging.owloopDescriptor.SpatialIndividualDescriptor;
-import it.emarolab.scene_identification_tagging.owloopDescriptor.SpatialObjectPropertyDescriptor;
-import it.emarolab.scene_identification_tagging.realObject.GeometricPrimitive;
-import it.emarolab.scene_identification_tagging.sceneRepresentation.FullSceneRepresentation;
+import it.emarolab.sit.owloopDescriptor.SpatialIndividualDescriptor;
+import it.emarolab.sit.owloopDescriptor.SpatialObjectPropertyDescriptor;
+import it.emarolab.sit.realObject.GeometricPrimitive;
+import it.emarolab.sit.sceneRepresentation.FullSceneRepresentation;
 
 import java.util.Set;
 
@@ -20,7 +19,7 @@ import java.util.Set;
  *     The actual T-Box considers always human friendly spatial relations.
  *
  * <div style="text-align:center;"><small>
- * <b>File</b>:        it.emarolab.scene_identification_tagging.SpatialSimplifier <br>
+ * <b>File</b>:        it.emarolab.sit.SpatialSimplifier <br>
  * <b>Licence</b>:     GNU GENERAL PUBLIC LICENSE. Version 3, 29 June 2007 <br>
  * <b>Author</b>:      Buoncompagni Luca (luca.buoncompagni@edu.unige.it) <br>
  * <b>affiliation</b>: EMAROLab, DIBRIS, University of Genoa. <br>
@@ -60,7 +59,7 @@ public class SpatialSimplifier
                 if ( ! i.equals( j)) // todo do it with amor and remove from description
                     i.addDisjointIndividual( j.getInstance()); // 1-
 
-            i.getObjectSemantics().clear(); // 2-
+            i.getIndividualObjectProperties().clear(); // 2-
             i.addObject( OBJECT_PROPERTY.SPATIAL_ABOVE); // 3-
             i.addObject( OBJECT_PROPERTY.SPATIAL_BEHIND);
             i.addObject( OBJECT_PROPERTY.SPATIAL_RIGHT);
@@ -82,7 +81,7 @@ public class SpatialSimplifier
                 done = true;
             }
 
-            i.writeSemantic();
+            i.writeExpressionAxioms();
         }
     }
 
@@ -94,7 +93,7 @@ public class SpatialSimplifier
      * In particular it:
      * <ul>
      *     <li>1: resets transitive and symmetric properties,</li>
-     *     <li>2: clear the object property description {@link Semantic.SemanticAxioms}.
+     *     <li>2: clear the object property description.
      *            This will make OWLOOP reading all the spatial relations,
      *            not only the primary, but also the inverse.</li>
      * </ul>
@@ -115,7 +114,7 @@ public class SpatialSimplifier
             }
 
             // if it is empty it reads all properties
-            i.getObjectSemantics().clear(); // 2-
+            i.getIndividualObjectProperties().clear(); // 2-
         }
     }
 
@@ -143,7 +142,7 @@ public class SpatialSimplifier
                 i.reason();
                 done = true;
             }
-            i.readSemantic();
+            i.readExpressionAxioms();
         }
     }
 }

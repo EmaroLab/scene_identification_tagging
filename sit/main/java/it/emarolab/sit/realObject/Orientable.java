@@ -1,8 +1,8 @@
-package it.emarolab.scene_identification_tagging.realObject;
+package it.emarolab.sit.realObject;
 
 import it.emarolab.amor.owlInterface.OWLReferences;
-import it.emarolab.scene_identification_tagging.SITBase;
-import it.emarolab.scene_identification_tagging.owloopDescriptor.SpatialIndividualDescriptor;
+import it.emarolab.sit.SITBase;
+import it.emarolab.sit.owloopDescriptor.SpatialIndividualDescriptor;
 import org.semanticweb.owlapi.model.OWLNamedIndividual;
 
 import java.util.List;
@@ -15,7 +15,7 @@ import java.util.List;
  *     with the ontological structure.
  *
  * <div style="text-align:center;"><small>
- * <b>File</b>:        it.emarolab.scene_identification_tagging.realObject.Sphere <br>
+ * <b>File</b>:        it.emarolab.sit.realObject.Sphere <br>
  * <b>Licence</b>:     GNU GENERAL PUBLIC LICENSE. Version 3, 29 June 2007 <br>
  * <b>Author</b>:      Buoncompagni Luca (luca.buoncompagni@edu.unige.it) <br>
  * <b>affiliation</b>: EMAROLab, DIBRIS, University of Genoa. <br>
@@ -203,8 +203,8 @@ public class Orientable
      * @return the changes done during reading.
      */
     @Override
-    public List<MappingIntent> readSemantic() {
-        List<MappingIntent> r = super.readSemantic();
+    public List<MappingIntent> readExpressionAxioms() {
+        List<MappingIntent> r = super.readExpressionAxioms();
         axisX = getLiteral( getPropertyAxisX()).parseFloat();
         axisY = getLiteral( getPropertyAxisY()).parseFloat();
         axisZ = getLiteral( getPropertyAxisZ()).parseFloat();
