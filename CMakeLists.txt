@@ -1,15 +1,15 @@
- ##############################################################################
+##############################################################################
 # CMake
 ##############################################################################
 
 cmake_minimum_required(VERSION 2.8.3)
-project(scene_identification_tagging)
+project(sit_pkg)
 
 ##############################################################################
 # Catkin
 ##############################################################################
 
-find_package(catkin REQUIRED rosjava_build_tools)
+find_package(catkin REQUIRED multi_ontology_reference owloop_pkg rosjava_build_tools) #ros_java_msgs
 
 # Set the gradle targets you want catkin's make to run by default, e.g.
 #   catkin_rosjava_setup(installApp)
