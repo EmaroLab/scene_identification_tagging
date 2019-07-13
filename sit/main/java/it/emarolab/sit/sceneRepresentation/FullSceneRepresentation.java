@@ -1,14 +1,10 @@
-package it.emarolab.scene_identification_tagging.sceneRepresentation;
+package it.emarolab.sit.sceneRepresentation;
 
 import it.emarolab.amor.owlInterface.OWLReferences;
-import it.emarolab.owloop.aMORDescriptor.MORAxioms;
-import it.emarolab.scene_identification_tagging.SITBase;
-import it.emarolab.scene_identification_tagging.SpatialSimplifier;
-import it.emarolab.scene_identification_tagging.owloopDescriptor.SceneClassDescriptor;
-import it.emarolab.scene_identification_tagging.owloopDescriptor.SceneIndividualDescriptor;
-import it.emarolab.scene_identification_tagging.owloopDescriptor.SpatialIndividualDescriptor;
-import org.semanticweb.owlapi.model.OWLClass;
-import org.semanticweb.owlapi.model.OWLNamedIndividual;
+import it.emarolab.sit.SITBase;
+import it.emarolab.sit.SpatialSimplifier;
+import it.emarolab.sit.owloopDescriptor.SceneClassDescriptor;
+import it.emarolab.sit.owloopDescriptor.SceneIndividualDescriptor;
 import org.semanticweb.owlapi.model.OWLObjectProperty;
 
 import java.util.*;
@@ -29,7 +25,7 @@ public class FullSceneRepresentation extends SceneRepresentation
     //private boolean addTime = false;
 
     public FullSceneRepresentation(SpatialSimplifier objects, OWLReferences ontoRef){
-        super(objects, ontoRef);
+        super();
         initialize( objects, ontoRef);
         applyScene( sceneDescriptor, relations);
         computeRecognitionConfidence( sceneDescriptor);
@@ -40,14 +36,14 @@ public class FullSceneRepresentation extends SceneRepresentation
         for ( SpatialRelation r : relations){
             OWLObjectProperty spatialRelation = getSpatialRelation( sceneDescriptor.getOntology(), r.getSubject(), r.getRelation());
             sceneDescriptor.addObject( spatialRelation, r.getObject().getIndividual());
-            OWLObjectProperty spatialInverseRelation = getSpatialRelation( sceneDescriptor.getOntology(), r.getSubject(), r.getInverseRelation());
+            OWLObjectProperty spatialInverseRelation = getSpatialRelation( sceneDescriptor.getOntology(), r.getObject(), r.getInverseRelation());
             if ( ! spatialInverseRelation.equals( spatialRelation))
                 sceneDescriptor.addObject( spatialInverseRelation, r.getSubject().getIndividual());
         }
         sceneDescriptor.addTypeIndividual( CLASS.SCENE);
         if (addTime)
             sceneDescriptor.addData( DATA_PROPERTY.TIME, time, true);
-        sceneDescriptor.writeSemanticInconsistencySafe( true);
+        sceneDescriptor.writeExpressionAxiomsInconsistencySafe( true);
     }
 
     // get spatial relation between a Scene and an Object from the spatial relation between two Objects
@@ -77,6 +73,7 @@ public class FullSceneRepresentation extends SceneRepresentation
             learnAtom( toLearn, r.getSubject(), r.getRelation(), r.getObject());
             //learnAtom( toLearn, r.getInverseRelation(), r.getSubject());
         }
+
         // count number of types
         Set<LearningData> shapeCardinality = new HashSet<>();
         for ( OWLObjectProperty p : toLearn.keySet()){
@@ -99,10 +96,10 @@ public class FullSceneRepresentation extends SceneRepresentation
         for ( LearningData learning : shapeCardinality)
             learned.addMinObjectRestriction( learning.getRelation(), learning.getCardinality(), learning.getShape());
         learned.addSuperConcept( CLASS.SCENE);
-        learned.writeSemanticInconsistencySafe( true); // cal reasoning
+        learned.writeExpressionAxiomsInconsistencySafe( true); // cal reasoning
 
         // update this internal class
-        sceneDescriptor.readSemantic();
+        sceneDescriptor.readExpressionAxioms();
         bestRecognitionDescriptor = learned;
         recognitionConfidence = 1;
     }

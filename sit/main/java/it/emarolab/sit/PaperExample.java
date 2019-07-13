@@ -1,10 +1,9 @@
-package it.emarolab.scene_identification_tagging;
+package it.emarolab.sit;
 
 import it.emarolab.amor.owlInterface.OWLReferences;
 import it.emarolab.amor.owlInterface.OWLReferencesInterface;
-import it.emarolab.scene_identification_tagging.owloopDescriptor.SceneClassDescriptor;
-import it.emarolab.scene_identification_tagging.realObject.*;
-import it.emarolab.scene_identification_tagging.sceneRepresentation.FullSceneRepresentation;
+import it.emarolab.sit.realObject.*;
+import it.emarolab.sit.sceneRepresentation.FullSceneRepresentation;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -60,7 +59,7 @@ public class PaperExample
         // learn the new scene if is the case
         if ( recognition1.shouldLearn()) {
             System.out.println("Learning.... ");
-            recognition1.learn("TestScene");
+            recognition1.learn("Scene");
         }
 
         System.out.println(" ----------------------------------------------");
@@ -68,7 +67,7 @@ public class PaperExample
         // check recognition after learning
         System.out.println( "Recognised with best confidence: " + recognition1.getRecognitionConfidence() + " should learn? " + recognition1.shouldLearn());
         System.out.println( "Best recognised class: " + recognition1.getBestRecognitionDescriptor());
-        System.out.println( "Other recognised classes: " + recognition1.getSceneDescriptor().getTypeIndividual());
+        System.out.println( "Other recognised classes: " + recognition1.getSceneDescriptor().getIndividualTypes());
 
         System.out.println(" ----------------------------------------------");
         System.out.println( "Object " + objects);
@@ -143,7 +142,7 @@ public class PaperExample
         // learn the new scene if is the case
         if ( recognition1.shouldLearn()) {
             System.out.println("Learning.... ");
-            recognition1.learn("TestScene");
+            recognition1.learn("Scene");
         }
 
         System.out.println("2 ----------------------------------------------");
