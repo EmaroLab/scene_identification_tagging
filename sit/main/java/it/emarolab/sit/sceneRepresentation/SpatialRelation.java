@@ -1,9 +1,9 @@
-package it.emarolab.scene_identification_tagging.sceneRepresentation;
+package it.emarolab.sit.sceneRepresentation;
 
 import com.google.common.base.Objects;
-import it.emarolab.scene_identification_tagging.SITBase;
-import it.emarolab.scene_identification_tagging.owloopDescriptor.SpatialIndividualDescriptor;
-import it.emarolab.scene_identification_tagging.owloopDescriptor.SpatialObjectPropertyDescriptor;
+import it.emarolab.sit.SITBase;
+import it.emarolab.sit.owloopDescriptor.SpatialIndividualDescriptor;
+import it.emarolab.sit.owloopDescriptor.SpatialObjectPropertyDescriptor;
 import org.semanticweb.owlapi.model.OWLNamedIndividual;
 import org.semanticweb.owlapi.model.OWLObjectProperty;
 
@@ -20,7 +20,7 @@ import org.semanticweb.owlapi.model.OWLObjectProperty;
  *     all the individuals have all the numbers describing their coefficients.
  *
  * <div style="text-align:center;"><small>
- * <b>File</b>:        it.emarolab.scene_identification_tagging.sceneRepresentation.SpatialRelation <br>
+ * <b>File</b>:        it.emarolab.sit.sceneRepresentation.SpatialRelation <br>
  * <b>Licence</b>:     GNU GENERAL PUBLIC LICENSE. Version 3, 29 June 2007 <br>
  * <b>Author</b>:      Buoncompagni Luca (luca.buoncompagni@edu.unige.it) <br>
  * <b>affiliation</b>: EMAROLab, DIBRIS, University of Genoa. <br>
@@ -46,7 +46,7 @@ public class SpatialRelation
         this.relation = relation;
 
         SpatialIndividualDescriptor objectDescriptor = new SpatialIndividualDescriptor(object, subject.getOntology());
-        objectDescriptor.readSemantic();
+        objectDescriptor.readExpressionAxioms();
         this.object = new SpatialAtom(objectDescriptor);
 
         SpatialObjectPropertyDescriptor propertyDescriptor = new SpatialObjectPropertyDescriptor( relation, subject.getOntology());
@@ -121,6 +121,22 @@ public class SpatialRelation
 
         return direct | inverse;*/
         return direct;
+    }
+
+    public boolean equalsOrInverse(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof SpatialRelation)) return false;
+        SpatialRelation that = (SpatialRelation) o;
+
+        boolean direct = getSubject().equals(that.getSubject())
+                & getObject().equals(that.getObject())
+                & getRelation().equals(that.getRelation());
+
+        boolean inverse = getSubject().equals(that.getObject())
+                & getObject().equals(that.getSubject())
+                & getRelation().equals(that.getInverseRelation());
+
+        return direct | inverse;
     }
 
     /**

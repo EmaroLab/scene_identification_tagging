@@ -1,15 +1,12 @@
-package it.emarolab.scene_identification_tagging.owloopDescriptor;
+package it.emarolab.sit.owloopDescriptor;
 
 import it.emarolab.amor.owlInterface.OWLReferences;
-import it.emarolab.owloop.aMORDescriptor.MORAxioms;
-import it.emarolab.owloop.aMORDescriptor.MORObjectProperty;
-import it.emarolab.owloop.aMORDescriptor.utility.MORObjectPropertyBase;
-import it.emarolab.owloop.aMORDescriptor.utility.objectProperty.MORFullObjectProperty;
-import it.emarolab.scene_identification_tagging.SITBase;
-import org.semanticweb.owlapi.model.OWLDataProperty;
+import it.emarolab.owloop.descriptor.construction.descriptorEntitySet.DescriptorEntitySet;
+import it.emarolab.owloop.descriptor.construction.descriptorExpression.ObjectPropertyExpression;
+import it.emarolab.owloop.descriptor.construction.descriptorGround.ObjectPropertyGround;
+import it.emarolab.sit.SITBase;
 import org.semanticweb.owlapi.model.OWLObjectProperty;
 
-import java.awt.font.ImageGraphicAttribute;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -25,7 +22,7 @@ import java.util.List;
  *     since working with string is much faster.
  *
  * <div style="text-align:center;"><small>
- * <b>File</b>:        it.emarolab.scene_identification_tagging.owloopDescriptor.SpatialObjectPropertyDescriptor <br>
+ * <b>File</b>:        it.emarolab.sit.owloopDescriptor.SpatialObjectPropertyDescriptor <br>
  * <b>Licence</b>:     GNU GENERAL PUBLIC LICENSE. Version 3, 29 June 2007 <br>
  * <b>Author</b>:      Buoncompagni Luca (luca.buoncompagni@edu.unige.it) <br>
  * <b>affiliation</b>: EMAROLab, DIBRIS, University of Genoa. <br>
@@ -33,11 +30,11 @@ import java.util.List;
  * </small></div>
  */
 public class SpatialObjectPropertyDescriptor
-        extends MORObjectPropertyBase
-        implements MORObjectProperty.Inverse<SpatialObjectPropertyDescriptor>,
+        extends ObjectPropertyGround
+        implements ObjectPropertyExpression.Inverse<SpatialObjectPropertyDescriptor>,
         SITBase{
 
-    private MORAxioms.ObjectLinks inverseProperties = new MORAxioms.ObjectLinks();
+    private DescriptorEntitySet.ObjectProperties inverseProperties = new DescriptorEntitySet.ObjectProperties();
 
     /**
      * Initialise this OWLOOP {@code Descriptor} by fully specifying the {@code Ground}.
@@ -46,7 +43,7 @@ public class SpatialObjectPropertyDescriptor
      */
     public SpatialObjectPropertyDescriptor(OWLObjectProperty instance, OWLReferences onto) {
         super(instance, onto);
-        this.getInverseObjectProperty().setSingleton( true);
+        this.getInverseObjectProperties().setSingleton( true);
     }
 
     /**
@@ -56,27 +53,15 @@ public class SpatialObjectPropertyDescriptor
      * @return always an empty list.
      */
     @Override @Deprecated
-    public List<MappingIntent> readSemantic() {
+    public List<MappingIntent> readExpressionAxioms() {
         return new ArrayList<>();
     }
 
-    /**
-     * This method does not do nothing. Use {@link #getSpatialInverse()}
-     * and {@link #isSpatialSymmetric()}. Those methods are much
-     * faster and we have to add the name of the spatial relation anyway.
-     * @return always an empty list.
-     */
     @Override @Deprecated
-    public List<MappingIntent> writeSemantic() {
+    public List<MappingIntent> writeExpressionAxioms() {
         return new ArrayList<>();
     }
 
-    /**
-     * This is a standard OWLOOP implementation. Due to the deprecation
-     * of this {@link #readSemantic()} and {@link #writeSemantic()} the buildings
-     * contains only the {@link Ground} of the property.
-     * @return a new {@code Descriptor} for an inverse object property to {@code this}.
-     */
     @Override
     public SpatialObjectPropertyDescriptor getNewInverseObjectProperty(OWLObjectProperty instance, OWLReferences ontology) {
         return new SpatialObjectPropertyDescriptor( instance, ontology);
@@ -90,7 +75,7 @@ public class SpatialObjectPropertyDescriptor
      * there is a singleton.
      */
     @Override
-    public MORAxioms.ObjectLinks getInverseObjectProperty() {
+    public DescriptorEntitySet.ObjectProperties getInverseObjectProperties() {
         return inverseProperties;
     }
 

@@ -1,6 +1,4 @@
-package it.emarolab.scene_identification_tagging;
-
-import org.semanticweb.owlapi.model.OWLObjectProperty;
+package it.emarolab.sit;
 
 /**
  * The base interface for the SIT architecture.
@@ -10,7 +8,7 @@ import org.semanticweb.owlapi.model.OWLObjectProperty;
  *     It should be implemented by all classes of this architecture
  *
  * <div style="text-align:center;"><small>
- * <b>File</b>:        it.emarolab.scene_identification_tagging.SITBase <br>
+ * <b>File</b>:        it.emarolab.sit.SITBase <br>
  * <b>Licence</b>:     GNU GENERAL PUBLIC LICENSE. Version 3, 29 June 2007 <br>
  * <b>Author</b>:      Buoncompagni Luca (luca.buoncompagni@edu.unige.it) <br>
  * <b>affiliation</b>: EMAROLab, DIBRIS, University of Genoa. <br>
@@ -30,8 +28,7 @@ public interface SITBase {
      * The path to the main t-box ontological representation
      * used by the SIT algorithm, with respect to the {@code src} folder.
      */
-    String ONTO_FILE = "../resources/t_box/empty-scene.owl";
-
+    String ONTO_FILE = "/home/bubx/ros_ws/src/injected_armor_pkgs/injected_armor/sit/resources/t_box/empty-scene.owl"; // TODO make this a parameter from ROS launcher
     /**
      * The {@code IRI} domain of the main t-box ontological representation
      * used by the SIT algorithm.
@@ -52,7 +49,7 @@ public interface SITBase {
      *     (available at: {@link #ONTO_FILE})
      *
      * <div style="text-align:center;"><small>
-     * <b>File</b>:        it.emarolab.scene_identification_tagging.SITBase <br>
+     * <b>File</b>:        it.emarolab.sit.SITBase <br>
      * <b>Licence</b>:     GNU GENERAL PUBLIC LICENSE. Version 3, 29 June 2007 <br>
      * <b>Author</b>:      Buoncompagni Luca (luca.buoncompagni@edu.unige.it) <br>
      * <b>affiliation</b>: EMAROLab, DIBRIS, University of Genoa. <br>
@@ -120,7 +117,7 @@ public interface SITBase {
      *     for addressing individuals.
      *
      * <div style="text-align:center;"><small>
-     * <b>File</b>:        it.emarolab.scene_identification_tagging.SITBase <br>
+     * <b>File</b>:        it.emarolab.sit.SITBase <br>
      * <b>Licence</b>:     GNU GENERAL PUBLIC LICENSE. Version 3, 29 June 2007 <br>
      * <b>Author</b>:      Buoncompagni Luca (luca.buoncompagni@edu.unige.it) <br>
      * <b>affiliation</b>: EMAROLab, DIBRIS, University of Genoa. <br>
@@ -188,7 +185,7 @@ public interface SITBase {
      *     for addressing classes.
      *
      * <div style="text-align:center;"><small>
-     * <b>File</b>:        it.emarolab.scene_identification_tagging.SITBase <br>
+     * <b>File</b>:        it.emarolab.sit.SITBase <br>
      * <b>Licence</b>:     GNU GENERAL PUBLIC LICENSE. Version 3, 29 June 2007 <br>
      * <b>Author</b>:      Buoncompagni Luca (luca.buoncompagni@edu.unige.it) <br>
      * <b>affiliation</b>: EMAROLab, DIBRIS, University of Genoa. <br>
@@ -207,42 +204,42 @@ public interface SITBase {
         /**
          * The name of the class containing all the object
          * with coefficients related to a sphere
-         * (i.e.: {@link it.emarolab.scene_identification_tagging.realObject.Sphere}).
+         * (i.e.: {@link it.emarolab.sit.realObject.Sphere}).
          */
         String SPHERE = "Sphere";
 
         /**
          * The name of the class containing all the object
          * with coefficients related to a plane
-         * (i.e.: {@link it.emarolab.scene_identification_tagging.realObject.Plane}).
+         * (i.e.: {@link it.emarolab.sit.realObject.Plane}).
          */
         String PLANE = "Plane";
 
         /**
          * The name of the class containing all the object
          * with coefficients related to an orientable sphere
-         * (i.e.: {@link it.emarolab.scene_identification_tagging.realObject.Orientable})
+         * (i.e.: {@link it.emarolab.sit.realObject.Orientable})
          */
         String ORIENTABLE = "Orientable";
 
         /**
          * The name of the class containing all the object
          * with coefficients related to a cone
-         * (i.e.: {@link it.emarolab.scene_identification_tagging.realObject.Cone})
+         * (i.e.: {@link it.emarolab.sit.realObject.Cone})
          */
         String CONE = "Cone";
 
         /**
          * The name of the class containing all the object
          * with coefficients related to a cylinder
-         * (i.e.: {@link it.emarolab.scene_identification_tagging.realObject.Cylinder})
+         * (i.e.: {@link it.emarolab.sit.realObject.Cylinder})
          */
         String CYLINDER = "Cylinder";
 
         /**
          * The name of the class containing all the object
          * with coefficients related to a primitive shape
-         * (i.e.: {@link it.emarolab.scene_identification_tagging.realObject.GeometricPrimitive})
+         * (i.e.: {@link it.emarolab.sit.realObject.GeometricPrimitive})
          */
         String PRIMITIVE = "GeometricPrimitive";
     }
@@ -257,7 +254,7 @@ public interface SITBase {
      *     All related values should be expressed in meters.
      *
      * <div style="text-align:center;"><small>
-     * <b>File</b>:        it.emarolab.scene_identification_tagging.SITBase <br>
+     * <b>File</b>:        it.emarolab.sit.SITBase <br>
      * <b>Licence</b>:     GNU GENERAL PUBLIC LICENSE. Version 3, 29 June 2007 <br>
      * <b>Author</b>:      Buoncompagni Luca (luca.buoncompagni@edu.unige.it) <br>
      * <b>affiliation</b>: EMAROLab, DIBRIS, University of Genoa. <br>
@@ -447,7 +444,7 @@ public interface SITBase {
      *     sub classes.
      *
      * <div style="text-align:center;"><small>
-     * <b>File</b>:        it.emarolab.scene_identification_tagging.SITBase <br>
+     * <b>File</b>:        it.emarolab.sit.SITBase <br>
      * <b>Licence</b>:     GNU GENERAL PUBLIC LICENSE. Version 3, 29 June 2007 <br>
      * <b>Author</b>:      Buoncompagni Luca (luca.buoncompagni@edu.unige.it) <br>
      * <b>affiliation</b>: EMAROLab, DIBRIS, University of Genoa. <br>

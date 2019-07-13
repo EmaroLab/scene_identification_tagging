@@ -1,12 +1,12 @@
-package it.emarolab.scene_identification_tagging.sceneRepresentation;
+package it.emarolab.sit.sceneRepresentation;
 
 import it.emarolab.amor.owlInterface.OWLReferences;
-import it.emarolab.owloop.aMORDescriptor.MORAxioms;
-import it.emarolab.scene_identification_tagging.SITBase;
-import it.emarolab.scene_identification_tagging.SpatialSimplifier;
-import it.emarolab.scene_identification_tagging.owloopDescriptor.SceneClassDescriptor;
-import it.emarolab.scene_identification_tagging.owloopDescriptor.SceneIndividualDescriptor;
-import it.emarolab.scene_identification_tagging.owloopDescriptor.SpatialIndividualDescriptor;
+import it.emarolab.owloop.descriptor.construction.descriptorEntitySet.DescriptorEntitySet;
+import it.emarolab.sit.SITBase;
+import it.emarolab.sit.SpatialSimplifier;
+import it.emarolab.sit.owloopDescriptor.SceneClassDescriptor;
+import it.emarolab.sit.owloopDescriptor.SceneIndividualDescriptor;
+import it.emarolab.sit.owloopDescriptor.SpatialIndividualDescriptor;
 import org.semanticweb.owlapi.model.OWLClass;
 import org.semanticweb.owlapi.model.OWLNamedIndividual;
 import org.semanticweb.owlapi.model.OWLObjectProperty;
@@ -49,7 +49,7 @@ import java.util.*;
  *     <br>
  *
  * <div style="text-align:center;"><small>
- * <b>File</b>:        it.emarolab.scene_identification_tagging.sceneRepresentation.SceneRepresentation <br>
+ * <b>File</b>:        it.emarolab.sit.sceneRepresentation.SceneRepresentation <br>
  * <b>Licence</b>:     GNU GENERAL PUBLIC LICENSE. Version 3, 29 June 2007 <br>
  * <b>Author</b>:      Buoncompagni Luca (luca.buoncompagni@edu.unige.it) <br>
  * <b>affiliation</b>: EMAROLab, DIBRIS, University of Genoa. <br>
@@ -59,13 +59,13 @@ import java.util.*;
 public class SceneRepresentation
         implements SITBase{
 
-    private Set< SpatialRelation> relations;
-    private SceneIndividualDescriptor sceneDescriptor;
-    private SceneClassDescriptor bestRecognitionDescriptor;
-    private double recognitionConfidence;
-    private long time = System.currentTimeMillis();
-    private static long ID;
-    private boolean addTime = false;
+    protected Set< SpatialRelation> relations;
+    protected SceneIndividualDescriptor sceneDescriptor;
+    protected SceneClassDescriptor bestRecognitionDescriptor;
+    protected double recognitionConfidence;
+    protected long time = System.currentTimeMillis();
+    protected static long ID;
+    protected boolean addTime = false;
 
     /**
      * This constructor assume that the given {@code object} have all object property that
@@ -75,13 +75,21 @@ public class SceneRepresentation
      * @param objects the objects describing spatial relations.
      * @param ontoRef the ontology that the SIT should manipulate.
      */
-    public SceneRepresentation(SpatialSimplifier objects, OWLReferences ontoRef){
+    public SceneRepresentation(SpatialSimplifier objects, OWLReferences ontoRef) {
+        initialize( objects, ontoRef);
+        applyScene( sceneDescriptor, relations);
+        computeRecognitionConfidence( sceneDescriptor);
+    }
+
+    public SceneRepresentation() {
+
+    }
+
+    public void initialize(SpatialSimplifier objects, OWLReferences ontoRef){
         objects.populateMinimalRelationSet();
         objects.readObjectSemantics( true); // call reasoner to compute SWRL rules and readSemantic()
         relations = computeSceneRelations(objects.getObjects());
         sceneDescriptor = new SceneIndividualDescriptor( getSceneIndividualName(), ontoRef);
-        applyScene( sceneDescriptor, relations);
-        computeRecognitionConfidence( sceneDescriptor);
     }
 
     // unique individual scene name
@@ -90,13 +98,13 @@ public class SceneRepresentation
     }
 
     // get the minimal set of relation between all obejcts
-    private Set< SpatialRelation> computeSceneRelations(Collection<? extends SpatialIndividualDescriptor> objects) {
+    protected Set< SpatialRelation> computeSceneRelations(Collection<? extends SpatialIndividualDescriptor> objects) {
         Set< SpatialRelation> relations = new HashSet<>();
         if ( ! objects.isEmpty())
             for ( SpatialIndividualDescriptor o : objects) {
-                for (MORAxioms.ObjectSemantic s : o.getObjectSemantics()) {
+                for (DescriptorEntitySet.ObjectLinks s : o.getIndividualObjectProperties()) {
                     for (OWLNamedIndividual i : s.getValues()) {
-                        relations.add(new SpatialRelation(o, s.getSemantic(), i));
+                        relations.add(new SpatialRelation(o, s.getExpression(), i));
                     }
                 }
             }
@@ -115,7 +123,7 @@ public class SceneRepresentation
         sceneDescriptor.addTypeIndividual( CLASS.SCENE);
         if (addTime)
             sceneDescriptor.addData( DATA_PROPERTY.TIME, time, true);
-        sceneDescriptor.writeSemanticInconsistencySafe( true);
+        sceneDescriptor.writeExpressionAxiomsInconsistencySafe( true);
     }
 
     // get spatial relation between a Scene and an Object from the spatial relation between two Objects
@@ -165,10 +173,10 @@ public class SceneRepresentation
         for ( LearningData learning : shapeCardinality)
             learned.addMinObjectRestriction( learning.getRelation(), learning.getCardinality(), learning.getShape());
         learned.addSuperConcept( CLASS.SCENE);
-        learned.writeSemanticInconsistencySafe( true); // cal reasoning
+        learned.writeExpressionAxiomsInconsistencySafe( true); // cal reasoning
 
         // update this internal class
-        sceneDescriptor.readSemantic();
+        sceneDescriptor.readExpressionAxioms();
         bestRecognitionDescriptor = learned;
         recognitionConfidence = 1;
     }
@@ -192,27 +200,27 @@ public class SceneRepresentation
      * It is mainly used to count the occurrence of relation
      * with respect to specific shapes
      */
-    private class LearningData{
+    protected class LearningData{
         // external information
         private OWLObjectProperty relation;
         private OWLClass shape;
         private int cardinality = 1;
 
-        public LearningData(OWLObjectProperty p, OWLClass type) {
+        protected LearningData(OWLObjectProperty p, OWLClass type) {
             this.relation = p;
             this.shape = type;
         }
 
-        private OWLObjectProperty getRelation() {
+        protected OWLObjectProperty getRelation() {
             return relation;
         }
-        private OWLClass getShape() {
+        protected OWLClass getShape() {
             return shape;
         }
-        private int getCardinality() {
+        protected int getCardinality() {
             return cardinality;
         }
-        private void increaseCardinality() {
+        protected void increaseCardinality() {
             cardinality += 1;
         }
 
@@ -242,7 +250,7 @@ public class SceneRepresentation
 
 
     // compute the best scene classification (confidence and descriptor)
-    private void computeRecognitionConfidence( SceneIndividualDescriptor sceneDescriptor){
+    protected void computeRecognitionConfidence( SceneIndividualDescriptor sceneDescriptor){
         double individualCardinality = sceneDescriptor.getCardinality();
         double bestCardinality = 0;
         for ( SceneClassDescriptor recognised : sceneDescriptor.buildTypeIndividual()){
@@ -264,7 +272,7 @@ public class SceneRepresentation
      * @return It indicate if the recognition went well.
      */
     public boolean shouldLearn(){
-        if ( sceneDescriptor.getTypeIndividual().size() <= 1) // [Scene]
+        if ( sceneDescriptor.getIndividualTypes().size() <= 1) // [Scene]
             return true;
         else {
             if ( recognitionConfidence < CONFIDENCE_THRESHOLD)
@@ -327,6 +335,10 @@ public class SceneRepresentation
      */
     public void setAddingTime(boolean addTime) {
         this.addTime = addTime;
+    }
+
+    public long getID() {
+        return ID;
     }
 
 }

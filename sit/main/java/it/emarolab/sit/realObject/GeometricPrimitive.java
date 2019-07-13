@@ -1,8 +1,8 @@
-package it.emarolab.scene_identification_tagging.realObject;
+package it.emarolab.sit.realObject;
 
 import it.emarolab.amor.owlInterface.OWLReferences;
-import it.emarolab.scene_identification_tagging.SITBase;
-import it.emarolab.scene_identification_tagging.owloopDescriptor.SpatialIndividualDescriptor;
+import it.emarolab.sit.SITBase;
+import it.emarolab.sit.owloopDescriptor.SpatialIndividualDescriptor;
 import org.semanticweb.owlapi.model.OWLNamedIndividual;
 
 import java.util.List;
@@ -17,7 +17,7 @@ import java.util.List;
  *     is able to infer spatial properties between objects through SWRL rules.
  *
  * <div style="text-align:center;"><small>
- * <b>File</b>:        it.emarolab.scene_identification_tagging.realObject.GeometricPrimitive <br>
+ * <b>File</b>:        it.emarolab.sit.realObject.GeometricPrimitive <br>
  * <b>Licence</b>:     GNU GENERAL PUBLIC LICENSE. Version 3, 29 June 2007 <br>
  * <b>Author</b>:      Buoncompagni Luca (luca.buoncompagni@edu.unige.it) <br>
  * <b>affiliation</b>: EMAROLab, DIBRIS, University of Genoa. <br>
@@ -174,7 +174,7 @@ public class GeometricPrimitive
      * @param time the time stamp of the object.
      */
     public void setTime(Long time) { // does not change object name
-        this.time = this.time;
+        this.time = time;
         if ( addTime)
             addData( getPropertyTime(), this.time, true);
     }
@@ -282,8 +282,8 @@ public class GeometricPrimitive
      * @return the changes done during reading.
      */
     @Override
-    public List<MappingIntent> readSemantic() {
-        List<MappingIntent> r = super.readSemantic();
+    public List<MappingIntent> readExpressionAxioms() {
+        List<MappingIntent> r = super.readExpressionAxioms();
         centerX = getLiteral( getPropertyCenterX()).parseFloat();
         centerY = getLiteral( getPropertyCenterY()).parseFloat();
         centerZ = getLiteral( getPropertyCenterZ()).parseFloat();
@@ -306,8 +306,12 @@ public class GeometricPrimitive
     /**
      * An adding time enable/disable flag for synchronising the
      * time stamp w.r.t. the ontology.
+     *
+     * @deprecated not disabled, time get always written (to be fixed)
      * @param flag {@code true} to enable synchronisation, {@code false} to disable.
+     *
      */
+    @Deprecated
     public void shouldAddTime(boolean flag) {
         addTime = flag;
     }

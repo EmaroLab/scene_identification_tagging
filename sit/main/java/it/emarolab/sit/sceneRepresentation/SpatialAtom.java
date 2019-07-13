@@ -1,9 +1,9 @@
-package it.emarolab.scene_identification_tagging.sceneRepresentation;
+package it.emarolab.sit.sceneRepresentation;
 
-import it.emarolab.owloop.aMORDescriptor.MORAxioms;
-import it.emarolab.scene_identification_tagging.SITBase;
-import it.emarolab.scene_identification_tagging.owloopDescriptor.SpatialClassDescriptor;
-import it.emarolab.scene_identification_tagging.owloopDescriptor.SpatialIndividualDescriptor;
+import it.emarolab.owloop.descriptor.construction.descriptorEntitySet.DescriptorEntitySet;
+import it.emarolab.sit.SITBase;
+import it.emarolab.sit.owloopDescriptor.SpatialClassDescriptor;
+import it.emarolab.sit.owloopDescriptor.SpatialIndividualDescriptor;
 import org.semanticweb.owlapi.model.OWLClass;
 import org.semanticweb.owlapi.model.OWLNamedIndividual;
 
@@ -19,7 +19,7 @@ import java.util.Set;
  *     classified in only one leaf.
  *
  * <div style="text-align:center;"><small>
- * <b>File</b>:        it.emarolab.scene_identification_tagging.sceneRepresentation.SpatialAtom <br>
+ * <b>File</b>:        it.emarolab.sit.sceneRepresentation.SpatialAtom <br>
  * <b>Licence</b>:     GNU GENERAL PUBLIC LICENSE. Version 3, 29 June 2007 <br>
  * <b>Author</b>:      Buoncompagni Luca (luca.buoncompagni@edu.unige.it) <br>
  * <b>affiliation</b>: EMAROLab, DIBRIS, University of Genoa. <br>
@@ -48,7 +48,7 @@ public class SpatialAtom
 
     private OWLClass getBottomType( Set<SpatialClassDescriptor> shapesSet){
         for (SpatialClassDescriptor shapes : shapesSet) {
-            MORAxioms.Concepts subShapes = shapes.getSubConcept();
+            DescriptorEntitySet.Concepts subShapes = shapes.getSubConcepts();
             if (subShapes.size() == 1) { // OWLNothing
                 return shapes.getInstance();
             }

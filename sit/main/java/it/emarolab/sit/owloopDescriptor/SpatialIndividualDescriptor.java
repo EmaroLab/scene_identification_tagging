@@ -1,11 +1,10 @@
-package it.emarolab.scene_identification_tagging.owloopDescriptor;
+package it.emarolab.sit.owloopDescriptor;
 
 import it.emarolab.amor.owlInterface.OWLReferences;
-import it.emarolab.owloop.aMORDescriptor.MORAxioms;
-import it.emarolab.owloop.aMORDescriptor.MORIndividual;
-import it.emarolab.owloop.aMORDescriptor.utility.MORIndividualBase;
-import it.emarolab.owloop.aMORDescriptor.utility.dataProperty.MORHierarchicalDataProperty;
-import it.emarolab.owloop.aMORDescriptor.utility.objectProperty.MORHierarchicalObjectProperty;
+import it.emarolab.owloop.descriptor.construction.descriptorEntitySet.DescriptorEntitySet;
+import it.emarolab.owloop.descriptor.construction.descriptorExpression.IndividualExpression;
+import it.emarolab.owloop.descriptor.construction.descriptorGround.IndividualGround;
+import it.emarolab.owloop.descriptor.utility.dataPropertyDescriptor.HierarchicalDataPropertyDesc;
 import org.semanticweb.owlapi.model.OWLClass;
 import org.semanticweb.owlapi.model.OWLNamedIndividual;
 
@@ -20,7 +19,7 @@ import java.util.List;
  *     its data and object properties as well as disjoint individuals.
  *
  * <div style="text-align:center;"><small>
- * <b>File</b>:        it.emarolab.scene_identification_tagging.owloopDescriptor.SpatialIndividualDescriptor <br>
+ * <b>File</b>:        it.emarolab.sit.owloopDescriptor.SpatialIndividualDescriptor <br>
  * <b>Licence</b>:     GNU GENERAL PUBLIC LICENSE. Version 3, 29 June 2007 <br>
  * <b>Author</b>:      Buoncompagni Luca (luca.buoncompagni@edu.unige.it) <br>
  * <b>affiliation</b>: EMAROLab, DIBRIS, University of Genoa. <br>
@@ -28,16 +27,16 @@ import java.util.List;
  * </small></div>
  */
 public class SpatialIndividualDescriptor
-        extends MORIndividualBase
-        implements MORIndividual.Disjoint<SpatialIndividualDescriptor>,
-        MORIndividual.Type<SpatialClassDescriptor>,
-        MORIndividual.DataLink<MORHierarchicalDataProperty>, // this buildings are never read or write
-        MORIndividual.ObjectLink<SpatialObjectPropertyDescriptor>{
+        extends IndividualGround
+        implements IndividualExpression.Disjoint<SpatialIndividualDescriptor>,
+        IndividualExpression.Type<SpatialClassDescriptor>,
+        IndividualExpression.DataLink<HierarchicalDataPropertyDesc>, // this buildings are never read or write
+        IndividualExpression.ObjectLink<SpatialObjectPropertyDescriptor>{
 
-    private MORAxioms.Individuals disjointIndividual = new MORAxioms.Individuals();
-    private MORAxioms.Concepts individualTypes = new MORAxioms.Concepts();
-    private MORAxioms.ObjectSemantics objectLinks = new MORAxioms.ObjectSemantics();
-    private MORAxioms.DataSemantics dataLinks = new MORAxioms.DataSemantics();
+    private DescriptorEntitySet.Individuals disjointIndividual = new DescriptorEntitySet.Individuals();
+    private DescriptorEntitySet.Concepts individualTypes = new DescriptorEntitySet.Concepts();
+    private DescriptorEntitySet.ObjectLinksSet objectLinks = new DescriptorEntitySet.ObjectLinksSet();
+    private DescriptorEntitySet.DataLinksSet dataLinks = new DescriptorEntitySet.DataLinksSet();
 
     /**
      * Initialise this OWLOOP {@code Descriptor} by fully specifying the {@code Ground}.
@@ -78,11 +77,11 @@ public class SpatialIndividualDescriptor
      * @return the changes done during reading.
      */
     @Override
-    public List<MappingIntent> readSemantic() {
-        List<MappingIntent> r = Disjoint.super.readSemantic();
-        r.addAll( Type.super.readSemantic());
-        r.addAll( ObjectLink.super.readSemantic());
-        r.addAll( DataLink.super.readSemantic());
+    public List<MappingIntent> readExpressionAxioms() {
+        List<MappingIntent> r = Disjoint.super.readExpressionAxioms();
+        r.addAll( Type.super.readExpressionAxioms());
+        r.addAll( ObjectLink.super.readExpressionAxioms());
+        r.addAll( DataLink.super.readExpressionAxioms());
         return r;
     }
 
@@ -92,11 +91,11 @@ public class SpatialIndividualDescriptor
      * @return the changes done during writing.
      */
     @Override
-    public List<MappingIntent> writeSemantic() {
-        List<MappingIntent> r = Disjoint.super.writeSemantic();
-        r.addAll( Type.super.writeSemantic());
-        r.addAll( ObjectLink.super.writeSemantic());
-        r.addAll( DataLink.super.writeSemantic());
+    public List<MappingIntent> writeExpressionAxioms() {
+        List<MappingIntent> r = Disjoint.super.writeExpressionAxioms();
+        r.addAll( Type.super.writeExpressionAxioms());
+        r.addAll( ObjectLink.super.writeExpressionAxioms());
+        r.addAll( DataLink.super.writeExpressionAxioms());
         return r;
     }
 
@@ -109,68 +108,14 @@ public class SpatialIndividualDescriptor
         return new SpatialIndividualDescriptor( individual, o);
     }
 
-    /**
-     * This is a standard OWLOOP implementation.
-     * @return the name of all disjoint individuals to {@code this}.
-     */
-    @Override
-    public MORAxioms.Individuals getDisjointIndividual() {
-        return disjointIndividual;
-    }
-
-
-    /**
-     * This is a standard OWLOOP implementation.
-     * @return a new {@code Descriptor} for a class classifying {@code this} individual.
-     */
-    @Override
-    public SpatialClassDescriptor getNewTypeIndividual(OWLClass instance, OWLReferences ontology) {
-        return new SpatialClassDescriptor( instance, ontology);
-    }
-
-    /**
-     * This is a standard OWLOOP implementation.
-     * @return the name of all the class in which {@code this} individual is belonging to.
-     */
-    @Override
-    public MORAxioms.Concepts getTypeIndividual() {
-        return individualTypes;
-    }
-
-    /**
-     * This is a standard OWLOOP implementation.
-     * @return an object property of {@code this} individual.
-     */
-    @Override
-    public SpatialObjectPropertyDescriptor getNewObjectIndividual(MORAxioms.ObjectSemantic instance, OWLReferences ontology) {
-        return new SpatialObjectPropertyDescriptor( instance.getSemantic(), ontology);
-    }
-
-    /**
-     * This is a standard OWLOOP implementation.
-     * @return the names and values of all the synchronised object properties of {@code this} individual.
-     */
-    @Override
-    public MORAxioms.ObjectSemantics getObjectSemantics() {
-        return objectLinks;
-    }
 
     /**
      * This is a standard OWLOOP implementation.
      * @return a data property of {@code this} individual.
      */
     @Override
-    public MORHierarchicalDataProperty getNewDataIndividual(MORAxioms.DataSemantic instance, OWLReferences ontology) {
-        return new MORHierarchicalDataProperty( instance.getSemantic(), ontology);
-    }
-
-    /**
-     * This is a standard OWLOOP implementation.
-     * @return the names and values of all the synchronised data properties of {@code this} individual.
-     */
-    @Override
-    public MORAxioms.DataSemantics getDataSemantics() {
-        return dataLinks;
+    public HierarchicalDataPropertyDesc getNewIndividualDataProperty(DescriptorEntitySet.DataLinks instance, OWLReferences ontology) {
+        return new HierarchicalDataPropertyDesc( instance.getExpression(), ontology);
     }
 
 
@@ -184,4 +129,60 @@ public class SpatialIndividualDescriptor
                 "," + NL + "\t⊢ " + dataLinks +
                 NL + "}";
     }
+
+    /**
+     * This is a standard OWLOOP implementation.
+     * @return the name of all disjoint individuals to {@code this}.
+     */
+    @Override
+    public DescriptorEntitySet.Individuals getDisjointIndividuals() {
+        return disjointIndividual;
+    }
+
+
+    /**
+     * This is a standard OWLOOP implementation.
+     * @return the names and values of all the synchronised data properties of {@code this} individual.
+     */
+    @Override
+    public DescriptorEntitySet.DataLinksSet getIndividualDataProperties() {
+        return dataLinks;
+    }
+
+    /**
+     * This is a standard OWLOOP implementation.
+     * @return an object property of {@code this} individual.
+     */
+    @Override
+    public SpatialObjectPropertyDescriptor getNewIndividualObjectProperty(DescriptorEntitySet.ObjectLinks instance, OWLReferences ontology) {
+        return new SpatialObjectPropertyDescriptor( instance.getExpression(), ontology);
+    }
+
+    /**
+     * This is a standard OWLOOP implementation.
+     * @return the names and values of all the synchronised object properties of {@code this} individual.
+     */
+    @Override
+    public DescriptorEntitySet.ObjectLinksSet getIndividualObjectProperties() {
+        return objectLinks;
+    }
+
+    /**
+     * This is a standard OWLOOP implementation.
+     * @return a new {@code Descriptor} for a class classifying {@code this} individual.
+     */
+    @Override
+    public SpatialClassDescriptor getNewIndividualType(OWLClass instance, OWLReferences ontology) {
+        return new SpatialClassDescriptor( instance, ontology);
+    }
+
+    /**
+     * This is a standard OWLOOP implementation.
+     * @return the name of all the class in which {@code this} individual is belonging to.
+     */
+    @Override
+    public DescriptorEntitySet.Concepts getIndividualTypes() {
+        return individualTypes;
+    }
+
 }
