@@ -3,7 +3,7 @@
 ##############################################################################
 
 cmake_minimum_required(VERSION 2.8.3)
-project(sit_pkg)
+project(sit)
 
 ##############################################################################
 # Catkin
@@ -27,3 +27,5 @@ catkin_package()
 # allprojects closure the root build.gradle
 install(DIRECTORY ${CATKIN_DEVEL_PREFIX}/${CATKIN_GLOBAL_MAVEN_DESTINATION}/it/emarolab/${PROJECT_NAME}/ 
         DESTINATION ${CATKIN_GLOBAL_MAVEN_DESTINATION}/it/emarolab/${PROJECT_NAME})
+        
+#        install(DIRECTORY ${CATKIN_DEVEL_PREFIX}/share/${PROJECT_NAME}/ DESTINATION ${CATKIN_DEVEL_PREFIX}/share/${PROJECT_NAME})
