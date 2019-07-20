@@ -1,11 +1,11 @@
-package it.emarolab.scene_identification_tagging;
+package it.emarolab.sit;
 
 import it.emarolab.amor.owlInterface.OWLReferences;
 import it.emarolab.amor.owlInterface.OWLReferencesInterface;
-import it.emarolab.scene_identification_tagging.owloopDescriptor.SceneClassDescriptor;
-import it.emarolab.scene_identification_tagging.realObject.*;
-import it.emarolab.scene_identification_tagging.sceneRepresentation.FullSceneRepresentation;
-import it.emarolab.scene_identification_tagging.sceneRepresentation.SceneRepresentation;
+import it.emarolab.sit.owloopDescriptor.SceneClassDescriptor;
+import it.emarolab.sit.realObject.*;
+import it.emarolab.sit.sceneRepresentation.FullSceneRepresentation;
+import it.emarolab.sit.sceneRepresentation.SceneRepresentation;
 
 import java.util.HashSet;
 import java.util.Set;

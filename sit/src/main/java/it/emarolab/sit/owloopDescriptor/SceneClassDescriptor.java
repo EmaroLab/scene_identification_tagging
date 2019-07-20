@@ -30,7 +30,7 @@ import java.util.List;
  */
 public class SceneClassDescriptor
         extends ConceptGround
-        implements ConceptExpression.Definition,
+        implements ConceptExpression.Restriction,
         ConceptExpression.Sub<SceneClassDescriptor>,
         ConceptExpression.Super<SceneClassDescriptor>,
         ConceptExpression.Instance<SceneIndividualDescriptor> {
@@ -86,7 +86,7 @@ public class SceneClassDescriptor
     @Override
     public List<MappingIntent> readExpressionAxioms() {
         List<MappingIntent> r = Sub.super.readExpressionAxioms();
-        r.addAll( Definition.super.readExpressionAxioms());
+        r.addAll( Restriction.super.readExpressionAxioms());
         r.addAll( Super.super.readExpressionAxioms());
         r.addAll( Instance.super.readExpressionAxioms());
         updateCardinality();
@@ -102,7 +102,7 @@ public class SceneClassDescriptor
      */
     @Override
     public List<MappingIntent> writeExpressionAxioms() {
-        List<MappingIntent> r = Definition.super.writeExpressionAxioms();
+        List<MappingIntent> r = Restriction.super.writeExpressionAxioms();
         r.addAll( Super.super.writeExpressionAxioms());
         r.addAll( Instance.super.writeExpressionAxioms());
         r.addAll( Sub.super.writeExpressionAxioms());
@@ -112,7 +112,7 @@ public class SceneClassDescriptor
 
     private void updateCardinality(){
         cardinality = 0;
-        for( SemanticRestriction r : getDefinitionConcepts()){
+        for( SemanticRestriction r : getRestrictionConcepts()){
             if( r instanceof SemanticRestriction.ClassRestrictedOnMinObject){
                 cardinality += ((SemanticRestriction.ClassRestrictedOnMinObject) r).getCardinality();
             }
@@ -125,7 +125,7 @@ public class SceneClassDescriptor
      * @return the definition of the described OWLClass.
      */
     @Override
-    public DescriptorEntitySet.Restrictions getDefinitionConcepts() {
+    public DescriptorEntitySet.Restrictions getRestrictionConcepts() {
         return restrictions;
     }
 

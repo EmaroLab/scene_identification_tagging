@@ -123,7 +123,7 @@ public class SceneRepresentation
         sceneDescriptor.addTypeIndividual( CLASS.SCENE);
         if (addTime)
             sceneDescriptor.addData( DATA_PROPERTY.TIME, time, true);
-        sceneDescriptor.writeExpressionAxiomsInconsistencySafe( true);
+        sceneDescriptor.writeReadExpressionAxioms( true);
     }
 
     // get spatial relation between a Scene and an Object from the spatial relation between two Objects
@@ -173,7 +173,7 @@ public class SceneRepresentation
         for ( LearningData learning : shapeCardinality)
             learned.addMinObjectRestriction( learning.getRelation(), learning.getCardinality(), learning.getShape());
         learned.addSuperConcept( CLASS.SCENE);
-        learned.writeExpressionAxiomsInconsistencySafe( true); // cal reasoning
+        learned.writeReadExpressionAxioms( true); // cal reasoning
 
         // update this internal class
         sceneDescriptor.readExpressionAxioms();

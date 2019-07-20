@@ -1,21 +1,18 @@
 <?xml version="1.0"?>
 <package>
-    <name>sit</name>
-    <version>2.0.0</version>
-  <description>The ROSJava package template messages</description>
+    <name>scene_identification_tagging</name>
+    <version>1.0.0</version>
+    <description>A crisp SIT algorithm implementation</description>
 
-    <maintainer email="luca.buoncompagni@edu.unige.it">Luca Buoncompagni</maintainer>
-    <author email="luca.buoncompagni@edu.unige.it">Luca Buoncompagni</author>
-    <url type="website">https://gitlab.com/buoncubi/ros_java_template_pkg</url>
-    <license>GNUv3</license>
-
-
+    <maintainer email="luca.buoncompagni@edu.unige.it">Buoncompagni Luca</maintainer>
+    <author email="luca.buoncompagni@edu.unige.it">Buoncompagni Luca</author>
+    <url type="website">https://github.com/EmaroLab/scene_identification_tagging</url>
+    <license>GPLv2</license>
 
     <buildtool_depend>catkin</buildtool_depend>
     <build_depend>rosjava_build_tools</build_depend>
     <build_depend>multi_ontology_reference</build_depend>
-    <build_depend>owloop</build_depend>
-
+    <build_depend>owl_oop</build_depend>
 
     <!-- The export tag contains other, unspecified, tags -->
     <export>
