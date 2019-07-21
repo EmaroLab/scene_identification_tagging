@@ -59,78 +59,34 @@
     
 
 
-    <!-- http://www.emarolab.it/sit/simple#CONE -->
+    <!-- http://www.emarolab.it/sit/simple#LEG -->
 
-    <owl:Class rdf:about="&simple2;CONE">
-        <rdfs:subClassOf rdf:resource="&simple2;ORIENTABLE"/>
+    <owl:Class rdf:about="&simple2;LEG">
+        <rdfs:subClassOf rdf:resource="&simple2;SPATIAL-OBJECT"/>
+        <owl:disjointWith rdf:resource="&simple2;PIN"/>
     </owl:Class>
     
 
 
-    <!-- http://www.emarolab.it/sit/simple#CYLINDER -->
+    <!-- http://www.emarolab.it/sit/simple#PIN -->
 
-    <owl:Class rdf:about="&simple2;CYLINDER">
-        <rdfs:subClassOf rdf:resource="&simple2;ORIENTABLE"/>
-    </owl:Class>
-    
-
-
-    <!-- http://www.emarolab.it/sit/simple#GEOMETRIC-PRIMITIVE -->
-
-    <owl:Class rdf:about="&simple2;GEOMETRIC-PRIMITIVE">
-        <owl:disjointWith rdf:resource="&simple2;SCENE"/>
-    </owl:Class>
-    
-
-
-    <!-- http://www.emarolab.it/sit/simple#ORIENTABLE -->
-
-    <owl:Class rdf:about="&simple2;ORIENTABLE">
-        <rdfs:subClassOf rdf:resource="&simple2;GEOMETRIC-PRIMITIVE"/>
-        <owl:disjointWith rdf:resource="&simple2;SPHERE"/>
-    </owl:Class>
-    
-
-
-    <!-- http://www.emarolab.it/sit/simple#PLANE -->
-
-    <owl:Class rdf:about="&simple2;PLANE">
-        <rdfs:subClassOf rdf:resource="&simple2;ORIENTABLE"/>
+    <owl:Class rdf:about="&simple2;PIN">
+        <rdfs:subClassOf rdf:resource="&simple2;SPATIAL-OBJECT"/>
     </owl:Class>
     
 
 
     <!-- http://www.emarolab.it/sit/simple#SCENE -->
 
-    <owl:Class rdf:about="&simple2;SCENE"/>
-    
-
-
-    <!-- http://www.emarolab.it/sit/simple#SPHERE -->
-
-    <owl:Class rdf:about="&simple2;SPHERE">
-        <rdfs:subClassOf rdf:resource="&simple2;GEOMETRIC-PRIMITIVE"/>
+    <owl:Class rdf:about="&simple2;SCENE">
+        <owl:disjointWith rdf:resource="&simple2;SPATIAL-OBJECT"/>
     </owl:Class>
     
 
 
-    <!-- 
-    ///////////////////////////////////////////////////////////////////////////////////////
-    //
-    // General axioms
-    //
-    ///////////////////////////////////////////////////////////////////////////////////////
-     -->
+    <!-- http://www.emarolab.it/sit/simple#SPATIAL-OBJECT -->
 
-    <rdf:Description>
-        <rdf:type rdf:resource="&owl;AllDisjointClasses"/>
-        <owl:members rdf:parseType="Collection">
-            <rdf:Description rdf:about="&simple2;CONE"/>
-            <rdf:Description rdf:about="&simple2;CYLINDER"/>
-            <rdf:Description rdf:about="&simple2;PLANE"/>
-            <rdf:Description rdf:about="&simple2;SPHERE"/>
-        </owl:members>
-    </rdf:Description>
+    <owl:Class rdf:about="&simple2;SPATIAL-OBJECT"/>
 </rdf:RDF>
 
 
