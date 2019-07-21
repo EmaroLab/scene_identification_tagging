@@ -15,7 +15,7 @@ package it.emarolab.sit.example.simpleSpatialScenario.sceneElement;
  */
 public class Sphere extends GeometricPrimitive {
 
-    private static final String TYPE = "SPHERE";
+    public static final String TYPE = "SPHERE";
     double radius;
 
     @Override

@@ -38,6 +38,8 @@ public interface SITInterface {
 
     Set<? extends RelationInterface> getRelations(); // get domain, rel, range
     ActualSceneDescriptor getActualScene();
+    Set<MemorySceneClassified> getRecognitions();
+    MemorySceneDescriptor getLearned();
 
     default String reifyRelation(RelationInterface r){
         return r.getRelationName() + r.getDomainElement().getTypeName();

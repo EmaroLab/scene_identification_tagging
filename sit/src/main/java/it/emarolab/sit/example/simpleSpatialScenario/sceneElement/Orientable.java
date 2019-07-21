@@ -17,7 +17,7 @@ import it.emarolab.sit.example.simpleSpatialScenario.Point3D;
  */
 public class Orientable extends GeometricPrimitive{
 
-    private static final String TYPE = "ORIENTABLE";
+    public static final String TYPE = "ORIENTABLE";
     private Point3D axis;
 
     @Override

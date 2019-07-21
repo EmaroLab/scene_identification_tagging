@@ -79,9 +79,11 @@ public class SimpleSIT implements SITInterface {
     }
 
     // they might be null
-    public Set<MemorySceneClassified> getRecognition(){
+    @Override
+    public Set<MemorySceneClassified> getRecognitions(){
         return storedRecognition;
     }
+    @Override
     public MemorySceneDescriptor getLearned(){
         return learned;
     }
