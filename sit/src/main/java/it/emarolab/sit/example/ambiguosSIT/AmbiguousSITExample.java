@@ -83,8 +83,6 @@ public class AmbiguousSITExample extends SimpleSITExample {
 
 
         SpatialEvaluator evaluator = new SpatialEvaluator( sceneElements, ex.getOntology());
-        evaluator.evaluate();
-
         return evaluator.getRelations();
     }
 

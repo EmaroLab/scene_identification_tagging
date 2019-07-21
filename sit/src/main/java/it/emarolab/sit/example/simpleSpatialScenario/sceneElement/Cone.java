@@ -17,6 +17,8 @@ import it.emarolab.sit.example.simpleSpatialScenario.Point3D;
  */
 public class Cone extends Orientable {
 
+    public static final String TYPE = "CONE";
+
     double radius;
     double height;
     Point3D apex;
@@ -28,7 +30,7 @@ public class Cone extends Orientable {
 
     @Override
     public String getTypeName() {
-        return "CONE";
+        return TYPE;
     }
 
     public double getRadius() {

@@ -17,6 +17,8 @@ import it.emarolab.sit.example.simpleSpatialScenario.Point3D;
  */
 public class Cylinder  extends Orientable {
 
+    public static final String TYPE = "CYLINDER";
+
     double radius;
     double height;
     Point3D pointOnAxis;
@@ -28,7 +30,7 @@ public class Cylinder  extends Orientable {
 
     @Override
     public String getTypeName() {
-        return "CYLINDER";
+        return TYPE;
     }
 
     public double getRadius() {

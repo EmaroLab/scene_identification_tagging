@@ -35,16 +35,26 @@ public abstract class SITExampleBase<R extends RelationInterface> {
         this.ontoRef.setOWLManipulatorBuffering( true);
     }
 
+    public SITExampleBase(OWLReferences ontoRef) {
+        this.ontoRef = ontoRef;
+    }
+
     protected abstract SITInterface getSIT(Set<R> relations);
 
     public SITInterface evaluateScene(Set<R> relations){
-        return evaluateScene( relations, "SCENE-" + sceneNameCnt++);
+        return evaluateScene( relations, "SCENE-" + sceneNameCnt++, CONFIDENCE_TH);
+    }
+    public SITInterface evaluateScene(Set<R> relations, double similarityTh){
+        return evaluateScene( relations, "SCENE-" + sceneNameCnt++, similarityTh);
     }
     public SITInterface evaluateScene(Set<R> relations, String sceneName){
+        return evaluateScene( relations, sceneName, CONFIDENCE_TH);
+    }
+    public SITInterface evaluateScene(Set<R> relations, String sceneName, double similarityTh){
         System.out.print( "******************");
         SITInterface sit = getSIT( relations);
         if( ! relations.isEmpty()) {
-            Set<MemorySceneClassified> recognition = sit.recognise(CONFIDENCE_TH);
+            Set<MemorySceneClassified> recognition = sit.recognise( similarityTh);
             if (sit.shouldLearn(recognition)) {
                 MemorySceneDescriptor learned = sit.learn(sceneName, ontoRef);
                 System.out.println("\t\t\tLEARNING");

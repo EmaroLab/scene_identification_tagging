@@ -4,6 +4,7 @@ import it.emarolab.amor.owlInterface.OWLReferences;
 import it.emarolab.sit.core.RelationInterface;
 import it.emarolab.sit.core.SITInterface;
 import it.emarolab.sit.core.owloopDescriptor.ActualSceneDescriptor;
+import it.emarolab.sit.core.owloopDescriptor.MemorySceneClassified;
 import it.emarolab.sit.core.owloopDescriptor.MemorySceneDescriptor;
 
 import java.util.Set;
@@ -26,6 +27,8 @@ public class SimpleSIT implements SITInterface {
     private Set<? extends RelationInterface> relations;
     private OWLReferences ontology;
     private ActualSceneDescriptor actualSceneDescriptor;
+    private Set<MemorySceneClassified> storedRecognition;
+    private MemorySceneDescriptor learned;
 
     public SimpleSIT(Set<? extends RelationInterface> relations, OWLReferences ontology) {
         this.relations = relations;
@@ -47,6 +50,7 @@ public class SimpleSIT implements SITInterface {
         MemorySceneDescriptor learned = SITInterface.super.learn(sceneName, ontology);
         ontology.applyOWLManipulatorChanges();
         learned.readExpressionAxioms();
+        this.learned = learned;
         return learned;
     }
 
@@ -66,4 +70,19 @@ public class SimpleSIT implements SITInterface {
         return actualSceneDescriptor;
     }
 
+
+    @Override
+    public Set<MemorySceneClassified> recognise(double similarityThreshold) {
+        Set<MemorySceneClassified> out = SITInterface.super.recognise(similarityThreshold);
+        this.storedRecognition = out;
+        return out;
+    }
+
+    // they might be null
+    public Set<MemorySceneClassified> getRecognition(){
+        return storedRecognition;
+    }
+    public MemorySceneDescriptor getLearned(){
+        return learned;
+    }
 }

@@ -81,8 +81,6 @@ public class TableSITExample  extends SITExampleBase<ConnectedRelation> {
 
 
         TableEvaluator evaluator = new TableEvaluator( sceneElements, ex.getOntology());
-        evaluator.evaluate();
-
         return evaluator.getRelations();
     }
 
@@ -100,8 +98,6 @@ public class TableSITExample  extends SITExampleBase<ConnectedRelation> {
         sceneElements.add( l);
 
         TableEvaluator evaluator = new TableEvaluator( sceneElements, ex.getOntology());
-        evaluator.evaluate();
-
         return evaluator.getRelations();
     }
 
@@ -127,8 +123,6 @@ public class TableSITExample  extends SITExampleBase<ConnectedRelation> {
         sceneElements.add( l);
 
         TableEvaluator evaluator = new TableEvaluator( sceneElements, ex.getOntology());
-        evaluator.evaluate();
-
         return evaluator.getRelations();
     }
 
@@ -150,8 +144,6 @@ public class TableSITExample  extends SITExampleBase<ConnectedRelation> {
         sceneElements.add( l);
 
         TableEvaluator evaluator = new TableEvaluator( sceneElements, ex.getOntology());
-        evaluator.evaluate();
-
         return evaluator.getRelations();
     }
 }

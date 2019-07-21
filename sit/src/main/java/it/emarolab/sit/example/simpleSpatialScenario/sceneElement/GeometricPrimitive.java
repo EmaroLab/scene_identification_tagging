@@ -18,6 +18,7 @@ import it.emarolab.sit.example.simpleSpatialScenario.Point3D;
  */
 public class GeometricPrimitive implements ElementInterface{
 
+    private static final String TYPE = "GEOMETRIC-PRIMITIVE";
     protected static long cnt = 0;
 
     private Point3D center;
@@ -43,7 +44,7 @@ public class GeometricPrimitive implements ElementInterface{
 
     @Override
     public String getTypeName() {
-        return "GEOMETRIC-PRIMITIVE";
+        return TYPE;
     }
 
     @Override

@@ -1,5 +1,6 @@
 package it.emarolab.sit.example.simpleSpatialScenario;
 
+import it.emarolab.amor.owlInterface.OWLReferences;
 import it.emarolab.sit.example.SITExampleBase;
 import it.emarolab.sit.core.SITInterface;
 import it.emarolab.sit.example.simpleSpatialScenario.sceneElement.Cone;
@@ -26,6 +27,10 @@ import java.util.Set;
  * </small></div>
  */
 public class SimpleSITExample extends SITExampleBase<SpatialRelation> {
+
+    public SimpleSITExample(OWLReferences ontoRef) {
+        super( ontoRef);
+    }
 
     public SimpleSITExample(String refName, String ontoFilePath, String ontoIRIPath) {
         super(refName, ontoFilePath, ontoIRIPath);
@@ -72,8 +77,6 @@ public class SimpleSITExample extends SITExampleBase<SpatialRelation> {
         sceneElements.add( p);
 
         SpatialEvaluator evaluator = new SpatialEvaluator( sceneElements, ex.getOntology());
-        evaluator.evaluate();
-
         return evaluator.getRelations();
     }
 
@@ -91,8 +94,6 @@ public class SimpleSITExample extends SITExampleBase<SpatialRelation> {
         sceneElements.add( p);
 
         SpatialEvaluator evaluator = new SpatialEvaluator( sceneElements, ex.getOntology());
-        evaluator.evaluate();
-
         return evaluator.getRelations();
     }
 
@@ -115,8 +116,6 @@ public class SimpleSITExample extends SITExampleBase<SpatialRelation> {
 
 
         SpatialEvaluator evaluator = new SpatialEvaluator( sceneElements, ex.getOntology());
-        evaluator.evaluate();
-
         return evaluator.getRelations();
     }
 
@@ -134,8 +133,6 @@ public class SimpleSITExample extends SITExampleBase<SpatialRelation> {
 
 
         SpatialEvaluator evaluator = new SpatialEvaluator( sceneElements, ex.getOntology());
-        evaluator.evaluate();
-
         return evaluator.getRelations();
     }
 
@@ -155,8 +152,6 @@ public class SimpleSITExample extends SITExampleBase<SpatialRelation> {
         sceneElements.add( s);
 
         SpatialEvaluator evaluator = new SpatialEvaluator( sceneElements, ex.getOntology());
-        evaluator.evaluate();
-
         return evaluator.getRelations();
     }
 

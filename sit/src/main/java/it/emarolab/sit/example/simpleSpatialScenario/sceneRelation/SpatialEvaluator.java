@@ -29,10 +29,11 @@ public class SpatialEvaluator {
     private Set<SpatialRelation> relations = new HashSet<>();
     private OWLReferences ontology = null;
 
-    public SpatialEvaluator(){}
+    public SpatialEvaluator(){}// evaluate() maunally
     public SpatialEvaluator(Set<GeometricPrimitive> elements, OWLReferences ontology){
         this.elements = elements;
         this.ontology = ontology;
+        this.evaluate();
     }
 
     public Set<GeometricPrimitive> getElements() {

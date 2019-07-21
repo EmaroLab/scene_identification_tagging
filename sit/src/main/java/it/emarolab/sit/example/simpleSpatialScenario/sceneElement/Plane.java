@@ -15,6 +15,7 @@ package it.emarolab.sit.example.simpleSpatialScenario.sceneElement;
  */
 public class Plane extends Orientable {
 
+    private static final String TYPE = "PLANE";
     double hessian;
 
     @Override
@@ -24,7 +25,7 @@ public class Plane extends Orientable {
 
     @Override
     public String getTypeName() {
-        return "PLANE";
+        return TYPE;
     }
 
     public double getHessian() {
