@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <package>
     <name>scene_identification_tagging</name>
-    <version>1.0.0</version>
+    <version>2.0.0</version>
     <description>A crisp SIT algorithm implementation</description>
 
     <maintainer email="luca.buoncompagni@edu.unige.it">Buoncompagni Luca</maintainer>
