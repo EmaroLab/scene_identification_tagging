@@ -2,6 +2,8 @@
 
 A semantic algorithm to learn and recognise composition ob objects based on their qualitative spatial relations.
 
+# README AND DOCUMENTATION OUT OF DATE
+
 ## Dependences
  
 This implementation depends on [OWLOOP](https://github.com/EmaroLab/owloop). 
