@@ -26,7 +26,7 @@ import java.util.Set;
  * <b>date</b>:        21/07/19 <br>
  * </small></div>
  */
-public class TableSITExample  extends SITExampleBase<ConnectedRelation> {
+public class TableSITExample  extends SITExampleBase<ConnectedRelation, SimpleSIT> {
 
 
     public TableSITExample(String refName, String ontoFilePath, String ontoIRIPath) {
@@ -34,7 +34,7 @@ public class TableSITExample  extends SITExampleBase<ConnectedRelation> {
     }
 
     @Override
-    protected SITInterface getSIT(Set<ConnectedRelation> relations) {
+    protected SimpleSIT getSIT(Set<ConnectedRelation> relations) {
         return new SimpleSIT( relations, getOntology());
     }
 

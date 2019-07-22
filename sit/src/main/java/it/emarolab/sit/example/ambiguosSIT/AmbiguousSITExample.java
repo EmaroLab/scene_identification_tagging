@@ -37,7 +37,7 @@ public class AmbiguousSITExample extends SimpleSITExample {
     }
 
     @Override
-    protected SITInterface getSIT(Set<SpatialRelation> relations) {
+    protected AmbiguousSIT getSIT(Set<SpatialRelation> relations) {
         return new AmbiguousSIT(relations, getOntology());
     }
 

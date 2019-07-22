@@ -26,7 +26,7 @@ import java.util.Set;
  * <b>date</b>:        20/07/19 <br>
  * </small></div>
  */
-public class SimpleSITExample extends SITExampleBase<SpatialRelation> {
+public class SimpleSITExample extends SITExampleBase<SpatialRelation, SimpleSIT> {
 
     public SimpleSITExample(OWLReferences ontoRef) {
         super( ontoRef);
@@ -37,7 +37,7 @@ public class SimpleSITExample extends SITExampleBase<SpatialRelation> {
     }
 
     @Override
-    protected SITInterface getSIT(Set<SpatialRelation> relations) {
+    protected SimpleSIT getSIT(Set<SpatialRelation> relations) {
         return new SimpleSIT( relations, getOntology());
     }
 

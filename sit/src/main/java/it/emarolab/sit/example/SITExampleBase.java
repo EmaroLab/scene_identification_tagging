@@ -22,7 +22,7 @@ import java.util.Set;
  * <b>date</b>:        21/07/19 <br>
  * </small></div>
  */
-public abstract class SITExampleBase<R extends RelationInterface> {
+public abstract class SITExampleBase<R extends RelationInterface, S extends SITInterface> {
 
     private long sceneNameCnt = 0;
     public static final double CONFIDENCE_TH = .9;
@@ -39,10 +39,10 @@ public abstract class SITExampleBase<R extends RelationInterface> {
         this.ontoRef = ontoRef;
     }
 
-    protected abstract SITInterface getSIT(Set<R> relations);
+    protected abstract S getSIT(Set<R> relations);
 
     public SITInterface evaluateScene(Set<R> relations){
-        return evaluateScene( relations, "SCENE-" + sceneNameCnt++, CONFIDENCE_TH);
+        return evaluateScene( relations, SITInterface.SCENE_ROOT + "-" + sceneNameCnt++, CONFIDENCE_TH);
     }
     public SITInterface evaluateScene(Set<R> relations, double similarityTh){
         return evaluateScene( relations, "SCENE-" + sceneNameCnt++, similarityTh);
@@ -52,7 +52,7 @@ public abstract class SITExampleBase<R extends RelationInterface> {
     }
     public SITInterface evaluateScene(Set<R> relations, String sceneName, double similarityTh){
         System.out.print( "******************");
-        SITInterface sit = getSIT( relations);
+        S sit = getSIT( relations);
         if( ! relations.isEmpty()) {
             Set<MemorySceneClassified> recognition = sit.recognise( similarityTh);
             if (sit.shouldLearn(recognition)) {

@@ -22,6 +22,7 @@ import java.util.Set;
  */
 public class SpatialEvaluator {
 
+    // TODO make them ros parameters
     private static final double SPATIAL_INTERVAL = .03; // in meters
     private static final double AXIS_INTERVAL = .05; // in ???? (based on axis scalar and dot product)
 
@@ -89,12 +90,12 @@ public class SpatialEvaluator {
         evaluateSquaredRelation( "left", range.getCenter().getY(), range, domain.getCenter().getY(), domain);
     }
     private void evaluateBehindFront(GeometricPrimitive domain, GeometricPrimitive range) {
-        evaluateSquaredRelation( "behind", domain.getCenter().getY(), domain, range.getCenter().getY(), range);
-        evaluateSquaredRelation( "front", range.getCenter().getY(), range, domain.getCenter().getY(), domain);
+        evaluateSquaredRelation( "behind", domain.getCenter().getX(), domain, range.getCenter().getX(), range);
+        evaluateSquaredRelation( "front", range.getCenter().getX(), range, domain.getCenter().getX(), domain);
     }
     private void evaluateAboveBelow(GeometricPrimitive domain, GeometricPrimitive range) {
-        evaluateSquaredRelation( "above", domain.getCenter().getY(), domain, range.getCenter().getY(), range);
-        evaluateSquaredRelation( "below", range.getCenter().getY(), range, domain.getCenter().getY(), domain);
+        evaluateSquaredRelation( "above", domain.getCenter().getZ(), domain, range.getCenter().getZ(), range);
+        evaluateSquaredRelation( "below", range.getCenter().getZ(), range, domain.getCenter().getZ(), domain);
     }
     private void evaluateSquaredRelation( String relation, double d, GeometricPrimitive dElement, double r, GeometricPrimitive rElement){
         if ( d - r >= SPATIAL_INTERVAL)
