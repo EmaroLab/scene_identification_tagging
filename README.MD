@@ -2,7 +2,8 @@
 
 A semantic algorithm to learn and recognise composition ob objects based on their qualitative spatial relations.
 
-# README AND DOCUMENTATION OUT OF DATE
+## README AND DOCUMENTATION OUT OF DATE
+We are currently working for documenting version 2.0.  In the `src` folder, you can find a simple example, but for more support do not hesitate to open an issue or write to me. I am sorry for the inconvenience.
 
 ## Dependences
  
